@@ -70,7 +70,7 @@ namespace localtour.Tours
         }
 
         [AbpAuthorize()]
-        public async Task<GetTourForEditOutput> GetStateForEdit(EntityDto input)
+        public async Task<GetTourForEditOutput> GetTourForEdit(EntityDto input)
         {
             var tour = await _tourRepository.FirstOrDefaultAsync(input.Id);
 

@@ -14,7 +14,7 @@ namespace localtour.Tours
 
         Task<GetTourForViewDto> GetTourForView(int id);
 
-        Task<GetTourForEditOutput> GetStateForEdit(EntityDto input);
+        Task<GetTourForEditOutput> GetTourForEdit(EntityDto input);
 
         Task CreateOrEdit(CreateOrEditTourDto input);
 

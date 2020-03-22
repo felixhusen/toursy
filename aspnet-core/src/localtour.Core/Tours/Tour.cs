@@ -1,4 +1,5 @@
 ﻿using Abp.Domain.Entities;
+using localtour.Authorization.Users;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -24,5 +25,10 @@ namespace localtour.Tours
         public virtual string Longitude { get; set; }
 
         public virtual string Latitude { get; set; }
+
+        public virtual long? UserId { get; set; }
+
+        [ForeignKey("UserId")]
+        public User UserFk { get; set; }
     }
 }
