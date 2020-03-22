@@ -7,5 +7,15 @@
         public const string Pages_Users = "Pages.Users";
 
         public const string Pages_Roles = "Pages.Roles";
+
+        public const string Pages_User_Bookings = "Pages.User.Bookings";
+
+        public const string Pages_User_Transactions = "Pages.User.Transactions";
+
+        public const string Pages_User_Disputes = "Pages.User.Disputes";
+
+        public const string Pages_User_Requests = "Pages.User.Requests";
+
+        public const string Pages_User_Reviews = "Pages.User.Reviews";
     }
 }

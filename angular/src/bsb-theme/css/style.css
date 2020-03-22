@@ -7794,7 +7794,7 @@ fieldset[disabled] .form-control {
 
 /* Login Page ================================== */
 .login-page {
-  background-color: #00BCD4;
+  background-color: #3f51b5;
   padding-left: 0;
   max-width: 360px;
   margin: 5% auto;
@@ -7808,7 +7808,7 @@ fieldset[disabled] .form-control {
     text-decoration: none;
     color: #00BCD4; }
   .login-page .login-box .logo {
-    margin-bottom: 20px; }
+    margin-bottom: 40px; }
     .login-page .login-box .logo a {
       font-size: 36px;
       display: block;
