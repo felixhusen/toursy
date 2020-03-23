@@ -1,10 +1,11 @@
-import { Component, ViewContainerRef, Injector, OnInit, AfterViewInit, ChangeDetectorRef } from '@angular/core';
+import { Component, ViewContainerRef, Injector, OnInit, AfterViewInit, ChangeDetectorRef, ViewEncapsulation } from '@angular/core';
 import { AppComponentBase } from '@shared/app-component-base';
 
 import { SignalRAspNetCoreHelper } from '@shared/helpers/SignalRAspNetCoreHelper';
 
 @Component({
-    templateUrl: './app.component.html'
+    templateUrl: './app.component.html',
+    styleUrls: ['./app.component.less']
 })
 export class AppComponent extends AppComponentBase implements OnInit, AfterViewInit {
 

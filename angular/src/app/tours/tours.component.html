@@ -1,7 +1,41 @@
 <div [@routerTransition]>
+    <mat-form-field appearance="fill">
+        <mat-label>Search Tour</mat-label>
+        <input matInput>
+    </mat-form-field>
 
-    <div class="block-header">
-        <h2>SAMPLE DASHBOARD</h2>
+    <div class="row">
+        <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3 mb-3" *ngFor="let item of tours">
+            <mat-card>
+                <img mat-card-image
+                    src="https://www.australia.com/content/australia/en/places/sydney-and-surrounds/guide-to-sydney/jcr:content/hero/desktop.adapt.1920.high.jpg"
+                    alt="{{item.tour.name}}" class="tour-image">
+                <mat-card-content>
+                    <p>
+                        <i class="las la-calendar"></i>
+                        {{item.tour.startDate | date:'dd/MM/yyyy'}} - {{item.tour.endDate | date:'dd/MM/yyyy'}}
+                    </p>
+                    <p>
+                        <i class="las la-map-marker"></i>
+                        {{item.tour.longitude}} Sydney
+                    </p>
+                    <mat-card-title class="text-truncate">{{item.tour.name}}</mat-card-title>
+                    <mat-card-subtitle class="text-truncate">{{item.tour.price | currency:'AUD':'symbol-narrow'}}
+                    </mat-card-subtitle>
+                    <p class="text-truncate">{{item.tour.description}}</p>
+                </mat-card-content>
+                <mat-card-actions>
+                    <button mat-button>Book</button>
+                    <button mat-button>Details</button>
+                    <button mat-button>Share</button>
+                </mat-card-actions>
+            </mat-card>
+        </div>
     </div>
 
+    <mat-card>
+        <mat-paginator [length]="totalCount" [pageSize]="maxResultCount" [pageSizeOptions]="maxResultCountOptions"
+            (page)="this.getTours($event)">
+        </mat-paginator>
+    </mat-card>
 </div>
