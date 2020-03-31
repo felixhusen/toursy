@@ -1537,6 +1537,115 @@ export class TourServiceProxy {
         }
         return _observableOf<void>(<any>null);
     }
+
+    /**
+     * @param tourId (optional) 
+     * @param body (optional) 
+     * @return Success
+     */
+    uploadTourPicture(tourId: number | undefined, body: Blob | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/app/Tour/UploadTourPicture?";
+        if (tourId === null)
+            throw new Error("The parameter 'tourId' cannot be null.");
+        else if (tourId !== undefined)
+            url_ += "TourId=" + encodeURIComponent("" + tourId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = body;
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "multipart/form-data", 
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processUploadTourPicture(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processUploadTourPicture(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processUploadTourPicture(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+
+    /**
+     * @param tourPictureId (optional) 
+     * @return Success
+     */
+    deleteTourPicture(tourPictureId: number | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/app/Tour/DeleteTourPicture?";
+        if (tourPictureId === null)
+            throw new Error("The parameter 'tourPictureId' cannot be null.");
+        else if (tourPictureId !== undefined)
+            url_ += "TourPictureId=" + encodeURIComponent("" + tourPictureId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+            })
+        };
+
+        return this.http.request("delete", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processDeleteTourPicture(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processDeleteTourPicture(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processDeleteTourPicture(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
 }
 
 @Injectable()
@@ -3552,6 +3661,7 @@ export class TourDto implements ITourDto {
     endDate: moment.Moment;
     longitude: string | undefined;
     latitude: string | undefined;
+    userId: number | undefined;
     id: number;
 
     constructor(data?: ITourDto) {
@@ -3572,6 +3682,7 @@ export class TourDto implements ITourDto {
             this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
             this.longitude = data["longitude"];
             this.latitude = data["latitude"];
+            this.userId = data["userId"];
             this.id = data["id"];
         }
     }
@@ -3592,6 +3703,7 @@ export class TourDto implements ITourDto {
         data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
         data["longitude"] = this.longitude;
         data["latitude"] = this.latitude;
+        data["userId"] = this.userId;
         data["id"] = this.id;
         return data; 
     }
@@ -3612,11 +3724,64 @@ export interface ITourDto {
     endDate: moment.Moment;
     longitude: string | undefined;
     latitude: string | undefined;
+    userId: number | undefined;
+    id: number;
+}
+
+export class TourPictureDto implements ITourPictureDto {
+    link: string | undefined;
+    tourId: number | undefined;
+    id: number;
+
+    constructor(data?: ITourPictureDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.link = data["link"];
+            this.tourId = data["tourId"];
+            this.id = data["id"];
+        }
+    }
+
+    static fromJS(data: any): TourPictureDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new TourPictureDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["link"] = this.link;
+        data["tourId"] = this.tourId;
+        data["id"] = this.id;
+        return data; 
+    }
+
+    clone(): TourPictureDto {
+        const json = this.toJSON();
+        let result = new TourPictureDto();
+        result.init(json);
+        return result;
+    }
+}
+
+export interface ITourPictureDto {
+    link: string | undefined;
+    tourId: number | undefined;
     id: number;
 }
 
 export class GetTourForViewDto implements IGetTourForViewDto {
     tour: TourDto;
+    tourPictures: TourPictureDto[] | undefined;
 
     constructor(data?: IGetTourForViewDto) {
         if (data) {
@@ -3630,6 +3795,11 @@ export class GetTourForViewDto implements IGetTourForViewDto {
     init(data?: any) {
         if (data) {
             this.tour = data["tour"] ? TourDto.fromJS(data["tour"]) : <any>undefined;
+            if (Array.isArray(data["tourPictures"])) {
+                this.tourPictures = [] as any;
+                for (let item of data["tourPictures"])
+                    this.tourPictures.push(TourPictureDto.fromJS(item));
+            }
         }
     }
 
@@ -3643,6 +3813,11 @@ export class GetTourForViewDto implements IGetTourForViewDto {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["tour"] = this.tour ? this.tour.toJSON() : <any>undefined;
+        if (Array.isArray(this.tourPictures)) {
+            data["tourPictures"] = [];
+            for (let item of this.tourPictures)
+                data["tourPictures"].push(item.toJSON());
+        }
         return data; 
     }
 
@@ -3656,6 +3831,7 @@ export class GetTourForViewDto implements IGetTourForViewDto {
 
 export interface IGetTourForViewDto {
     tour: TourDto;
+    tourPictures: TourPictureDto[] | undefined;
 }
 
 export class GetTourForViewDtoPagedResultDto implements IGetTourForViewDtoPagedResultDto {
@@ -3721,6 +3897,7 @@ export class CreateOrEditTourDto implements ICreateOrEditTourDto {
     endDate: moment.Moment;
     longitude: string | undefined;
     latitude: string | undefined;
+    userId: number | undefined;
     id: number | undefined;
 
     constructor(data?: ICreateOrEditTourDto) {
@@ -3741,6 +3918,7 @@ export class CreateOrEditTourDto implements ICreateOrEditTourDto {
             this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
             this.longitude = data["longitude"];
             this.latitude = data["latitude"];
+            this.userId = data["userId"];
             this.id = data["id"];
         }
     }
@@ -3761,6 +3939,7 @@ export class CreateOrEditTourDto implements ICreateOrEditTourDto {
         data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
         data["longitude"] = this.longitude;
         data["latitude"] = this.latitude;
+        data["userId"] = this.userId;
         data["id"] = this.id;
         return data; 
     }
@@ -3781,11 +3960,13 @@ export interface ICreateOrEditTourDto {
     endDate: moment.Moment;
     longitude: string | undefined;
     latitude: string | undefined;
+    userId: number | undefined;
     id: number | undefined;
 }
 
 export class GetTourForEditOutput implements IGetTourForEditOutput {
     tour: CreateOrEditTourDto;
+    tourPictures: TourPictureDto[] | undefined;
 
     constructor(data?: IGetTourForEditOutput) {
         if (data) {
@@ -3799,6 +3980,11 @@ export class GetTourForEditOutput implements IGetTourForEditOutput {
     init(data?: any) {
         if (data) {
             this.tour = data["tour"] ? CreateOrEditTourDto.fromJS(data["tour"]) : <any>undefined;
+            if (Array.isArray(data["tourPictures"])) {
+                this.tourPictures = [] as any;
+                for (let item of data["tourPictures"])
+                    this.tourPictures.push(TourPictureDto.fromJS(item));
+            }
         }
     }
 
@@ -3812,6 +3998,11 @@ export class GetTourForEditOutput implements IGetTourForEditOutput {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["tour"] = this.tour ? this.tour.toJSON() : <any>undefined;
+        if (Array.isArray(this.tourPictures)) {
+            data["tourPictures"] = [];
+            for (let item of this.tourPictures)
+                data["tourPictures"].push(item.toJSON());
+        }
         return data; 
     }
 
@@ -3825,6 +4016,7 @@ export class GetTourForEditOutput implements IGetTourForEditOutput {
 
 export interface IGetTourForEditOutput {
     tour: CreateOrEditTourDto;
+    tourPictures: TourPictureDto[] | undefined;
 }
 
 export class CreateUserDto implements ICreateUserDto {

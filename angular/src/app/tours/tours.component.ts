@@ -1,4 +1,4 @@
-import { Component, Injector, OnInit } from "@angular/core";
+import { Component, Injector, OnInit, ViewEncapsulation } from "@angular/core";
 import { AppComponentBase } from "@shared/app-component-base";
 import { appModuleAnimation } from "@shared/animations/routerTransition";
 import {
@@ -11,8 +11,10 @@ import { PageEvent } from "@angular/material/paginator";
 @Component({
   templateUrl: "./tours.component.html",
   styleUrls: ['../app.component.less', './tours.component.less'],
-  animations: [appModuleAnimation()]
+  animations: [appModuleAnimation()],
+  encapsulation: ViewEncapsulation.None
 })
+
 export class ToursComponent extends AppComponentBase implements OnInit {
   public nameFilter: string;
   public priceFilter: number;
@@ -28,6 +30,7 @@ export class ToursComponent extends AppComponentBase implements OnInit {
   public sort: string;
   public maxResultCountOptions: number[] = [1, 5, 10, 25, 100];
   public pageEvent: PageEvent;
+  public defaultImageLink: string = "https://attendantdesign.com/wp-content/uploads/2017/08/tour-1-1.jpg";
 
   constructor(injector: Injector, private _tourService: TourServiceProxy) {
     super(injector);

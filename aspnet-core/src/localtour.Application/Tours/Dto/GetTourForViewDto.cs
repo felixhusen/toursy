@@ -7,5 +7,7 @@ namespace localtour.Tours.Dto
     public class GetTourForViewDto
     {
         public TourDto Tour { get; set; }
+
+        public List<TourPictureDto> TourPictures { get; set; }
     }
 }

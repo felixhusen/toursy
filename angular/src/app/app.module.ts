@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientJsonpModule } from '@angular/common/http';
 import { HttpClientModule } from '@angular/common/http';
-
+import { MatCarouselModule } from '@ngmodule/material-carousel';
 import { ModalModule } from 'ngx-bootstrap';
 import { NgxPaginationModule } from 'ngx-pagination';
 
@@ -79,7 +79,8 @@ import { ToursComponent } from '@app/tours/tours.component';
     AppRoutingModule,
     ServiceProxyModule,
     SharedModule,
-    NgxPaginationModule
+    NgxPaginationModule,
+    MatCarouselModule
   ],
   providers: [],
   entryComponents: [

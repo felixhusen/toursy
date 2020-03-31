@@ -1,6 +1,7 @@
 ﻿using Abp.Application.Services;
 using Abp.Application.Services.Dto;
 using localtour.Tours.Dto;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -19,5 +20,9 @@ namespace localtour.Tours
         Task CreateOrEdit(CreateOrEditTourDto input);
 
         Task Delete(EntityDto input);
+
+        Task UploadTourPicture(int TourId, IFormFile file);
+
+        Task DeleteTourPicture(int TourPictureId);
     }
 }
