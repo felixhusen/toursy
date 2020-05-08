@@ -162,36 +162,42 @@ namespace localtour.Tours
         [AbpAuthorize(PermissionNames.Pages_Tour_Create)]
         public async Task UploadTourPicture(int TourId, IFormFile file)
         {
-            var uploadDir = Path.Combine(_hostEnvironment.WebRootPath, AppConsts.TourPictureUploadPath);
-
-            if (!Directory.Exists(uploadDir))
+            try
             {
-                Directory.CreateDirectory(uploadDir);
-            }
+                var uploadDir = Path.Combine(_hostEnvironment.WebRootPath, AppConsts.TourPictureUploadPath);
 
-            if (file.Length > 0)
-            {
-                var fileName = $"tourPicture_{TourId}_{DateTime.Now.ToString("hhmmss")}_{file.FileName}";
-
-                var filePath = Path.Combine(uploadDir, fileName);
-
-                using (var fileStream = new FileStream(filePath, FileMode.Create))
+                if (!Directory.Exists(uploadDir))
                 {
-                    await file.CopyToAsync(fileStream);
+                    Directory.CreateDirectory(uploadDir);
                 }
 
-                var tourPicture = new TourPicture
+                if (file.Length > 0)
                 {
-                    Link = $"http://localhost:21021/{AppConsts.TourPictureUploadPath}/{fileName}",
-                    TourId = TourId
-                };
+                    var fileName = $"tourPicture_{TourId}_{DateTime.Now.ToString("hhmmss")}_{file.FileName}";
 
-                if (AbpSession.TenantId != null)
-                {
-                    tourPicture.TenantId = (int?)AbpSession.TenantId;
+                    var filePath = Path.Combine(uploadDir, fileName);
+
+                    using (var fileStream = new FileStream(filePath, FileMode.Create))
+                    {
+                        await file.CopyToAsync(fileStream);
+                    }
+
+                    var tourPicture = new TourPicture
+                    {
+                        Link = $"http://localhost:21021/{AppConsts.TourPictureUploadPath}/{fileName}",
+                        TourId = TourId
+                    };
+
+                    if (AbpSession.TenantId != null)
+                    {
+                        tourPicture.TenantId = (int?)AbpSession.TenantId;
+                    }
+
+                    await _tourPictureRepository.InsertAsync(tourPicture);
                 }
-
-                await _tourPictureRepository.InsertAsync(tourPicture);
+            } catch (Exception e)
+            {
+                Console.WriteLine(e);
             }
         }
 
