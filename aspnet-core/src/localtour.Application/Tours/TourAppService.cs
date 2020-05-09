@@ -119,38 +119,52 @@ namespace localtour.Tours
             return output;
         }
 
-        public async Task CreateOrEdit(CreateOrEditTourDto input)
+        public async Task<TourDto> CreateOrEdit(CreateOrEditTourDto input)
         {
             if (input.Id == null)
             {
-                await Create(input);
+                return await Create(input);
             }
             else
             {
-                await Update(input);
+                return await Update(input);
             }
         }
 
         [AbpAuthorize(PermissionNames.Pages_Tour_Create)]
-        protected virtual async Task Create(CreateOrEditTourDto input)
+        protected virtual async Task<TourDto> Create(CreateOrEditTourDto input)
         {
-            var tour = ObjectMapper.Map<Tour>(input);
-
-
-            if (AbpSession.TenantId != null)
+            try
             {
-                tour.TenantId = (int?)AbpSession.TenantId;
+                var tour = ObjectMapper.Map<Tour>(input);
+
+                if (AbpSession.TenantId != null)
+                {
+                    tour.TenantId = (int?)AbpSession.TenantId;
+                }
+
+                var tourId = await _tourRepository.InsertAndGetIdAsync(tour);
+
+                var result = ObjectMapper.Map<TourDto>(input);
+
+                result.Id = tourId;
+
+                return result;
+
+            } catch (Exception e)
+            {
+                Console.WriteLine(e);
             }
 
-
-            await _tourRepository.InsertAsync(tour);
+            return null;
         }
 
         [AbpAuthorize(PermissionNames.Pages_Tour_Edit)]
-        protected virtual async Task Update(CreateOrEditTourDto input)
+        protected virtual async Task<TourDto> Update(CreateOrEditTourDto input)
         {
             var tour = await _tourRepository.FirstOrDefaultAsync((int)input.Id);
             ObjectMapper.Map(input, tour);
+            return ObjectMapper.Map<TourDto>(input);
         }
 
         [AbpAuthorize(PermissionNames.Pages_Tour_Delete)]
@@ -160,7 +174,7 @@ namespace localtour.Tours
         }
 
         [AbpAuthorize(PermissionNames.Pages_Tour_Create)]
-        public async Task UploadTourPicture(int TourId, IFormFile file)
+        public async Task<TourPictureDto> UploadTourPicture(int? TourId, IFormFile file)
         {
             try
             {
@@ -193,12 +207,28 @@ namespace localtour.Tours
                         tourPicture.TenantId = (int?)AbpSession.TenantId;
                     }
 
-                    await _tourPictureRepository.InsertAsync(tourPicture);
+                    var tourPictureId = await _tourPictureRepository.InsertAndGetIdAsync(tourPicture);
+
+                    var result = ObjectMapper.Map<TourPictureDto>(tourPicture);
+
+                    result.Id = tourPictureId;
+
+                    return result;
                 }
             } catch (Exception e)
             {
                 Console.WriteLine(e);
             }
+
+            return null;
+        }
+
+        [AbpAuthorize(PermissionNames.Pages_Tour_Edit)]
+        public async Task UpdateTourPicture(TourPictureDto input)
+        {
+            var tourPicture = await _tourPictureRepository.GetAsync(input.Id);
+
+            ObjectMapper.Map(input, tourPicture);
         }
 
         [AbpAuthorize(PermissionNames.Pages_Tour_Edit)]

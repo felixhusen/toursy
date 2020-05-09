@@ -1,10 +1,12 @@
 ﻿using Abp.Application.Services.Dto;
+using Abp.AutoMapper;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace localtour.Tours.Dto
 {
+    [AutoMapFrom(typeof(CreateOrEditTourDto))]
     public class TourDto : EntityDto
     {
         public string Name { get; set; }

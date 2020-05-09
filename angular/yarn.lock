@@ -1370,6 +1370,13 @@ amdefine@>=0.0.4:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/amdefine/-/amdefine-1.0.1.tgz#4a5282ac164729e93619bcfd3ad151f817ce91f5"
 
+angular-file-uploader@^5.0.2:
+  version "5.0.2"
+  resolved "https://registry.yarnpkg.com/angular-file-uploader/-/angular-file-uploader-5.0.2.tgz#68d893b6a98b6e19dc694460617aeb7b885a169f"
+  integrity sha512-QeU1wBezfp9epzQF2WQdz3xTLf6Tlne1iN/6NxAgNSQ2UWaMEzlW2tKdLF/TM9ttBbygKsgfx4PGNQxDuCVtJw==
+  dependencies:
+    tslib "^1.9.0"
+
 animate.css@^3.5.2:
   version "3.6.1"
   resolved "https://registry.yarnpkg.com/animate.css/-/animate.css-3.6.1.tgz#4ea8a48556378bc8d7535224296c4c0dac9229de"

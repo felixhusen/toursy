@@ -14,6 +14,7 @@ import { AbpModule } from '@abp/abp.module';
 
 import { ServiceProxyModule } from '@shared/service-proxies/service-proxy.module';
 import { SharedModule } from '@shared/shared.module';
+import { AngularFileUploaderModule } from "angular-file-uploader";
 
 import { HomeComponent } from '@app/home/home.component';
 import { AboutComponent } from '@app/about/about.component';
@@ -39,6 +40,7 @@ import { ChangePasswordComponent } from './users/change-password/change-password
 import { ResetPasswordDialogComponent } from './users/reset-password/reset-password.component';
 // tours
 import { ToursComponent } from '@app/tours/tours.component';
+import { CreateOrEditTourDialogComponent } from '@app/tours/create-or-edit-tour/create-or-edit-tour-dialog.component';
 
 @NgModule({
   declarations: [
@@ -66,7 +68,8 @@ import { ToursComponent } from '@app/tours/tours.component';
     ChangePasswordComponent,
     ResetPasswordDialogComponent,
     // tours
-    ToursComponent
+    ToursComponent,
+    CreateOrEditTourDialogComponent,
   ],
   imports: [
     CommonModule,
@@ -80,7 +83,8 @@ import { ToursComponent } from '@app/tours/tours.component';
     ServiceProxyModule,
     SharedModule,
     NgxPaginationModule,
-    MatCarouselModule
+    MatCarouselModule,
+    AngularFileUploaderModule
   ],
   providers: [],
   entryComponents: [
@@ -93,7 +97,9 @@ import { ToursComponent } from '@app/tours/tours.component';
     // users
     CreateUserDialogComponent,
     EditUserDialogComponent,
-    ResetPasswordDialogComponent
+    ResetPasswordDialogComponent,
+    // tours
+    CreateOrEditTourDialogComponent
   ]
 })
 export class AppModule {}

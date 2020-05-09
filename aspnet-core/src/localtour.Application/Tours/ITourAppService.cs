@@ -17,11 +17,11 @@ namespace localtour.Tours
 
         Task<GetTourForEditOutput> GetTourForEdit(EntityDto input);
 
-        Task CreateOrEdit(CreateOrEditTourDto input);
+        Task<TourDto> CreateOrEdit(CreateOrEditTourDto input);
 
         Task Delete(EntityDto input);
 
-        Task UploadTourPicture(int TourId, IFormFile file);
+        Task<TourPictureDto> UploadTourPicture(int? TourId, IFormFile file);
 
         Task DeleteTourPicture(int TourPictureId);
     }

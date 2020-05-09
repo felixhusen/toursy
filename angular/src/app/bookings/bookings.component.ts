@@ -1,18 +1,21 @@
 import { Component, Injector, OnInit, ViewEncapsulation } from "@angular/core";
 import { AppComponentBase } from "@shared/app-component-base";
 import { appModuleAnimation } from "@shared/animations/routerTransition";
-import { GetTourForViewDto, TourServiceProxy } from "@shared/service-proxies/service-proxies";
+import {
+  TourServiceProxy,
+  GetTourForViewDto
+} from "@shared/service-proxies/service-proxies";
 import * as moment from "moment";
+import { PageEvent } from "@angular/material/paginator";
 
 @Component({
-  templateUrl: "./home.component.html",
-  styleUrls: ['../app.component.less', './home.component.less'],
+  templateUrl: "./bookings.component.html",
+  styleUrls: ['../app.component.less', './bookings.component.less'],
   animations: [appModuleAnimation()],
   encapsulation: ViewEncapsulation.None
 })
 
-export class HomeComponent extends AppComponentBase implements OnInit {
-  public slides: any = [];
+export class BookingsComponent extends AppComponentBase implements OnInit {
   public nameFilter: string;
   public priceFilter: number;
   public descriptionFilter: string;
@@ -26,6 +29,7 @@ export class HomeComponent extends AppComponentBase implements OnInit {
   public skipCount: number = 0;
   public sort: string;
   public maxResultCountOptions: number[] = [1, 5, 10, 25, 100];
+  public pageEvent: PageEvent;
   public defaultImageLink: string = "https://attendantdesign.com/wp-content/uploads/2017/08/tour-1-1.jpg";
 
   constructor(injector: Injector, private _tourService: TourServiceProxy) {
@@ -33,6 +37,12 @@ export class HomeComponent extends AppComponentBase implements OnInit {
   }
 
   public getTours(event?: any): void {
+    if (event) {
+        this.pageEvent = event;
+        this.skipCount = this.pageEvent.pageIndex * this.pageEvent.pageSize;
+        this.maxResultCount = this.pageEvent.pageSize;
+    }
+
     this._tourService
       .getAll(
         this.nameFilter,
@@ -49,20 +59,10 @@ export class HomeComponent extends AppComponentBase implements OnInit {
       .subscribe(result => {
         this.tours = result.items;
         this.totalCount = result.totalCount;
-        this.setupCarousel();
       });
   }
 
-  public setupCarousel(): void {
-    const length = this.tours.length < 2 ? this.tours.length : 2;
-    for (let i = 0; i < length; i++) {
-      this.slides.push(this.tours[i]);
-    }
-    console.log(this.slides);
-  }
-
-  public ngOnInit(): void {
+  ngOnInit(): void {
     this.getTours();
   }
-
 }

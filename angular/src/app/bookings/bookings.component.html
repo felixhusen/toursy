@@ -1,15 +1,4 @@
 <div [@routerTransition]>
-    <div class="row">
-        <div class="col-sm-10">
-            <h3 class="page-title mb-3">All Tours</h3>
-        </div>
-        <div class="col-sm-2 text-right">
-            <button mat-mini-fab color="primary" (click)="createTour()">
-                <mat-icon>add</mat-icon>
-            </button>
-        </div>
-    </div>
-
     <mat-card class="mb-3" style="padding: 0px;">
         <form (submit)="getTours()">
             <mat-form-field appearance="outline" class="mat-search-bar">
@@ -22,7 +11,7 @@
     </mat-card>
 
     <div class="row">
-        <div class="col-xs-12 col-sm-6 col-md-4 col-lg-4 mb-3" *ngFor="let item of tours">
+        <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3 mb-3" *ngFor="let item of tours">
             <mat-card>
                 <img mat-card-image [src]="item.tourPictures.length > 0 ? item.tourPictures[0].link : defaultImageLink"
                     alt="{{item.tour.name}}" class="tour-image">
@@ -42,14 +31,14 @@
                 </mat-card-content>
                 <mat-card-actions>
                     <button mat-button color="primary">{{l("Book")}}</button>
-                    <button mat-button color="primary" (click)="tourDetails(item.tour.id)">{{l("Details")}}</button>
-                    <button mat-button color="accent" (click)="editTour(item.tour.id)">{{l("Edit")}}</button>
+                    <button mat-button color="primary">{{l("Details")}}</button>
+                    <button mat-button color="accent">{{l("Share")}}</button>
                 </mat-card-actions>
             </mat-card>
         </div>
     </div>
 
-    <mat-card class="mb-3">
+    <mat-card>
         <mat-paginator [length]="totalCount" [pageSize]="maxResultCount" [pageSizeOptions]="maxResultCountOptions"
             (page)="this.getTours($event)">
         </mat-paginator>
