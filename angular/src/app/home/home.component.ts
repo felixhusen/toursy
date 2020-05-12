@@ -22,10 +22,9 @@ export class HomeComponent extends AppComponentBase implements OnInit {
   public latitudeFilter: string;
   public tours: GetTourForViewDto[];
   public totalCount: number;
-  public maxResultCount: number = 5;
+  public maxResultCount: number = 6;
   public skipCount: number = 0;
-  public sort: string;
-  public maxResultCountOptions: number[] = [1, 5, 10, 25, 100];
+  public sort: string = "tour.id desc";
   public defaultImageLink: string = "https://attendantdesign.com/wp-content/uploads/2017/08/tour-1-1.jpg";
 
   constructor(injector: Injector, private _tourService: TourServiceProxy) {
@@ -58,7 +57,6 @@ export class HomeComponent extends AppComponentBase implements OnInit {
     for (let i = 0; i < length; i++) {
       this.slides.push(this.tours[i]);
     }
-    console.log(this.slides);
   }
 
   public ngOnInit(): void {

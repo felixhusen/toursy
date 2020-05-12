@@ -3,12 +3,13 @@ using Abp.Authorization;
 using Abp.Domain.Repositories;
 using Abp.Linq.Extensions;
 using localtour.Authorization;
+using localtour.Authorization.Users;
 using localtour.Bookings.Dto;
+using localtour.States;
+using localtour.Tours;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using System;
-using System.IO;
 using System.Linq;
 using System.Linq.Dynamic.Core;
 using System.Threading.Tasks;
@@ -19,11 +20,17 @@ namespace localtour.Bookings
     public class BookingAppService : localtourAppServiceBase, IBookingAppService
     {
         private readonly IRepository<Booking, int> _bookingRepository;
+        private readonly IRepository<Tour, int> _tourRepository;
+        private readonly IRepository<State, int> _stateRepository;
+        private readonly IRepository<User, long> _userRepository;
         private readonly IWebHostEnvironment _hostEnvironment;
 
-        public BookingAppService(IRepository<Booking, int> tourRepository, IWebHostEnvironment hostEnvironment)
+        public BookingAppService(IRepository<Booking, int> bookingRepository, IRepository<Tour, int> tourRepository, IRepository<State, int> stateRepository, IRepository<User, long> userRepository, IWebHostEnvironment hostEnvironment)
         {
-            _bookingRepository = tourRepository;
+            _bookingRepository = bookingRepository;
+            _tourRepository = tourRepository;
+            _stateRepository = stateRepository;
+            _userRepository = userRepository;
             _hostEnvironment = hostEnvironment;
         }
 
@@ -32,6 +39,15 @@ namespace localtour.Bookings
             var filteredBookings = _bookingRepository.GetAll().WhereIf(!string.IsNullOrWhiteSpace(input.Query), e => false || e.Suburb.Contains(input.Query));
 
             var bookings = from o in filteredBookings
+
+                           join o1 in _tourRepository.GetAll() on o.TourId equals o1.Id into j1
+                           from s1 in j1.DefaultIfEmpty()
+
+                           join o2 in _stateRepository.GetAll() on o.StateId equals o2.Id into j2
+                           from s2 in j2.DefaultIfEmpty()
+
+                               //join o3 in _userRepository.GetAll() on o.UserId equals o3.Id into j3
+                               //from s3 in j3.DefaultIfEmpty()
 
                            select new GetBookingForViewDto()
                            {
@@ -46,7 +62,10 @@ namespace localtour.Bookings
                                    PostCode = o.PostCode,
                                    PromoCode = o.PromoCode,
                                    TotalPrice = o.TotalPrice
-                               }
+                               },
+                               TourName = s1 != null ? s1.Name : null,
+                               StateCode = s2 != null ? s2.Code : null,
+                               //UserFullName = s3 != null ? s3.FullName : null
                            };
 
             var pagedAndFilteredBookings = bookings
@@ -65,7 +84,19 @@ namespace localtour.Bookings
         {
             var booking = await _bookingRepository.GetAsync(id);
 
-            var output = new GetBookingForViewDto { Booking = ObjectMapper.Map<BookingDto>(booking) };
+            var state = await _stateRepository.GetAsync((int)booking.StateId);
+
+            var user = await _userRepository.GetAsync((long)booking.UserId);
+
+            var tour = await _tourRepository.GetAsync((int)booking.TourId);
+
+            var output = new GetBookingForViewDto
+            {
+                Booking = ObjectMapper.Map<BookingDto>(booking),
+                StateCode = state.Code,
+                UserFullName = user.FullName,
+                TourName = tour.Name
+            };
 
             return output;
         }
@@ -75,7 +106,19 @@ namespace localtour.Bookings
         {
             var booking = await _bookingRepository.FirstOrDefaultAsync(input.Id);
 
-            var output = new GetBookingForEditOutput { Booking = ObjectMapper.Map<CreateOrEditBookingDto>(booking) };
+            var state = await _stateRepository.GetAsync((int)booking.StateId);
+
+            var user = await _userRepository.GetAsync((long)booking.UserId);
+
+            var tour = await _tourRepository.GetAsync((int)booking.TourId);
+
+            var output = new GetBookingForEditOutput
+            {
+                Booking = ObjectMapper.Map<CreateOrEditBookingDto>(booking),
+                StateCode = state.Code,
+                UserFullName = user.FullName,
+                TourName = tour.Name
+            };
 
             return output;
         }
@@ -92,17 +135,25 @@ namespace localtour.Bookings
             }
         }
 
-        [AbpAuthorize(PermissionNames.Pages_Booking_Create)]
+        //[AbpAuthorize(PermissionNames.Pages_Booking_Create)]
         protected virtual async Task Create(CreateOrEditBookingDto input)
         {
-            var booking = ObjectMapper.Map<Booking>(input);
-
-            if (AbpSession.TenantId != null)
+            try
             {
-                booking.TenantId = (int?)AbpSession.TenantId;
+                var booking = ObjectMapper.Map<Booking>(input);
+
+                if (AbpSession.TenantId != null)
+                {
+                    booking.TenantId = (int?)AbpSession.TenantId;
+                }
+
+                await _bookingRepository.InsertAsync(booking);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
             }
 
-            await _bookingRepository.InsertAsync(booking);
         }
 
         [AbpAuthorize(PermissionNames.Pages_Booking_Edit)]

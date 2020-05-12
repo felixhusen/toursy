@@ -7,6 +7,6 @@ namespace localtour.Transactions.Dto
 {
     public class GetAllTransactionsInput : PagedAndSortedResultRequestDto
     {
-        public DateTime? TransactionDate { get; set; }
+        public string Query { get; set; }
     }
 }

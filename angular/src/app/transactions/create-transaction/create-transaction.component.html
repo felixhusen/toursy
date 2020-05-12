@@ -1,0 +1,54 @@
+<div [@routerTransition]>
+
+    <h3 class="page-title mb-3">Payment</h3>
+
+    <mat-card class="pa-3">
+        <div class="row">
+            <div class="col-xs-12 col-md-6" *ngIf="tour">
+                <h3 class="header-title">{{tour.tour.name}}</h3>
+                <img [src]="tour.tourPictures[0].link" alt="tour.tour.name" class="tour-image" />
+                <h4 class="header-title">Price: {{tour.tour.price | currency}} per person</h4>
+                <p class="mb-3">If you wish to make a negotiation for this tour, click here</p>
+                <p class="mb-3">Persons attending: 3</p>
+                <h4 class="header-title">Amount Due: {{tour.tour.price | currency}}</h4>
+                <p>Please complete the payment form</p>
+            </div>
+            <div class="col-xs-12 col-md-6" *ngIf="tour">
+                <h3 class="header-title">Card Payment</h3>
+
+                <mat-form-field appearance="fill">
+                    <mat-label>Card Number</mat-label>
+                    <input matInput type="text" name="CardNumber" [(ngModel)]="transaction.cardNumber">
+                </mat-form-field>
+
+                <mat-form-field appearance="fill">
+                    <mat-label>Name on card</mat-label>
+                    <input matInput type="number" name="NameOnCard" [(ngModel)]="transaction.nameOnCard">
+                </mat-form-field>
+
+                <div class="row">
+                    <div class="col-xs-12 col-md-6">
+                        <mat-form-field appearance="fill">
+                            <mat-label>Exp Month</mat-label>
+                            <input matInput type="text" name="ExpMonth" [(ngModel)]="transaction.expMonth">
+                        </mat-form-field>
+                    </div>
+                    <div class="col-xs-12 col-md-6">
+                        <mat-form-field appearance="fill">
+                            <mat-label>Exp year</mat-label>
+                            <input matInput type="text" name="ExpYear" [(ngModel)]="transaction.expYear">
+                        </mat-form-field>
+                    </div>
+                </div>
+
+                <mat-form-field appearance="fill">
+                    <mat-label>CVC</mat-label>
+                    <input matInput type="number" name="CVCCode" [(ngModel)]="transaction.CVCCode">
+                </mat-form-field>
+
+                <button mat-raised-button color="primary">Complete Payment</button>
+            </div>
+        </div>
+        
+    </mat-card>
+</div>

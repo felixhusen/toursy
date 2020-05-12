@@ -1,11 +1,11 @@
 <div [@routerTransition]>
 
-    <h3 class="page-title mb-3">Bookings</h3>
+    <h3 class="page-title mb-3">Requests</h3>
 
     <mat-card class="mb-3" style="padding: 0px;">
-        <form (submit)="getBookings()">
+        <form (submit)="getRequests()">
             <mat-form-field appearance="outline" class="mat-search-bar">
-                <input matInput placeholder="{{l('Search')}}" [(ngModel)]="nameFilter" name="NameFilter">
+                <input matInput placeholder="{{l('Search')}}" [(ngModel)]="searchQuery" name="SearchQuery">
                 <button mat-icon-button matSuffix color="primary" aria-label="Search" type="submit">
                     <mat-icon>search</mat-icon>
                 </button>
@@ -13,25 +13,25 @@
         </form>
     </mat-card>
 
-    <p-table [value]="bookings" styleClass="ui-table-customers">
+    <p-table [value]="requests" styleClass="ui-table-customers">
         <ng-template pTemplate="header">
             <tr>
-                <th>Booking Number</th>
+                <th>Request ID</th>
                 <th>Tour</th>
                 <th>User</th>
-                <th>Address</th>
-                <th>Number of People</th>
-                <th>Total Price</th>
+                <th>Description</th>
+                <th>Date</th>
+                <th>Status</th>
             </tr>
         </ng-template>
         <ng-template pTemplate="body" let-item>
             <tr>
-                <td>B-00{{item.booking.id}}</td>
+                <td>RQ-00{{item.booking.id}}</td>
                 <td>{{item.tourName}}</td>
                 <td>{{item.userFullName}}</td>
-                <td>{{item.booking.address}}, {{item.booking.suburb}}, {{item.booking.postCode}}</td>
-                <td>{{item.booking.numberOfPeople}}</td>
-                <td>{{item.booking.totalPrice | currency}}</td>
+                <td>{{item.request.description}}</td>
+                <td>{{item.request.datePosted}}</td>
+                <td>{{item.booking.status}}</td>
             </tr>
         </ng-template>
     </p-table>

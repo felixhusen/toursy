@@ -2916,18 +2916,18 @@ export class TransactionServiceProxy {
     }
 
     /**
-     * @param transactionDate (optional) 
+     * @param query (optional) 
      * @param sorting (optional) 
      * @param skipCount (optional) 
      * @param maxResultCount (optional) 
      * @return Success
      */
-    getAll(transactionDate: moment.Moment | undefined, sorting: string | undefined, skipCount: number | undefined, maxResultCount: number | undefined): Observable<GetTransactionForViewDtoPagedResultDto> {
+    getAll(query: string | undefined, sorting: string | undefined, skipCount: number | undefined, maxResultCount: number | undefined): Observable<GetTransactionForViewDtoPagedResultDto> {
         let url_ = this.baseUrl + "/api/services/app/Transaction/GetAll?";
-        if (transactionDate === null)
-            throw new Error("The parameter 'transactionDate' cannot be null.");
-        else if (transactionDate !== undefined)
-            url_ += "TransactionDate=" + encodeURIComponent(transactionDate ? "" + transactionDate.toJSON() : "") + "&"; 
+        if (query === null)
+            throw new Error("The parameter 'query' cannot be null.");
+        else if (query !== undefined)
+            url_ += "Query=" + encodeURIComponent("" + query) + "&"; 
         if (sorting === null)
             throw new Error("The parameter 'sorting' cannot be null.");
         else if (sorting !== undefined)
@@ -4000,6 +4000,9 @@ export interface IBookingDto {
 
 export class GetBookingForViewDto implements IGetBookingForViewDto {
     booking: BookingDto;
+    tourName: string | undefined;
+    userFullName: string | undefined;
+    stateCode: string | undefined;
 
     constructor(data?: IGetBookingForViewDto) {
         if (data) {
@@ -4013,6 +4016,9 @@ export class GetBookingForViewDto implements IGetBookingForViewDto {
     init(data?: any) {
         if (data) {
             this.booking = data["booking"] ? BookingDto.fromJS(data["booking"]) : <any>undefined;
+            this.tourName = data["tourName"];
+            this.userFullName = data["userFullName"];
+            this.stateCode = data["stateCode"];
         }
     }
 
@@ -4026,6 +4032,9 @@ export class GetBookingForViewDto implements IGetBookingForViewDto {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["booking"] = this.booking ? this.booking.toJSON() : <any>undefined;
+        data["tourName"] = this.tourName;
+        data["userFullName"] = this.userFullName;
+        data["stateCode"] = this.stateCode;
         return data; 
     }
 
@@ -4039,6 +4048,9 @@ export class GetBookingForViewDto implements IGetBookingForViewDto {
 
 export interface IGetBookingForViewDto {
     booking: BookingDto;
+    tourName: string | undefined;
+    userFullName: string | undefined;
+    stateCode: string | undefined;
 }
 
 export class GetBookingForViewDtoPagedResultDto implements IGetBookingForViewDtoPagedResultDto {
@@ -4173,6 +4185,9 @@ export interface ICreateOrEditBookingDto {
 
 export class GetBookingForEditOutput implements IGetBookingForEditOutput {
     booking: CreateOrEditBookingDto;
+    tourName: string | undefined;
+    userFullName: string | undefined;
+    stateCode: string | undefined;
 
     constructor(data?: IGetBookingForEditOutput) {
         if (data) {
@@ -4186,6 +4201,9 @@ export class GetBookingForEditOutput implements IGetBookingForEditOutput {
     init(data?: any) {
         if (data) {
             this.booking = data["booking"] ? CreateOrEditBookingDto.fromJS(data["booking"]) : <any>undefined;
+            this.tourName = data["tourName"];
+            this.userFullName = data["userFullName"];
+            this.stateCode = data["stateCode"];
         }
     }
 
@@ -4199,6 +4217,9 @@ export class GetBookingForEditOutput implements IGetBookingForEditOutput {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["booking"] = this.booking ? this.booking.toJSON() : <any>undefined;
+        data["tourName"] = this.tourName;
+        data["userFullName"] = this.userFullName;
+        data["stateCode"] = this.stateCode;
         return data; 
     }
 
@@ -4212,6 +4233,9 @@ export class GetBookingForEditOutput implements IGetBookingForEditOutput {
 
 export interface IGetBookingForEditOutput {
     booking: CreateOrEditBookingDto;
+    tourName: string | undefined;
+    userFullName: string | undefined;
+    stateCode: string | undefined;
 }
 
 export class ChangeUiThemeInput implements IChangeUiThemeInput {

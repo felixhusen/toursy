@@ -11,10 +11,10 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 
 import { AbpModule } from '@abp/abp.module';
-
 import { ServiceProxyModule } from '@shared/service-proxies/service-proxy.module';
 import { SharedModule } from '@shared/shared.module';
 import { AngularFileUploaderModule } from "angular-file-uploader";
+import {TableModule} from 'primeng/table';
 
 import { HomeComponent } from '@app/home/home.component';
 import { AboutComponent } from '@app/about/about.component';
@@ -38,9 +38,23 @@ import { CreateUserDialogComponent } from '@app/users/create-user/create-user-di
 import { EditUserDialogComponent } from '@app/users/edit-user/edit-user-dialog.component';
 import { ChangePasswordComponent } from './users/change-password/change-password.component';
 import { ResetPasswordDialogComponent } from './users/reset-password/reset-password.component';
+import { UserDetailsComponent } from './user-details/user-details.component';
 // tours
 import { ToursComponent } from '@app/tours/tours.component';
 import { CreateOrEditTourDialogComponent } from '@app/tours/create-or-edit-tour/create-or-edit-tour-dialog.component';
+import { TourDetailsComponent } from './tour-details/tour-details.component';
+// bookings
+import { BookingsComponent } from '@app/bookings/bookings.component';
+import { CreateBookingComponent } from './bookings/create-booking/create-booking.component';
+// transactions
+import { TransactionsComponent } from '@app/transactions/transactions.component';
+import { CreateTransactionComponent } from './transactions/create-transaction/create-transaction.component';
+// reviews
+import { ReviewsComponent } from './reviews/reviews.component';
+// requests
+import { RequestsComponent } from './requests/requests.component';
+// disputes
+import { DisputesComponent } from './disputes/disputes.component';
 
 @NgModule({
   declarations: [
@@ -67,9 +81,24 @@ import { CreateOrEditTourDialogComponent } from '@app/tours/create-or-edit-tour/
     EditUserDialogComponent,
     ChangePasswordComponent,
     ResetPasswordDialogComponent,
+    UserDetailsComponent,
     // tours
     ToursComponent,
     CreateOrEditTourDialogComponent,
+    TourDetailsComponent,
+    // bookings
+    BookingsComponent,
+    CreateBookingComponent,
+    // transactions
+    TransactionsComponent,
+    CreateTransactionComponent,
+    // reviews
+    ReviewsComponent,
+    // requests
+    RequestsComponent,
+    // disputes
+    DisputesComponent,
+
   ],
   imports: [
     CommonModule,
@@ -84,7 +113,8 @@ import { CreateOrEditTourDialogComponent } from '@app/tours/create-or-edit-tour/
     SharedModule,
     NgxPaginationModule,
     MatCarouselModule,
-    AngularFileUploaderModule
+    AngularFileUploaderModule,
+    TableModule
   ],
   providers: [],
   entryComponents: [
@@ -99,7 +129,17 @@ import { CreateOrEditTourDialogComponent } from '@app/tours/create-or-edit-tour/
     EditUserDialogComponent,
     ResetPasswordDialogComponent,
     // tours
-    CreateOrEditTourDialogComponent
+    CreateOrEditTourDialogComponent,
+    // bookings
+    BookingsComponent,
+    // transactions
+    TransactionsComponent,
+    // reviews
+    ReviewsComponent,
+    // requests
+    RequestsComponent,
+    // disputes
+    DisputesComponent,
   ]
 })
 export class AppModule {}

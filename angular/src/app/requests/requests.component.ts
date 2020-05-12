@@ -2,54 +2,53 @@ import { Component, Injector, OnInit, ViewEncapsulation } from "@angular/core";
 import { AppComponentBase } from "@shared/app-component-base";
 import { appModuleAnimation } from "@shared/animations/routerTransition";
 import {
-  BookingServiceProxy,
-  GetBookingForViewDto,
+  RequestServiceProxy,
+  GetRequestForViewDto,
 } from "@shared/service-proxies/service-proxies";
 import * as moment from "moment";
 import { PageEvent } from "@angular/material/paginator";
 
 @Component({
-  templateUrl: "./bookings.component.html",
-  styleUrls: ["../app.component.less", "./bookings.component.less"],
+  templateUrl: "./requests.component.html",
+  styleUrls: ["../app.component.less"],
   animations: [appModuleAnimation()],
   encapsulation: ViewEncapsulation.None,
 })
-export class BookingsComponent extends AppComponentBase implements OnInit {
+export class RequestsComponent extends AppComponentBase implements OnInit {
   public searchQuery: string;
-  public bookings: GetBookingForViewDto[];
+  public requests: GetRequestForViewDto[];
   public totalCount: number;
   public maxResultCount: number = 5;
   public skipCount: number = 0;
   public sort: string;
   public maxResultCountOptions: number[] = [1, 5, 10, 25, 100];
   public pageEvent: PageEvent;
-  public displayedColumns: string[] = ['booking.tourId', 'booking.userId', 'booking.address', 'booking.promoCode', 'booking.numberOfPeople', 'booking.totalPrice'];
 
   constructor(
     injector: Injector,
-    private _bookingService: BookingServiceProxy
+    private _requestService: RequestServiceProxy
   ) {
     super(injector);
   }
 
-  public getBookings(event?: any): void {
+  public getRequests(event?: any): void {
     if (event) {
       this.pageEvent = event;
       this.skipCount = this.pageEvent.pageIndex * this.pageEvent.pageSize;
       this.maxResultCount = this.pageEvent.pageSize;
     }
 
-    this._bookingService
+    this._requestService
       .getAll(this.searchQuery, this.sort, this.skipCount, this.maxResultCount)
       .subscribe((result) => {
-        this.bookings = result.items;
+        this.requests = result.items;
         this.totalCount = result.totalCount;
         console.log("Result")
-        console.log(this.bookings)
+        console.log(this.requests)
       });
   }
 
   ngOnInit(): void {
-    this.getBookings();
+    this.getRequests();
   }
 }

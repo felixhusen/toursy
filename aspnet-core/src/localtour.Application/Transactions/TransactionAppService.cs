@@ -29,8 +29,7 @@ namespace localtour.Transactions
 
         public async Task<PagedResultDto<GetTransactionForViewDto>> GetAll(GetAllTransactionsInput input)
         {
-            var filteredTransactions = _transactionRepository.GetAll()
-                                        .WhereIf(input.TransactionDate != null, e => false || e.TransactionDate == input.TransactionDate);
+            var filteredTransactions = _transactionRepository.GetAll();
 
             var transactions = from o in filteredTransactions
 

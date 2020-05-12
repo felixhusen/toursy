@@ -1,0 +1,70 @@
+<div [@routerTransition]>
+
+    <h3 class="page-title mb-3">New Booking</h3>
+
+    <mat-card class="pa-3">
+        <div class="row">
+            <div class="col-xs-12 col-md-6">
+                <h3 class="header-title">Booking Information</h3>
+
+                <div class="example-container">
+                    <mat-form-field appearance="fill">
+                        <mat-label>Name</mat-label>
+                        <input matInput type="text" name="Name" [(ngModel)]="booking.name">
+                    </mat-form-field>
+
+                    <mat-form-field appearance="fill">
+                        <mat-label>Phone number</mat-label>
+                        <input matInput type="number" name="PhoneNumber" [(ngModel)]="booking.phoneNumber">
+                    </mat-form-field>
+
+                    <mat-form-field appearance="fill">
+                        <mat-label>Address</mat-label>
+                        <input matInput type="text" name="Address" [(ngModel)]="booking.address">
+                    </mat-form-field>
+                    
+                    <mat-form-field appearance="fill">
+                        <mat-label>Suburb</mat-label>
+                        <input matInput type="text" name="Suburb" [(ngModel)]="booking.suburb">
+                    </mat-form-field>
+
+                    <mat-form-field appearance="fill">
+                        <mat-label>Postcode</mat-label>
+                        <input matInput type="number" name="PostCode" [(ngModel)]="booking.postCode">
+                    </mat-form-field>
+
+                    <mat-form-field appearance="fill">
+                        <mat-label>Number Of People</mat-label>
+                        <input matInput type="number" name="NumberOfPeople" [(ngModel)]="booking.numberOfPeople">
+                    </mat-form-field>
+
+                    <mat-form-field appearance="fill">
+                        <mat-label>Promo Code</mat-label>
+                        <input matInput type="text" name="PromoCode" [(ngModel)]="booking.promoCode">
+                    </mat-form-field>
+
+                    <!-- <br>
+                    <mat-form-field appearance="fill">
+                        <mat-label>Select</mat-label>
+                        <mat-select>
+                            <mat-option value="option">Option</mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                    <br>
+                    <mat-form-field appearance="fill">
+                        <mat-label>Textarea</mat-label>
+                        <textarea matInput></textarea>
+                    </mat-form-field> -->
+                </div>
+            </div>
+            <div class="col-xs-12 col-md-6" *ngIf="tour">
+                <h3 class="header-title">Tour Information</h3>
+                <img [src]="tour.tourPictures[0].link" alt="tour.tour.name" class="tour-image" />
+                <h4 class="header-title">{{tour.tour.name}}</h4>
+                <p class="mb-3">{{tour.tour.description}}</p>
+                <h4 class="header-title">Total Price: {{tour.tour.price | currency}}</h4>
+            </div>
+        </div>
+        <button mat-raised-button color="primary" (click)="validate()">Next</button>
+    </mat-card>
+</div>

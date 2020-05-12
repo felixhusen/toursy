@@ -6,7 +6,7 @@ using System.Text;
 
 namespace localtour.Tours.Dto
 {
-    [AutoMapFrom(typeof(CreateOrEditTourDto))]
+    [AutoMapFrom(typeof(CreateOrEditTourDto), typeof(Tour))]
     public class TourDto : EntityDto
     {
         public string Name { get; set; }

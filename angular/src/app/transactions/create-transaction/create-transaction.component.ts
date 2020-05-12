@@ -2,28 +2,38 @@ import { Component, Injector, OnInit, ViewEncapsulation } from "@angular/core";
 import { AppComponentBase } from "@shared/app-component-base";
 import { appModuleAnimation } from "@shared/animations/routerTransition";
 import {
+  TransactionServiceProxy,
+  GetTransactionForViewDto,
+  CreateOrEditTransactionDto,
   TourServiceProxy,
   GetTourForViewDto,
 } from "@shared/service-proxies/service-proxies";
 import * as moment from "moment";
 import { PageEvent } from "@angular/material/paginator";
 import { ActivatedRoute, Router } from "@angular/router";
+import { Route } from "@angular/compiler/src/core";
 
 @Component({
-  templateUrl: "./tour-details.component.html",
-  styleUrls: ["../app.component.less", "./tour-details.component.less"],
+  templateUrl: "./create-transaction.component.html",
+  styles: [`
+    .tour-image {
+      width: 100%;
+      height: 200px;
+      object-fit: contain;
+      margin-bottom: 3rem;
+    }
+  `],
+  styleUrls: ["../../app.component.less"],
   animations: [appModuleAnimation()],
   encapsulation: ViewEncapsulation.None,
 })
-export class TourDetailsComponent extends AppComponentBase implements OnInit {
+export class CreateTransactionComponent extends AppComponentBase implements OnInit {
+  public transaction: CreateOrEditTransactionDto = new CreateOrEditTransactionDto();
   public tour: GetTourForViewDto;
-  public _id: number;
-  public dates: any = [
-    {}, {}
-  ]
-  
+
   constructor(
     injector: Injector,
+    private _transactionService: TransactionServiceProxy,
     private _tourService: TourServiceProxy,
     private _activatedRoute: ActivatedRoute,
     private _router: Router
@@ -37,12 +47,7 @@ export class TourDetailsComponent extends AppComponentBase implements OnInit {
     });
   }
 
-  public bookTour(id: number): void {
-    this._router.navigateByUrl('/app/bookings/create-booking', { queryParams: { tourId: id }});
-  }
-
   ngOnInit(): void {
-    this._id = Number(this._activatedRoute.snapshot.paramMap.get("id"));
-    this.getTour(this._id);
+    this.getTour(1);
   }
 }

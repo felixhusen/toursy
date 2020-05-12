@@ -14,6 +14,11 @@ import * as ApiServiceProxies from './service-proxies';
         ApiServiceProxies.AccountServiceProxy,
         ApiServiceProxies.ConfigurationServiceProxy,
         ApiServiceProxies.TourServiceProxy,
+        ApiServiceProxies.BookingServiceProxy,
+        ApiServiceProxies.TransactionServiceProxy,
+        ApiServiceProxies.DisputeServiceProxy,
+        ApiServiceProxies.ReviewServiceProxy,
+        ApiServiceProxies.RequestServiceProxy,
         { provide: HTTP_INTERCEPTORS, useClass: AbpHttpInterceptor, multi: true }
     ]
 })

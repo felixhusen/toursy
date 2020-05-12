@@ -1,10 +1,13 @@
 ﻿using Abp.Application.Services.Dto;
+using Abp.AutoMapper;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace localtour.Bookings.Dto
 {
+    [AutoMapTo(typeof(Booking))]
+    [AutoMapFrom(typeof(Booking))]
     public class CreateOrEditBookingDto : EntityDto<int?>
     {
         public int? TourId { get; set; }

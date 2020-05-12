@@ -6000,6 +6000,16 @@ prepend-http@^1.0.0:
   resolved "https://registry.yarnpkg.com/prepend-http/-/prepend-http-1.0.4.tgz#d4f4562b0ce3696e41ac52d0e002e57a635dc6dc"
   integrity sha1-1PRWKwzjaW5BrFLQ4ALlemNdxtw=
 
+primeicons@^3.0.0-rc.1:
+  version "3.0.0-rc.1"
+  resolved "https://registry.yarnpkg.com/primeicons/-/primeicons-3.0.0-rc.1.tgz#f1121d59ecf2c07ccbcfe0d93d25250fca09fb51"
+  integrity sha512-n4fJjLdffEAoATTrVRrWXSDD4tmwjx3XBftkGoq5q53jwvBt9FBS9qHykoFudaRRO8Ez/CSI/NypsT0o0aIbOg==
+
+primeng@^9.0.6:
+  version "9.0.6"
+  resolved "https://registry.yarnpkg.com/primeng/-/primeng-9.0.6.tgz#b0d8350428722aaab2f5d4a65d3d06b5d4f673e0"
+  integrity sha512-RGVTkXwHTb7609zTU/uJFYdbJV124kOwrMiwnHjFn6UkwmS3yTX0Kkr21v8KOTJqsKLq3OWVYhkOwvUklipAAg==
+
 private@^0.1.6:
   version "0.1.8"
   resolved "https://registry.yarnpkg.com/private/-/private-0.1.8.tgz#2381edb3689f7a53d653190060fcf822d2f368ff"

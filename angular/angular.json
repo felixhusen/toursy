@@ -43,7 +43,10 @@
               "src/bsb-theme/css/style.css",
               "src/bsb-theme/css/themes/all-themes.css",
               "src/shared/core.less",
-              "node_modules/line-awesome/dist/line-awesome/css/line-awesome.min.css"
+              "node_modules/line-awesome/dist/line-awesome/css/line-awesome.min.css",
+              "node_modules/primeng/resources/themes/nova-light/theme.css",
+              "node_modules/primeng/resources/primeng.min.css",
+              "node_modules/primeicons/primeicons.css"
             ],
             "scripts": [
               "node_modules/jquery/dist/jquery.min.js",
@@ -94,20 +97,16 @@
               "extractLicenses": true,
               "vendorChunk": false,
               "buildOptimizer": true,
-              "fileReplacements": [
-                {
-                  "replace": "src/environments/environment.ts",
-                  "with": "src/environments/environment.prod.ts"
-                }
-              ]
+              "fileReplacements": [{
+                "replace": "src/environments/environment.ts",
+                "with": "src/environments/environment.prod.ts"
+              }]
             },
             "hmr": {
-              "fileReplacements": [
-                {
-                  "replace": "src/environments/environment.ts",
-                  "with": "src/environments/environment.hmr.ts"
-                }
-              ]
+              "fileReplacements": [{
+                "replace": "src/environments/environment.ts",
+                "with": "src/environments/environment.hmr.ts"
+              }]
             }
           }
         },
