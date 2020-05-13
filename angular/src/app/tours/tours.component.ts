@@ -9,6 +9,7 @@ import * as moment from "moment";
 import { PageEvent } from "@angular/material/paginator";
 import { MatDialog } from "@angular/material";
 import { CreateOrEditTourDialogComponent } from "./create-or-edit-tour/create-or-edit-tour-dialog.component";
+import { AppSessionService } from "@shared/session/app-session.service";
 
 @Component({
   templateUrl: "./tours.component.html",
@@ -24,6 +25,7 @@ export class ToursComponent extends AppComponentBase implements OnInit {
   public endDateFilter: moment.Moment;
   public longitudeFilter: string;
   public latitudeFilter: string;
+  public userIdFilter: number;
   public tours: GetTourForViewDto[];
   public totalCount: number;
   public maxResultCount: number = 6;
@@ -31,12 +33,15 @@ export class ToursComponent extends AppComponentBase implements OnInit {
   public sort: string;
   public maxResultCountOptions: number[] = [6, 12, 24, 96];
   public pageEvent: PageEvent;
+  public title: string = "All Tours";
   public defaultImageLink: string =
     "https://attendantdesign.com/wp-content/uploads/2017/08/tour-1-1.jpg";
+  public userId: number;
 
   constructor(
     injector: Injector,
     private _tourService: TourServiceProxy,
+    private _appSessionService: AppSessionService,
     private _dialog: MatDialog
   ) {
     super(injector);
@@ -58,6 +63,7 @@ export class ToursComponent extends AppComponentBase implements OnInit {
         this.endDateFilter,
         this.longitudeFilter,
         this.latitudeFilter,
+        this.userIdFilter,
         this.sort,
         this.skipCount,
         this.maxResultCount
@@ -74,6 +80,18 @@ export class ToursComponent extends AppComponentBase implements OnInit {
 
   public editTour(id: number): void {
     this.showCreateOrEditTourDialog(id);
+  }
+
+  public toggleMyTours(): void {
+    this.title = "My Tours";
+    this.userIdFilter = this._appSessionService.userId;
+    this.getTours();
+  }
+
+  public toggleAllTours(): void {
+    this.title = "All Tours";
+    this.userIdFilter = undefined;
+    this.getTours();
   }
 
   private showCreateOrEditTourDialog(id?: number): void {
@@ -94,6 +112,7 @@ export class ToursComponent extends AppComponentBase implements OnInit {
   }
 
   ngOnInit(): void {
+    this.userId = this._appSessionService.user.id;
     this.getTours();
   }
 }

@@ -8,6 +8,14 @@ namespace localtour.Bookings.Dto
 
         public long? UserId { get; set; }
 
+        public string Name { get; set; }
+
+        public string PhoneNumber { get; set; }
+
+        public int NumberOfPeople { get; set; }
+
+        public string Status { get; set; }
+
         public string Address { get; set; }
 
         public int? StateId { get; set; }
@@ -19,5 +27,7 @@ namespace localtour.Bookings.Dto
         public string PromoCode { get; set; }
 
         public decimal TotalPrice { get; set; }
+
+        public string Email { get; set; }
     }
 }

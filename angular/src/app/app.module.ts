@@ -9,7 +9,7 @@ import { NgxPaginationModule } from 'ngx-pagination';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-
+import { DlDateTimeDateModule, DlDateTimePickerModule } from 'angular-bootstrap-datetimepicker';
 import { AbpModule } from '@abp/abp.module';
 import { ServiceProxyModule } from '@shared/service-proxies/service-proxy.module';
 import { SharedModule } from '@shared/shared.module';
@@ -114,7 +114,9 @@ import { DisputesComponent } from './disputes/disputes.component';
     NgxPaginationModule,
     MatCarouselModule,
     AngularFileUploaderModule,
-    TableModule
+    TableModule,
+    DlDateTimeDateModule,  // <--- Determines the data type of the model
+    DlDateTimePickerModule,
   ],
   providers: [],
   entryComponents: [

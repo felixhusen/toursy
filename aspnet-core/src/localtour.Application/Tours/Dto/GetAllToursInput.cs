@@ -20,5 +20,7 @@ namespace localtour.Tours.Dto
         public string Longitude { get; set; }
 
         public string Latitude { get; set; }
+
+        public long? UserId { get; set; }
     }
 }

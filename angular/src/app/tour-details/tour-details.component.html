@@ -1,10 +1,10 @@
 <div [@routerTransition]>
     <mat-card class="mat-carousel mb-3" *ngIf="tour">
-        <mat-carousel timings="250ms ease-in" [autoplay]="true" color="white" interval="5000" color="primary" maxWidth="auto"
-            proportion="25" slides="5" [loop]="true" [hideArrows]="true" [hideIndicators]="false" [useKeyboard]="true"
-            [useMouseWheel]="false" orientation="ltr">
-            <mat-carousel-slide #matCarouselSlide *ngFor="let slide of tour.tourPictures; let i = index" [image]="slide.link"
-                overlayColor="#00000040" [hideOverlay]="false">
+        <mat-carousel timings="250ms ease-in" [autoplay]="true" color="white" interval="5000" color="primary"
+            maxWidth="auto" proportion="25" slides="5" [loop]="true" [hideArrows]="true" [hideIndicators]="false"
+            [useKeyboard]="true" [useMouseWheel]="false" orientation="ltr">
+            <mat-carousel-slide #matCarouselSlide *ngFor="let slide of tour.tourPictures; let i = index"
+                [image]="slide.link" overlayColor="#00000040" [hideOverlay]="false">
             </mat-carousel-slide>
         </mat-carousel>
     </mat-card>
@@ -15,26 +15,29 @@
                 <h3 class="heading-title">{{tour.tour.name}}</h3>
             </div>
             <div class="col-xs-12 col-md-5 text-right">
-                <button mat-raised-button color="primary" class="mr-1" (click)="bookTour(tour.tour.id)">Book</button>
-                <button mat-raised-button color="accent" class="mr-1">Share</button>
-                <button mat-raised-button color="accent">Review</button>
+                <button mat-flat-button color="primary" class="mr-1"
+                    [routerLink]="['/app/bookings/create-booking/' + tour.tour.id]"
+                    routerLinkActive="active" [disabled]="tour.tourDates.length == 0">Book</button>
+                <!-- <button mat-raised-button color="accent" class="mr-1">Edit</button> -->
+                <button mat-flat-button color="accent">Review</button>
             </div>
         </div>
-        <h4 class="heading-title mb-2">Sydney, NSW</h4>
+        <h4 class="heading-title mb-2">{{tour.tour.locationName}}</h4>
         <h5 class="heading-title mb-2">{{tour.tour.price | currency}}</h5>
         <p class="mb-2">{{tour.tour.description}}</p>
         <h4 class="heading-title mb-2">Available Dates</h4>
-        <p-table [value]="dates" styleClass="ui-table-customers">
+        <p *ngIf="tour.tourDates.length == 0">No Available Dates</p>
+        <p-table [value]="tour.tourDates" *ngIf="tour.tourDates.length > 0" styleClass="ui-table-customers">
             <ng-template pTemplate="header">
                 <tr>
-                    <th>Date</th>
-                    <th>Status</th>
+                    <th>Start Date</th>
+                    <th>End Date</th>
                 </tr>
             </ng-template>
             <ng-template pTemplate="body" let-item>
                 <tr>
-                    <td>23/03/2020</td>
-                    <td>Available</td>
+                    <td>{{item.startDate | date:'short'}}</td>
+                    <td>{{item.startDate | date:'short'}}</td>
                 </tr>
             </ng-template>
         </p-table>

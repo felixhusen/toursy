@@ -9,5 +9,7 @@ namespace localtour.Tours.Dto
         public TourDto Tour { get; set; }
 
         public List<TourPictureDto> TourPictures { get; set; }
+
+        public List<TourDateDto> TourDates { get; set; }
     }
 }

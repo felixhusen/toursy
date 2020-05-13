@@ -9,7 +9,6 @@ using localtour.States;
 using localtour.Tours;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
-using System;
 using System.Linq;
 using System.Linq.Dynamic.Core;
 using System.Threading.Tasks;
@@ -46,8 +45,8 @@ namespace localtour.Bookings
                            join o2 in _stateRepository.GetAll() on o.StateId equals o2.Id into j2
                            from s2 in j2.DefaultIfEmpty()
 
-                               //join o3 in _userRepository.GetAll() on o.UserId equals o3.Id into j3
-                               //from s3 in j3.DefaultIfEmpty()
+                           join o3 in _userRepository.GetAll() on o.UserId equals o3.Id into j3
+                           from s3 in j3.DefaultIfEmpty()
 
                            select new GetBookingForViewDto()
                            {
@@ -61,11 +60,17 @@ namespace localtour.Bookings
                                    Suburb = o.Suburb,
                                    PostCode = o.PostCode,
                                    PromoCode = o.PromoCode,
-                                   TotalPrice = o.TotalPrice
+                                   TotalPrice = o.TotalPrice,
+                                   Name = o.Name,
+                                   PhoneNumber = o.PhoneNumber,
+                                   NumberOfPeople = o.NumberOfPeople,
+                                   Status = o.Status,
+                                   Email = o.Email
                                },
+                               BookingCode = "B-" + o.Id,
                                TourName = s1 != null ? s1.Name : null,
                                StateCode = s2 != null ? s2.Code : null,
-                               //UserFullName = s3 != null ? s3.FullName : null
+                               UserFullName = s3 != null ? s3.FullName : null
                            };
 
             var pagedAndFilteredBookings = bookings
@@ -123,44 +128,44 @@ namespace localtour.Bookings
             return output;
         }
 
-        public async Task CreateOrEdit(CreateOrEditBookingDto input)
+        public async Task<BookingDto> CreateOrEdit(CreateOrEditBookingDto input)
         {
             if (input.Id == null)
             {
-                await Create(input);
+                return await Create(input);
             }
             else
             {
-                await Update(input);
+                return await Update(input);
             }
         }
 
         //[AbpAuthorize(PermissionNames.Pages_Booking_Create)]
-        protected virtual async Task Create(CreateOrEditBookingDto input)
+        protected virtual async Task<BookingDto> Create(CreateOrEditBookingDto input)
         {
-            try
-            {
-                var booking = ObjectMapper.Map<Booking>(input);
+            input.Status = "Pending";
 
-                if (AbpSession.TenantId != null)
-                {
-                    booking.TenantId = (int?)AbpSession.TenantId;
-                }
+            var booking = ObjectMapper.Map<Booking>(input);
 
-                await _bookingRepository.InsertAsync(booking);
-            }
-            catch (Exception e)
+            if (AbpSession.TenantId != null)
             {
-                Console.WriteLine(e);
+                booking.TenantId = (int?)AbpSession.TenantId;
             }
 
+            var id = await _bookingRepository.InsertAndGetIdAsync(booking);
+
+            input.Id = id;
+
+            return ObjectMapper.Map<BookingDto>(input);
         }
 
         [AbpAuthorize(PermissionNames.Pages_Booking_Edit)]
-        protected virtual async Task Update(CreateOrEditBookingDto input)
+        protected virtual async Task<BookingDto> Update(CreateOrEditBookingDto input)
         {
             var booking = await _bookingRepository.FirstOrDefaultAsync((int)input.Id);
             ObjectMapper.Map(input, booking);
+
+            return ObjectMapper.Map<BookingDto>(input);
         }
 
         [AbpAuthorize(PermissionNames.Pages_Booking_Delete)]

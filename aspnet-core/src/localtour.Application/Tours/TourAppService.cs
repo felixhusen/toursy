@@ -3,8 +3,10 @@ using Abp.Authorization;
 using Abp.Domain.Repositories;
 using Abp.Linq.Extensions;
 using localtour.Authorization;
+using localtour.TourDates;
 using localtour.TourPictures;
 using localtour.Tours.Dto;
+using localtour.Users;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
@@ -21,12 +23,16 @@ namespace localtour.Tours
     {
         private readonly IRepository<Tour, int> _tourRepository;
         private readonly IRepository<TourPicture, int> _tourPictureRepository;
+        private readonly IRepository<TourDate, int> _tourDateRepository;
         private readonly IWebHostEnvironment _hostEnvironment;
+        private readonly IUserAppService _userAppService;
 
-        public TourAppService(IRepository<Tour, int> tourRepository, IRepository<TourPicture, int> tourPictureRepository, IWebHostEnvironment hostEnvironment)
+        public TourAppService(IRepository<Tour, int> tourRepository, IRepository<TourPicture, int> tourPictureRepository, IRepository<TourDate, int> tourDateRepository, IWebHostEnvironment hostEnvironment, IUserAppService userAppService)
         {
             _tourRepository = tourRepository;
             _tourPictureRepository = tourPictureRepository;
+            _tourDateRepository = tourDateRepository;
+            _userAppService = userAppService;
             _hostEnvironment = hostEnvironment;
         }
 
@@ -36,7 +42,8 @@ namespace localtour.Tours
                                         .WhereIf(!string.IsNullOrWhiteSpace(input.Name), e => false || e.Name.Contains(input.Name))
                                         .WhereIf(!string.IsNullOrWhiteSpace(input.Description), e => false || e.Name.Contains(input.Description))
                                         .WhereIf(!string.IsNullOrWhiteSpace(input.Longitude), e => e.Longitude == input.Longitude)
-                                        .WhereIf(!string.IsNullOrWhiteSpace(input.Latitude), e => e.Latitude == input.Latitude);
+                                        .WhereIf(!string.IsNullOrWhiteSpace(input.Latitude), e => e.Latitude == input.Latitude)
+                                        .WhereIf(input.UserId != null, e => e.UserId == input.UserId);
 
             var tours = from o in filteredTours
 
@@ -48,10 +55,10 @@ namespace localtour.Tours
                                 Name = o.Name,
                                 Price = o.Price,
                                 Description = o.Description,
-                                StartDate = o.StartDate,
-                                EndDate = o.EndDate,
                                 Latitude = o.Latitude,
-                                Longitude = o.Longitude
+                                Longitude = o.Longitude,
+                                LocationName = o.LocationName,
+                                UserId = o.UserId
                             },
                             TourPictures = (
 
@@ -60,10 +67,24 @@ namespace localtour.Tours
                                 {
                                     Id = o1.Id,
                                     Link = o1.Link,
-                                    TourId = o1.TourId
+                                    TourId = o.Id
+                                }
+
+                            ).ToList(),
+                            TourDates = (
+
+                                from o1 in _tourDateRepository.GetAll().Where(e => e.TourId == o.Id)
+                                orderby o1.StartDate
+                                select new TourDateDto
+                                {
+                                    Id = o1.Id,
+                                    StartDate = o1.StartDate,
+                                    EndDate = o1.EndDate,
+                                    TourId = o.Id
                                 }
 
                             ).ToList()
+
                         };
 
             var pagedAndFilteredTours = tours
@@ -93,6 +114,17 @@ namespace localtour.Tours
                                    TourId = o1.TourId
                                };
 
+            var tourDates = from o1 in _tourDateRepository.GetAll().Where(e => e.TourId == id)
+
+                            select new TourDateDto
+                            {
+                                Id = o1.Id,
+                                StartDate = o1.StartDate,
+                                EndDate = o1.EndDate
+                            };
+
+            output.TourDates = await tourDates.ToListAsync();
+
             output.TourPictures = await tourPictures.ToListAsync();
 
             return output;
@@ -114,9 +146,57 @@ namespace localtour.Tours
                                    TourId = o1.TourId
                                };
 
+            var tourDates = from o1 in _tourDateRepository.GetAll().Where(e => e.TourId == input.Id)
+
+                            select new TourDateDto
+                            {
+                                Id = o1.Id,
+                                StartDate = o1.StartDate,
+                                EndDate = o1.EndDate
+                            };
+
+            output.TourDates = await tourDates.ToListAsync();
+
             output.TourPictures = await tourPictures.ToListAsync();
 
             return output;
+        }
+
+        public async Task<TourDateDto> CreateOrEditTourDate(TourDateDto input)
+        {
+            if (input.Id == null)
+            {
+                return await CreateTourDate(input);
+            }
+            else
+            {
+                return await UpdateTourDate(input);
+            }
+        }
+
+        [AbpAuthorize(PermissionNames.Pages_Tour_Create)]
+        protected virtual async Task<TourDateDto> CreateTourDate(TourDateDto input)
+        {
+            var tourDate = ObjectMapper.Map<TourDate>(input);
+
+            if (AbpSession.TenantId != null)
+            {
+                tourDate.TenantId = (int?)AbpSession.TenantId;
+            }
+
+            var tourDateId = await _tourDateRepository.InsertAndGetIdAsync(tourDate);
+
+            input.Id = tourDateId;
+
+            return input;
+        }
+
+        [AbpAuthorize(PermissionNames.Pages_Tour_Edit)]
+        protected virtual async Task<TourDateDto> UpdateTourDate(TourDateDto input)
+        {
+            var tourDate = await _tourDateRepository.FirstOrDefaultAsync((int)input.Id);
+            ObjectMapper.Map(input, tourDate);
+            return input;
         }
 
         public async Task<TourDto> CreateOrEdit(CreateOrEditTourDto input)
@@ -151,7 +231,8 @@ namespace localtour.Tours
 
                 return result;
 
-            } catch (Exception e)
+            }
+            catch (Exception e)
             {
                 Console.WriteLine(e);
             }
@@ -171,6 +252,12 @@ namespace localtour.Tours
         public async Task Delete(EntityDto input)
         {
             await _tourRepository.DeleteAsync(input.Id);
+        }
+
+        [AbpAuthorize(PermissionNames.Pages_Tour_Delete)]
+        public async Task DeleteTourDate(EntityDto input)
+        {
+            await _tourDateRepository.DeleteAsync(input.Id);
         }
 
         [AbpAuthorize(PermissionNames.Pages_Tour_Create)]
@@ -215,7 +302,8 @@ namespace localtour.Tours
 
                     return result;
                 }
-            } catch (Exception e)
+            }
+            catch (Exception e)
             {
                 Console.WriteLine(e);
             }

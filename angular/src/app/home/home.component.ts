@@ -3,6 +3,7 @@ import { AppComponentBase } from "@shared/app-component-base";
 import { appModuleAnimation } from "@shared/animations/routerTransition";
 import { GetTourForViewDto, TourServiceProxy } from "@shared/service-proxies/service-proxies";
 import * as moment from "moment";
+import { AppSessionService } from "@shared/session/app-session.service";
 
 @Component({
   templateUrl: "./home.component.html",
@@ -20,14 +21,16 @@ export class HomeComponent extends AppComponentBase implements OnInit {
   public endDateFilter: moment.Moment;
   public longitudeFilter: string;
   public latitudeFilter: string;
+  public userIdFilter: number;
   public tours: GetTourForViewDto[];
   public totalCount: number;
   public maxResultCount: number = 6;
   public skipCount: number = 0;
   public sort: string = "tour.id desc";
   public defaultImageLink: string = "https://attendantdesign.com/wp-content/uploads/2017/08/tour-1-1.jpg";
+  public userId: number;
 
-  constructor(injector: Injector, private _tourService: TourServiceProxy) {
+  constructor(injector: Injector, private _tourService: TourServiceProxy, private _appSessionService: AppSessionService) {
     super(injector);
   }
 
@@ -41,6 +44,7 @@ export class HomeComponent extends AppComponentBase implements OnInit {
         this.endDateFilter,
         this.longitudeFilter,
         this.latitudeFilter,
+        this.userIdFilter,
         this.sort,
         this.skipCount,
         this.maxResultCount
@@ -61,6 +65,7 @@ export class HomeComponent extends AppComponentBase implements OnInit {
 
   public ngOnInit(): void {
     this.getTours();
+    this.userId = this._appSessionService.userId;
   }
 
 }

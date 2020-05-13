@@ -19,6 +19,7 @@
                 <th>Transaction ID</th>
                 <th>Tour</th>
                 <th>Card Number</th>
+                <th>Name</th>
                 <th>Date</th>
                 <th>Status</th>
                 <th>Amount</th>
@@ -26,9 +27,10 @@
         </ng-template>
         <ng-template pTemplate="body" let-item>
             <tr>
-                <td>T-00{{item.transaction.id}}</td>
+                <td><button mat-flat-button color="primary">T-{{item.transaction.id}}</button></td>
                 <td>{{item.tourName}}</td>
                 <td>{{item.transaction.cardNumber}}</td>
+                <td>{{item.transaction.nameOnCard}}</td>
                 <td>{{item.transaction.transactionDate}}</td>
                 <td>{{item.transaction.status}}</td>
                 <td>{{item.transaction.amount | currency}}</td>

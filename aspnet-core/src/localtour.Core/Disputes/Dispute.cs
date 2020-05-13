@@ -1,5 +1,6 @@
 ﻿using Abp.Domain.Entities;
 using localtour.Bookings;
+using System;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace localtour.Disputes
@@ -15,5 +16,9 @@ namespace localtour.Disputes
         public Booking BookingFk { get; set; }
 
         public virtual string Description { get; set; }
+
+        public virtual string Status { get; set; }
+
+        public virtual DateTime? Date { get; set; }
     }
 }

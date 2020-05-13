@@ -338,7 +338,7 @@ export class BookingServiceProxy {
      * @param body (optional) 
      * @return Success
      */
-    createOrEdit(body: CreateOrEditBookingDto | undefined): Observable<void> {
+    createOrEdit(body: CreateOrEditBookingDto | undefined): Observable<BookingDto> {
         let url_ = this.baseUrl + "/api/services/app/Booking/CreateOrEdit";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -350,6 +350,7 @@ export class BookingServiceProxy {
             responseType: "blob",
             headers: new HttpHeaders({
                 "Content-Type": "application/json-patch+json", 
+                "Accept": "text/plain"
             })
         };
 
@@ -360,14 +361,14 @@ export class BookingServiceProxy {
                 try {
                     return this.processCreateOrEdit(<any>response_);
                 } catch (e) {
-                    return <Observable<void>><any>_observableThrow(e);
+                    return <Observable<BookingDto>><any>_observableThrow(e);
                 }
             } else
-                return <Observable<void>><any>_observableThrow(response_);
+                return <Observable<BookingDto>><any>_observableThrow(response_);
         }));
     }
 
-    protected processCreateOrEdit(response: HttpResponseBase): Observable<void> {
+    protected processCreateOrEdit(response: HttpResponseBase): Observable<BookingDto> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -376,14 +377,17 @@ export class BookingServiceProxy {
         let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
         if (status === 200) {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return _observableOf<void>(<any>null);
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = BookingDto.fromJS(resultData200);
+            return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             }));
         }
-        return _observableOf<void>(<any>null);
+        return _observableOf<BookingDto>(<any>null);
     }
 
     /**
@@ -2425,12 +2429,13 @@ export class TourServiceProxy {
      * @param endDate (optional) 
      * @param longitude (optional) 
      * @param latitude (optional) 
+     * @param userId (optional) 
      * @param sorting (optional) 
      * @param skipCount (optional) 
      * @param maxResultCount (optional) 
      * @return Success
      */
-    getAll(name: string | undefined, price: number | undefined, description: string | undefined, startDate: moment.Moment | undefined, endDate: moment.Moment | undefined, longitude: string | undefined, latitude: string | undefined, sorting: string | undefined, skipCount: number | undefined, maxResultCount: number | undefined): Observable<GetTourForViewDtoPagedResultDto> {
+    getAll(name: string | undefined, price: number | undefined, description: string | undefined, startDate: moment.Moment | undefined, endDate: moment.Moment | undefined, longitude: string | undefined, latitude: string | undefined, userId: number | undefined, sorting: string | undefined, skipCount: number | undefined, maxResultCount: number | undefined): Observable<GetTourForViewDtoPagedResultDto> {
         let url_ = this.baseUrl + "/api/services/app/Tour/GetAll?";
         if (name === null)
             throw new Error("The parameter 'name' cannot be null.");
@@ -2460,6 +2465,10 @@ export class TourServiceProxy {
             throw new Error("The parameter 'latitude' cannot be null.");
         else if (latitude !== undefined)
             url_ += "Latitude=" + encodeURIComponent("" + latitude) + "&"; 
+        if (userId === null)
+            throw new Error("The parameter 'userId' cannot be null.");
+        else if (userId !== undefined)
+            url_ += "UserId=" + encodeURIComponent("" + userId) + "&"; 
         if (sorting === null)
             throw new Error("The parameter 'sorting' cannot be null.");
         else if (sorting !== undefined)
@@ -2634,6 +2643,62 @@ export class TourServiceProxy {
      * @param body (optional) 
      * @return Success
      */
+    createOrEditTourDate(body: TourDateDto | undefined): Observable<TourDateDto> {
+        let url_ = this.baseUrl + "/api/services/app/Tour/CreateOrEditTourDate";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json-patch+json", 
+                "Accept": "text/plain"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processCreateOrEditTourDate(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processCreateOrEditTourDate(<any>response_);
+                } catch (e) {
+                    return <Observable<TourDateDto>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<TourDateDto>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processCreateOrEditTourDate(response: HttpResponseBase): Observable<TourDateDto> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = TourDateDto.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<TourDateDto>(<any>null);
+    }
+
+    /**
+     * @param body (optional) 
+     * @return Success
+     */
     createOrEdit(body: CreateOrEditTourDto | undefined): Observable<TourDto> {
         let url_ = this.baseUrl + "/api/services/app/Tour/CreateOrEdit";
         url_ = url_.replace(/[?&]$/, "");
@@ -2720,6 +2785,58 @@ export class TourServiceProxy {
     }
 
     protected processDelete(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+
+    /**
+     * @param id (optional) 
+     * @return Success
+     */
+    deleteTourDate(id: number | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/app/Tour/DeleteTourDate?";
+        if (id === null)
+            throw new Error("The parameter 'id' cannot be null.");
+        else if (id !== undefined)
+            url_ += "Id=" + encodeURIComponent("" + id) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+            })
+        };
+
+        return this.http.request("delete", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processDeleteTourDate(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processDeleteTourDate(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processDeleteTourDate(response: HttpResponseBase): Observable<void> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -3926,12 +4043,17 @@ export interface IRegisterOutput {
 export class BookingDto implements IBookingDto {
     tourId: number | undefined;
     userId: number | undefined;
+    name: string | undefined;
+    phoneNumber: string | undefined;
+    numberOfPeople: number;
+    status: string | undefined;
     address: string | undefined;
     stateId: number | undefined;
     suburb: string | undefined;
     postCode: number;
     promoCode: string | undefined;
     totalPrice: number;
+    email: string | undefined;
     id: number;
 
     constructor(data?: IBookingDto) {
@@ -3947,12 +4069,17 @@ export class BookingDto implements IBookingDto {
         if (data) {
             this.tourId = data["tourId"];
             this.userId = data["userId"];
+            this.name = data["name"];
+            this.phoneNumber = data["phoneNumber"];
+            this.numberOfPeople = data["numberOfPeople"];
+            this.status = data["status"];
             this.address = data["address"];
             this.stateId = data["stateId"];
             this.suburb = data["suburb"];
             this.postCode = data["postCode"];
             this.promoCode = data["promoCode"];
             this.totalPrice = data["totalPrice"];
+            this.email = data["email"];
             this.id = data["id"];
         }
     }
@@ -3968,12 +4095,17 @@ export class BookingDto implements IBookingDto {
         data = typeof data === 'object' ? data : {};
         data["tourId"] = this.tourId;
         data["userId"] = this.userId;
+        data["name"] = this.name;
+        data["phoneNumber"] = this.phoneNumber;
+        data["numberOfPeople"] = this.numberOfPeople;
+        data["status"] = this.status;
         data["address"] = this.address;
         data["stateId"] = this.stateId;
         data["suburb"] = this.suburb;
         data["postCode"] = this.postCode;
         data["promoCode"] = this.promoCode;
         data["totalPrice"] = this.totalPrice;
+        data["email"] = this.email;
         data["id"] = this.id;
         return data; 
     }
@@ -3989,18 +4121,24 @@ export class BookingDto implements IBookingDto {
 export interface IBookingDto {
     tourId: number | undefined;
     userId: number | undefined;
+    name: string | undefined;
+    phoneNumber: string | undefined;
+    numberOfPeople: number;
+    status: string | undefined;
     address: string | undefined;
     stateId: number | undefined;
     suburb: string | undefined;
     postCode: number;
     promoCode: string | undefined;
     totalPrice: number;
+    email: string | undefined;
     id: number;
 }
 
 export class GetBookingForViewDto implements IGetBookingForViewDto {
     booking: BookingDto;
     tourName: string | undefined;
+    bookingCode: string | undefined;
     userFullName: string | undefined;
     stateCode: string | undefined;
 
@@ -4017,6 +4155,7 @@ export class GetBookingForViewDto implements IGetBookingForViewDto {
         if (data) {
             this.booking = data["booking"] ? BookingDto.fromJS(data["booking"]) : <any>undefined;
             this.tourName = data["tourName"];
+            this.bookingCode = data["bookingCode"];
             this.userFullName = data["userFullName"];
             this.stateCode = data["stateCode"];
         }
@@ -4033,6 +4172,7 @@ export class GetBookingForViewDto implements IGetBookingForViewDto {
         data = typeof data === 'object' ? data : {};
         data["booking"] = this.booking ? this.booking.toJSON() : <any>undefined;
         data["tourName"] = this.tourName;
+        data["bookingCode"] = this.bookingCode;
         data["userFullName"] = this.userFullName;
         data["stateCode"] = this.stateCode;
         return data; 
@@ -4049,6 +4189,7 @@ export class GetBookingForViewDto implements IGetBookingForViewDto {
 export interface IGetBookingForViewDto {
     booking: BookingDto;
     tourName: string | undefined;
+    bookingCode: string | undefined;
     userFullName: string | undefined;
     stateCode: string | undefined;
 }
@@ -4111,12 +4252,17 @@ export interface IGetBookingForViewDtoPagedResultDto {
 export class CreateOrEditBookingDto implements ICreateOrEditBookingDto {
     tourId: number | undefined;
     userId: number | undefined;
+    name: string | undefined;
+    phoneNumber: string | undefined;
+    numberOfPeople: number;
+    status: string | undefined;
     address: string | undefined;
     stateId: number | undefined;
     suburb: string | undefined;
     postCode: number;
     promoCode: string | undefined;
     totalPrice: number;
+    email: string | undefined;
     id: number | undefined;
 
     constructor(data?: ICreateOrEditBookingDto) {
@@ -4132,12 +4278,17 @@ export class CreateOrEditBookingDto implements ICreateOrEditBookingDto {
         if (data) {
             this.tourId = data["tourId"];
             this.userId = data["userId"];
+            this.name = data["name"];
+            this.phoneNumber = data["phoneNumber"];
+            this.numberOfPeople = data["numberOfPeople"];
+            this.status = data["status"];
             this.address = data["address"];
             this.stateId = data["stateId"];
             this.suburb = data["suburb"];
             this.postCode = data["postCode"];
             this.promoCode = data["promoCode"];
             this.totalPrice = data["totalPrice"];
+            this.email = data["email"];
             this.id = data["id"];
         }
     }
@@ -4153,12 +4304,17 @@ export class CreateOrEditBookingDto implements ICreateOrEditBookingDto {
         data = typeof data === 'object' ? data : {};
         data["tourId"] = this.tourId;
         data["userId"] = this.userId;
+        data["name"] = this.name;
+        data["phoneNumber"] = this.phoneNumber;
+        data["numberOfPeople"] = this.numberOfPeople;
+        data["status"] = this.status;
         data["address"] = this.address;
         data["stateId"] = this.stateId;
         data["suburb"] = this.suburb;
         data["postCode"] = this.postCode;
         data["promoCode"] = this.promoCode;
         data["totalPrice"] = this.totalPrice;
+        data["email"] = this.email;
         data["id"] = this.id;
         return data; 
     }
@@ -4174,12 +4330,17 @@ export class CreateOrEditBookingDto implements ICreateOrEditBookingDto {
 export interface ICreateOrEditBookingDto {
     tourId: number | undefined;
     userId: number | undefined;
+    name: string | undefined;
+    phoneNumber: string | undefined;
+    numberOfPeople: number;
+    status: string | undefined;
     address: string | undefined;
     stateId: number | undefined;
     suburb: string | undefined;
     postCode: number;
     promoCode: string | undefined;
     totalPrice: number;
+    email: string | undefined;
     id: number | undefined;
 }
 
@@ -4284,6 +4445,8 @@ export interface IChangeUiThemeInput {
 export class DisputeDto implements IDisputeDto {
     bookingId: number | undefined;
     description: string | undefined;
+    status: string | undefined;
+    date: moment.Moment | undefined;
     id: number;
 
     constructor(data?: IDisputeDto) {
@@ -4299,6 +4462,8 @@ export class DisputeDto implements IDisputeDto {
         if (data) {
             this.bookingId = data["bookingId"];
             this.description = data["description"];
+            this.status = data["status"];
+            this.date = data["date"] ? moment(data["date"].toString()) : <any>undefined;
             this.id = data["id"];
         }
     }
@@ -4314,6 +4479,8 @@ export class DisputeDto implements IDisputeDto {
         data = typeof data === 'object' ? data : {};
         data["bookingId"] = this.bookingId;
         data["description"] = this.description;
+        data["status"] = this.status;
+        data["date"] = this.date ? this.date.toISOString() : <any>undefined;
         data["id"] = this.id;
         return data; 
     }
@@ -4329,6 +4496,8 @@ export class DisputeDto implements IDisputeDto {
 export interface IDisputeDto {
     bookingId: number | undefined;
     description: string | undefined;
+    status: string | undefined;
+    date: moment.Moment | undefined;
     id: number;
 }
 
@@ -4527,6 +4696,8 @@ export interface IGetDisputeForEditOutput {
 export class RequestDto implements IRequestDto {
     tourId: number;
     description: string | undefined;
+    status: string | undefined;
+    date: moment.Moment | undefined;
     id: number;
 
     constructor(data?: IRequestDto) {
@@ -4542,6 +4713,8 @@ export class RequestDto implements IRequestDto {
         if (data) {
             this.tourId = data["tourId"];
             this.description = data["description"];
+            this.status = data["status"];
+            this.date = data["date"] ? moment(data["date"].toString()) : <any>undefined;
             this.id = data["id"];
         }
     }
@@ -4557,6 +4730,8 @@ export class RequestDto implements IRequestDto {
         data = typeof data === 'object' ? data : {};
         data["tourId"] = this.tourId;
         data["description"] = this.description;
+        data["status"] = this.status;
+        data["date"] = this.date ? this.date.toISOString() : <any>undefined;
         data["id"] = this.id;
         return data; 
     }
@@ -4572,6 +4747,8 @@ export class RequestDto implements IRequestDto {
 export interface IRequestDto {
     tourId: number;
     description: string | undefined;
+    status: string | undefined;
+    date: moment.Moment | undefined;
     id: number;
 }
 
@@ -6280,8 +6457,7 @@ export class TourDto implements ITourDto {
     name: string | undefined;
     price: number;
     description: string | undefined;
-    startDate: moment.Moment;
-    endDate: moment.Moment;
+    locationName: string | undefined;
     longitude: string | undefined;
     latitude: string | undefined;
     userId: number | undefined;
@@ -6301,8 +6477,7 @@ export class TourDto implements ITourDto {
             this.name = data["name"];
             this.price = data["price"];
             this.description = data["description"];
-            this.startDate = data["startDate"] ? moment(data["startDate"].toString()) : <any>undefined;
-            this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
+            this.locationName = data["locationName"];
             this.longitude = data["longitude"];
             this.latitude = data["latitude"];
             this.userId = data["userId"];
@@ -6322,8 +6497,7 @@ export class TourDto implements ITourDto {
         data["name"] = this.name;
         data["price"] = this.price;
         data["description"] = this.description;
-        data["startDate"] = this.startDate ? this.startDate.toISOString() : <any>undefined;
-        data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
+        data["locationName"] = this.locationName;
         data["longitude"] = this.longitude;
         data["latitude"] = this.latitude;
         data["userId"] = this.userId;
@@ -6343,8 +6517,7 @@ export interface ITourDto {
     name: string | undefined;
     price: number;
     description: string | undefined;
-    startDate: moment.Moment;
-    endDate: moment.Moment;
+    locationName: string | undefined;
     longitude: string | undefined;
     latitude: string | undefined;
     userId: number | undefined;
@@ -6402,9 +6575,65 @@ export interface ITourPictureDto {
     id: number;
 }
 
+export class TourDateDto implements ITourDateDto {
+    startDate: moment.Moment;
+    endDate: moment.Moment;
+    tourId: number | undefined;
+    id: number | undefined;
+
+    constructor(data?: ITourDateDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.startDate = data["startDate"] ? moment(data["startDate"].toString()) : <any>undefined;
+            this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
+            this.tourId = data["tourId"];
+            this.id = data["id"];
+        }
+    }
+
+    static fromJS(data: any): TourDateDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new TourDateDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["startDate"] = this.startDate ? this.startDate.toISOString() : <any>undefined;
+        data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
+        data["tourId"] = this.tourId;
+        data["id"] = this.id;
+        return data; 
+    }
+
+    clone(): TourDateDto {
+        const json = this.toJSON();
+        let result = new TourDateDto();
+        result.init(json);
+        return result;
+    }
+}
+
+export interface ITourDateDto {
+    startDate: moment.Moment;
+    endDate: moment.Moment;
+    tourId: number | undefined;
+    id: number | undefined;
+}
+
 export class GetTourForViewDto implements IGetTourForViewDto {
     tour: TourDto;
     tourPictures: TourPictureDto[] | undefined;
+    tourDates: TourDateDto[] | undefined;
 
     constructor(data?: IGetTourForViewDto) {
         if (data) {
@@ -6422,6 +6651,11 @@ export class GetTourForViewDto implements IGetTourForViewDto {
                 this.tourPictures = [] as any;
                 for (let item of data["tourPictures"])
                     this.tourPictures.push(TourPictureDto.fromJS(item));
+            }
+            if (Array.isArray(data["tourDates"])) {
+                this.tourDates = [] as any;
+                for (let item of data["tourDates"])
+                    this.tourDates.push(TourDateDto.fromJS(item));
             }
         }
     }
@@ -6441,6 +6675,11 @@ export class GetTourForViewDto implements IGetTourForViewDto {
             for (let item of this.tourPictures)
                 data["tourPictures"].push(item.toJSON());
         }
+        if (Array.isArray(this.tourDates)) {
+            data["tourDates"] = [];
+            for (let item of this.tourDates)
+                data["tourDates"].push(item.toJSON());
+        }
         return data; 
     }
 
@@ -6455,6 +6694,7 @@ export class GetTourForViewDto implements IGetTourForViewDto {
 export interface IGetTourForViewDto {
     tour: TourDto;
     tourPictures: TourPictureDto[] | undefined;
+    tourDates: TourDateDto[] | undefined;
 }
 
 export class GetTourForViewDtoPagedResultDto implements IGetTourForViewDtoPagedResultDto {
@@ -6516,11 +6756,10 @@ export class CreateOrEditTourDto implements ICreateOrEditTourDto {
     name: string | undefined;
     price: number;
     description: string | undefined;
-    startDate: moment.Moment;
-    endDate: moment.Moment;
     longitude: string | undefined;
     latitude: string | undefined;
     userId: number | undefined;
+    locationName: string | undefined;
     id: number | undefined;
 
     constructor(data?: ICreateOrEditTourDto) {
@@ -6537,11 +6776,10 @@ export class CreateOrEditTourDto implements ICreateOrEditTourDto {
             this.name = data["name"];
             this.price = data["price"];
             this.description = data["description"];
-            this.startDate = data["startDate"] ? moment(data["startDate"].toString()) : <any>undefined;
-            this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
             this.longitude = data["longitude"];
             this.latitude = data["latitude"];
             this.userId = data["userId"];
+            this.locationName = data["locationName"];
             this.id = data["id"];
         }
     }
@@ -6558,11 +6796,10 @@ export class CreateOrEditTourDto implements ICreateOrEditTourDto {
         data["name"] = this.name;
         data["price"] = this.price;
         data["description"] = this.description;
-        data["startDate"] = this.startDate ? this.startDate.toISOString() : <any>undefined;
-        data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
         data["longitude"] = this.longitude;
         data["latitude"] = this.latitude;
         data["userId"] = this.userId;
+        data["locationName"] = this.locationName;
         data["id"] = this.id;
         return data; 
     }
@@ -6579,17 +6816,17 @@ export interface ICreateOrEditTourDto {
     name: string | undefined;
     price: number;
     description: string | undefined;
-    startDate: moment.Moment;
-    endDate: moment.Moment;
     longitude: string | undefined;
     latitude: string | undefined;
     userId: number | undefined;
+    locationName: string | undefined;
     id: number | undefined;
 }
 
 export class GetTourForEditOutput implements IGetTourForEditOutput {
     tour: CreateOrEditTourDto;
     tourPictures: TourPictureDto[] | undefined;
+    tourDates: TourDateDto[] | undefined;
 
     constructor(data?: IGetTourForEditOutput) {
         if (data) {
@@ -6607,6 +6844,11 @@ export class GetTourForEditOutput implements IGetTourForEditOutput {
                 this.tourPictures = [] as any;
                 for (let item of data["tourPictures"])
                     this.tourPictures.push(TourPictureDto.fromJS(item));
+            }
+            if (Array.isArray(data["tourDates"])) {
+                this.tourDates = [] as any;
+                for (let item of data["tourDates"])
+                    this.tourDates.push(TourDateDto.fromJS(item));
             }
         }
     }
@@ -6626,6 +6868,11 @@ export class GetTourForEditOutput implements IGetTourForEditOutput {
             for (let item of this.tourPictures)
                 data["tourPictures"].push(item.toJSON());
         }
+        if (Array.isArray(this.tourDates)) {
+            data["tourDates"] = [];
+            for (let item of this.tourDates)
+                data["tourDates"].push(item.toJSON());
+        }
         return data; 
     }
 
@@ -6640,14 +6887,19 @@ export class GetTourForEditOutput implements IGetTourForEditOutput {
 export interface IGetTourForEditOutput {
     tour: CreateOrEditTourDto;
     tourPictures: TourPictureDto[] | undefined;
+    tourDates: TourDateDto[] | undefined;
 }
 
 export class TransactionDto implements ITransactionDto {
     bookingId: number | undefined;
     amount: number;
+    nameOnCard: string | undefined;
     cardNumber: string | undefined;
     cvcCode: string | undefined;
     transactionDate: moment.Moment | undefined;
+    expMonth: number;
+    expYear: number;
+    status: string | undefined;
     id: number;
 
     constructor(data?: ITransactionDto) {
@@ -6663,9 +6915,13 @@ export class TransactionDto implements ITransactionDto {
         if (data) {
             this.bookingId = data["bookingId"];
             this.amount = data["amount"];
+            this.nameOnCard = data["nameOnCard"];
             this.cardNumber = data["cardNumber"];
             this.cvcCode = data["cvcCode"];
             this.transactionDate = data["transactionDate"] ? moment(data["transactionDate"].toString()) : <any>undefined;
+            this.expMonth = data["expMonth"];
+            this.expYear = data["expYear"];
+            this.status = data["status"];
             this.id = data["id"];
         }
     }
@@ -6681,9 +6937,13 @@ export class TransactionDto implements ITransactionDto {
         data = typeof data === 'object' ? data : {};
         data["bookingId"] = this.bookingId;
         data["amount"] = this.amount;
+        data["nameOnCard"] = this.nameOnCard;
         data["cardNumber"] = this.cardNumber;
         data["cvcCode"] = this.cvcCode;
         data["transactionDate"] = this.transactionDate ? this.transactionDate.toISOString() : <any>undefined;
+        data["expMonth"] = this.expMonth;
+        data["expYear"] = this.expYear;
+        data["status"] = this.status;
         data["id"] = this.id;
         return data; 
     }
@@ -6699,14 +6959,20 @@ export class TransactionDto implements ITransactionDto {
 export interface ITransactionDto {
     bookingId: number | undefined;
     amount: number;
+    nameOnCard: string | undefined;
     cardNumber: string | undefined;
     cvcCode: string | undefined;
     transactionDate: moment.Moment | undefined;
+    expMonth: number;
+    expYear: number;
+    status: string | undefined;
     id: number;
 }
 
 export class GetTransactionForViewDto implements IGetTransactionForViewDto {
     transaction: TransactionDto;
+    tourName: string | undefined;
+    bookingCode: string | undefined;
 
     constructor(data?: IGetTransactionForViewDto) {
         if (data) {
@@ -6720,6 +6986,8 @@ export class GetTransactionForViewDto implements IGetTransactionForViewDto {
     init(data?: any) {
         if (data) {
             this.transaction = data["transaction"] ? TransactionDto.fromJS(data["transaction"]) : <any>undefined;
+            this.tourName = data["tourName"];
+            this.bookingCode = data["bookingCode"];
         }
     }
 
@@ -6733,6 +7001,8 @@ export class GetTransactionForViewDto implements IGetTransactionForViewDto {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["transaction"] = this.transaction ? this.transaction.toJSON() : <any>undefined;
+        data["tourName"] = this.tourName;
+        data["bookingCode"] = this.bookingCode;
         return data; 
     }
 
@@ -6746,6 +7016,8 @@ export class GetTransactionForViewDto implements IGetTransactionForViewDto {
 
 export interface IGetTransactionForViewDto {
     transaction: TransactionDto;
+    tourName: string | undefined;
+    bookingCode: string | undefined;
 }
 
 export class GetTransactionForViewDtoPagedResultDto implements IGetTransactionForViewDtoPagedResultDto {
@@ -6806,9 +7078,12 @@ export interface IGetTransactionForViewDtoPagedResultDto {
 export class CreateOrEditTransactionDto implements ICreateOrEditTransactionDto {
     bookingId: number | undefined;
     amount: number;
+    nameOnCard: string | undefined;
     cardNumber: string | undefined;
     cvcCode: string | undefined;
     transactionDate: moment.Moment | undefined;
+    expMonth: number;
+    expYear: number;
     id: number | undefined;
 
     constructor(data?: ICreateOrEditTransactionDto) {
@@ -6824,9 +7099,12 @@ export class CreateOrEditTransactionDto implements ICreateOrEditTransactionDto {
         if (data) {
             this.bookingId = data["bookingId"];
             this.amount = data["amount"];
+            this.nameOnCard = data["nameOnCard"];
             this.cardNumber = data["cardNumber"];
             this.cvcCode = data["cvcCode"];
             this.transactionDate = data["transactionDate"] ? moment(data["transactionDate"].toString()) : <any>undefined;
+            this.expMonth = data["expMonth"];
+            this.expYear = data["expYear"];
             this.id = data["id"];
         }
     }
@@ -6842,9 +7120,12 @@ export class CreateOrEditTransactionDto implements ICreateOrEditTransactionDto {
         data = typeof data === 'object' ? data : {};
         data["bookingId"] = this.bookingId;
         data["amount"] = this.amount;
+        data["nameOnCard"] = this.nameOnCard;
         data["cardNumber"] = this.cardNumber;
         data["cvcCode"] = this.cvcCode;
         data["transactionDate"] = this.transactionDate ? this.transactionDate.toISOString() : <any>undefined;
+        data["expMonth"] = this.expMonth;
+        data["expYear"] = this.expYear;
         data["id"] = this.id;
         return data; 
     }
@@ -6860,9 +7141,12 @@ export class CreateOrEditTransactionDto implements ICreateOrEditTransactionDto {
 export interface ICreateOrEditTransactionDto {
     bookingId: number | undefined;
     amount: number;
+    nameOnCard: string | undefined;
     cardNumber: string | undefined;
     cvcCode: string | undefined;
     transactionDate: moment.Moment | undefined;
+    expMonth: number;
+    expYear: number;
     id: number | undefined;
 }
 

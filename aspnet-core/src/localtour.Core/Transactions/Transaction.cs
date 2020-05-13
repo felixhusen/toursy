@@ -15,12 +15,20 @@ namespace localtour.Transactions
         [ForeignKey("BookingId")]
         public Booking BookingFk { get; set; }
 
+        public virtual string NameOnCard { get; set; }
+
         public virtual decimal Amount { get; set; }
 
         public virtual string CardNumber { get; set; }
 
         public virtual string CVCCode { get; set; }
 
+        public virtual int ExpMonth { get; set; }
+
+        public virtual int ExpYear { get; set; }
+
         public virtual DateTime? TransactionDate { get; set; }
+
+        public virtual string Status { get; set; }
     }
 }

@@ -6,6 +6,7 @@ using localtour.Authorization;
 using localtour.Requests.Dto;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Linq;
 using System.Linq.Dynamic.Core;
 using System.Threading.Tasks;
@@ -37,7 +38,9 @@ namespace localtour.Requests
                                {
                                    Id = o.Id,
                                    TourId = o.TourId,
-                                   Description = o.Description
+                                   Description = o.Description,
+                                   Status = o.Status,
+                                   Date = o.Date
                                }
                            };
 
@@ -89,6 +92,9 @@ namespace localtour.Requests
         {
             var request = ObjectMapper.Map<Request>(input);
 
+            request.Status = "Pending";
+
+            request.Date = DateTime.Now;
 
             if (AbpSession.TenantId != null)
             {
@@ -103,7 +109,10 @@ namespace localtour.Requests
         protected virtual async Task Update(CreateOrEditRequestDto input)
         {
             var request = await _requestRepository.FirstOrDefaultAsync((int)input.Id);
+            
             ObjectMapper.Map(input, request);
+
+            request.Date = DateTime.Now;
         }
 
         [AbpAuthorize(PermissionNames.Pages_Request_Delete)]

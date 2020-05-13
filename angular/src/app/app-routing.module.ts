@@ -47,7 +47,7 @@ import { CreateTransactionComponent } from "./transactions/create-transaction/cr
             canActivate: [AppRouteGuard],
           },
           {
-            path: "bookings/create-booking",
+            path: "bookings/create-booking/:id",
             component: CreateBookingComponent,
             canActivate: [AppRouteGuard],
           },
@@ -72,7 +72,7 @@ import { CreateTransactionComponent } from "./transactions/create-transaction/cr
             canActivate: [AppRouteGuard],
           },
           {
-            path: "transactions/create-transaction",
+            path: "transactions/create-transaction/:id",
             component: CreateTransactionComponent,
             canActivate: [AppRouteGuard],
           },

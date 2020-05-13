@@ -3,12 +3,11 @@ using Abp.Authorization;
 using Abp.Domain.Repositories;
 using Abp.Linq.Extensions;
 using localtour.Authorization;
+using localtour.Bookings;
+using localtour.Tours;
 using localtour.Transactions.Dto;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.IO;
 using System.Linq;
 using System.Linq.Dynamic.Core;
 using System.Threading.Tasks;
@@ -20,10 +19,14 @@ namespace localtour.Transactions
     {
         private readonly IRepository<Transaction, int> _transactionRepository;
         private readonly IWebHostEnvironment _hostEnvironment;
+        private readonly IRepository<Booking, int> _bookingRepository;
+        private readonly IRepository<Tour, int> _tourRepository;
 
-        public TransactionAppService(IRepository<Transaction, int> transactionRepository, IWebHostEnvironment hostEnvironment)
+        public TransactionAppService(IRepository<Transaction, int> transactionRepository, IRepository<Booking, int> bookingRepository, IRepository<Tour, int> tourRepository, IWebHostEnvironment hostEnvironment)
         {
             _transactionRepository = transactionRepository;
+            _bookingRepository = bookingRepository;
+            _tourRepository = tourRepository;
             _hostEnvironment = hostEnvironment;
         }
 
@@ -33,18 +36,27 @@ namespace localtour.Transactions
 
             var transactions = from o in filteredTransactions
 
-                        select new GetTransactionForViewDto()
-                        {
-                            Transaction = new TransactionDto
-                            {
-                                Id = o.Id,
-                                TransactionDate = o.TransactionDate,
-                                Amount = o.Amount,
-                                BookingId = o.BookingId,
-                                CardNumber = o.CardNumber,
-                                CVCCode = o.CVCCode
-                            }
-                        };
+                               join o1 in _bookingRepository.GetAll() on o.BookingId equals o1.Id into j1
+                               from s1 in j1.DefaultIfEmpty()
+
+                               join o2 in _tourRepository.GetAll() on s1.TourId equals o2.Id into j2
+                               from s2 in j2.DefaultIfEmpty()
+
+                               select new GetTransactionForViewDto()
+                               {
+                                   Transaction = new TransactionDto
+                                   {
+                                       Id = o.Id,
+                                       TransactionDate = o.TransactionDate,
+                                       Amount = o.Amount,
+                                       BookingId = o.BookingId,
+                                       CardNumber = o.CardNumber.Substring(o.CardNumber.Length - 4),
+                                       NameOnCard = o.NameOnCard,
+                                       Status = o.Status
+                                   },
+                                   TourName = s2.Name,
+                                   BookingCode = "B-" + s1.Id
+                               };
 
             var pagedAndFilteredTransactions = transactions
                 .OrderBy(input.Sorting ?? "Transaction.Id asc")
@@ -89,7 +101,6 @@ namespace localtour.Transactions
             }
         }
 
-        [AbpAuthorize(PermissionNames.Pages_Transaction_Create)]
         protected virtual async Task Create(CreateOrEditTransactionDto input)
         {
             var transaction = ObjectMapper.Map<Transaction>(input);
@@ -104,7 +115,6 @@ namespace localtour.Transactions
             await _transactionRepository.InsertAsync(transaction);
         }
 
-        [AbpAuthorize(PermissionNames.Pages_Transaction_Edit)]
         protected virtual async Task Update(CreateOrEditTransactionDto input)
         {
             var transaction = await _transactionRepository.FirstOrDefaultAsync((int)input.Id);

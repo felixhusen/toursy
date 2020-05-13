@@ -6,6 +6,7 @@ using localtour.Authorization;
 using localtour.Disputes.Dto;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Linq;
 using System.Linq.Dynamic.Core;
 using System.Threading.Tasks;
@@ -36,7 +37,9 @@ namespace localtour.Disputes
                                {
                                    Id = o.Id,
                                    BookingId = o.BookingId,
-                                   Description = o.Description
+                                   Description = o.Description,
+                                   Status = o.Status,
+                                   Date = o.Date
                                }
                            };
 
@@ -94,6 +97,9 @@ namespace localtour.Disputes
                 dispute.TenantId = (int?)AbpSession.TenantId;
             }
 
+            dispute.Status = "Pending";
+
+            dispute.Date = DateTime.Now;
 
             await _disputeRepository.InsertAsync(dispute);
         }
@@ -102,6 +108,7 @@ namespace localtour.Disputes
         protected virtual async Task Update(CreateOrEditDisputeDto input)
         {
             var dispute = await _disputeRepository.FirstOrDefaultAsync((int)input.Id);
+            dispute.Date = DateTime.Now;
             ObjectMapper.Map(input, dispute);
         }
 

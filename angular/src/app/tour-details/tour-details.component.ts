@@ -18,9 +18,6 @@ import { ActivatedRoute, Router } from "@angular/router";
 export class TourDetailsComponent extends AppComponentBase implements OnInit {
   public tour: GetTourForViewDto;
   public _id: number;
-  public dates: any = [
-    {}, {}
-  ]
   
   constructor(
     injector: Injector,

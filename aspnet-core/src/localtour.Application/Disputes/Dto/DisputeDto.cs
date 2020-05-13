@@ -1,7 +1,5 @@
 ﻿using Abp.Application.Services.Dto;
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace localtour.Disputes.Dto
 {
@@ -11,5 +9,9 @@ namespace localtour.Disputes.Dto
         public int? BookingId { get; set; }
 
         public string Description { get; set; }
+
+        public string Status { get; set; }
+
+        public DateTime? Date { get; set; }
     }
 }

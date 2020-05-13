@@ -16,5 +16,9 @@ namespace localtour.Requests
         public Tour TourFk { get; set; }
 
         public virtual string Description { get; set; }
+
+        public virtual string Status { get; set; }
+
+        public virtual DateTime? Date { get; set; }
     }
 }

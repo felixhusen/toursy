@@ -1370,6 +1370,13 @@ amdefine@>=0.0.4:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/amdefine/-/amdefine-1.0.1.tgz#4a5282ac164729e93619bcfd3ad151f817ce91f5"
 
+angular-bootstrap-datetimepicker@^4.0.2:
+  version "4.0.2"
+  resolved "https://registry.yarnpkg.com/angular-bootstrap-datetimepicker/-/angular-bootstrap-datetimepicker-4.0.2.tgz#28563fd17c461a26b59d4e21b31f5146a4e3d53c"
+  integrity sha512-FEhPbpVszPKw5CUSyk/QKWsTlsGPC6KS2MQawVr4LfQN/foOaGM3hvw6mMl0ASrAZtikcsFa5h2cA5GLJMPZBg==
+  dependencies:
+    tslib "^1.9.0"
+
 angular-file-uploader@^5.0.2:
   version "5.0.2"
   resolved "https://registry.yarnpkg.com/angular-file-uploader/-/angular-file-uploader-5.0.2.tgz#68d893b6a98b6e19dc694460617aeb7b885a169f"
@@ -5604,6 +5611,11 @@ onetime@^5.1.0:
   integrity sha512-5NcSkPHhwTVFIQN+TUqXoS5+dlElHXdpAWu9I0HP20YOtIi+aZ0Ct82jdlILDxjLEAWwvm+qj1m6aEtsDVmm6Q==
   dependencies:
     mimic-fn "^2.1.0"
+
+open-iconic@^1.1.1:
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/open-iconic/-/open-iconic-1.1.1.tgz#9dcfc8c7cd3c61cdb4a236b1a347894c97adc0c6"
+  integrity sha1-nc/Ix808Yc20ojaxo0eJTJetwMY=
 
 open@6.4.0:
   version "6.4.0"

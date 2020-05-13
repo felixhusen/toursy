@@ -14,14 +14,12 @@ namespace localtour.Tours.Dto
 
         public string Description { get; set; }
 
-        public DateTime StartDate { get; set; }
-
-        public DateTime EndDate { get; set; }
-
         public string Longitude { get; set; }
 
         public string Latitude { get; set; }
 
         public long? UserId { get; set; }
+
+        public string LocationName { get; set; }
     }
 }

@@ -10,9 +10,11 @@ import {
   CreateOrEditTourDto,
   TourServiceProxy,
   GetTourForEditOutput,
+  TourDateDto,
 } from "@shared/service-proxies/service-proxies";
 import { AppConsts } from "@shared/AppConsts";
 import { HttpClient } from "@angular/common/http";
+import * as moment from "moment";
 
 @Component({
   templateUrl: "./create-or-edit-tour-dialog.component.html",
@@ -29,10 +31,12 @@ import { HttpClient } from "@angular/common/http";
 })
 export class CreateOrEditTourDialogComponent extends AppComponentBase
   implements OnInit {
-  saving = false;
-  tour: GetTourForEditOutput = new GetTourForEditOutput();
-
-  title: string = "Create New Tour";
+  public saving = false;
+  public tour: GetTourForEditOutput = new GetTourForEditOutput();
+  public tourDates: TourDateDto[] = [];
+  public startDate: moment.Moment;
+  public endDate: moment.Moment;
+  public title: string = "Create New Tour";
 
   @ViewChild('imageUpload', { static: false }) imageUpload: ElementRef;
 
@@ -51,7 +55,16 @@ export class CreateOrEditTourDialogComponent extends AppComponentBase
   public getTour(): void {
     this._tourService.getTourForEdit(this._id).subscribe((result) => {
       this.tour = result;
+      this.tourDates = this.tour.tourDates;
     });
+  }
+
+  public addDate(): void {
+    const newDate = new TourDateDto();
+    newDate.startDate = this.startDate;
+    newDate.endDate = this.endDate;
+    if (this._id) newDate.tourId = this._id;
+    this.tourDates.push(newDate);
   }
 
   public uploadTourPicture(event: any): void {
@@ -65,7 +78,7 @@ export class CreateOrEditTourDialogComponent extends AppComponentBase
       AppConsts.remoteServiceBaseUrl +
       "/api/services/app/Tour/UploadTourPicture";
 
-    if (this._id) url_ = "?TourId=" + this._id;
+    if (this._id) url_ += "?TourId=" + this._id;
 
     this._httpClient
       .post<any>(url_, formData)
@@ -120,6 +133,12 @@ export class CreateOrEditTourDialogComponent extends AppComponentBase
             tourPicture.tourId = result.id;
             this._tourService.updateTourPicture(tourPicture).subscribe(() => {});
           }
+        }
+
+        for (let tourDate of this.tourDates) {
+          if (!tourDate.tourId) tourDate.tourId = result.id;
+          console.log(tourDate)
+          this._tourService.createOrEditTourDate(tourDate).subscribe(() => {})
         }
 
         this.notify.info(this.l("SavedSuccessfully"));

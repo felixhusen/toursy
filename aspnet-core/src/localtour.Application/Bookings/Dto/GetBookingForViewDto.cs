@@ -10,6 +10,8 @@ namespace localtour.Bookings.Dto
 
         public string TourName { get; set; }
 
+        public string BookingCode { get; set; }
+
         public string UserFullName { get; set; }
 
         public string StateCode { get; set; }

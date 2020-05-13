@@ -17,7 +17,7 @@ namespace localtour.Bookings
 
         Task<GetBookingForEditOutput> GetBookingForEdit(EntityDto input);
 
-        Task CreateOrEdit(CreateOrEditBookingDto input);
+        Task<BookingDto> CreateOrEdit(CreateOrEditBookingDto input);
 
         Task Delete(EntityDto input);
     }
