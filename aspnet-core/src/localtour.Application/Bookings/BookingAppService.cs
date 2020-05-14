@@ -85,6 +85,13 @@ namespace localtour.Bookings
             );
         }
 
+        public async Task RequestCancelBooking(int id)
+        {
+            var booking = await _bookingRepository.GetAsync(id);
+
+            booking.Status = "Cancellation Requested";
+        }
+
         public async Task<GetBookingForViewDto> GetBookingForView(int id)
         {
             var booking = await _bookingRepository.GetAsync(id);

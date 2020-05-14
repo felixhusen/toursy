@@ -3,7 +3,10 @@ using Abp.Authorization;
 using Abp.Domain.Repositories;
 using Abp.Linq.Extensions;
 using localtour.Authorization;
+using localtour.Authorization.Users;
+using localtour.Bookings;
 using localtour.Disputes.Dto;
+using localtour.Tours;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -18,11 +21,17 @@ namespace localtour.Disputes
     {
         private readonly IRepository<Dispute, int> _disputeRepository;
         private readonly IWebHostEnvironment _hostEnvironment;
+        private readonly IRepository<Tour, int> _tourRepository;
+        private readonly IRepository<User, long> _userRepository;
+        private readonly IRepository<Booking, int> _bookingRepository;
 
-        public DisputeAppService(IRepository<Dispute, int> disputeRepository, IWebHostEnvironment hostEnvironment)
+        public DisputeAppService(IRepository<Dispute, int> disputeRepository, IWebHostEnvironment hostEnvironment, IRepository<Tour, int> tourRepository, IRepository<User, long> userRepository, IRepository<Booking, int> bookingRepository)
         {
             _disputeRepository = disputeRepository;
             _hostEnvironment = hostEnvironment;
+            _tourRepository = tourRepository;
+            _userRepository = userRepository;
+            _bookingRepository = bookingRepository;
         }
 
         public async Task<PagedResultDto<GetDisputeForViewDto>> GetAll(GetAllDisputesInput input)
@@ -30,6 +39,10 @@ namespace localtour.Disputes
             var filteredDisputes = _disputeRepository.GetAll().WhereIf(!string.IsNullOrWhiteSpace(input.Query), e => false || e.Description.Contains(input.Query));
 
             var disputes = from o in filteredDisputes
+
+                           join booking in _bookingRepository.GetAll() on o.BookingId equals booking.Id
+                           join tour in _tourRepository.GetAll() on booking.TourId equals tour.Id
+                           join user in _userRepository.GetAll() on booking.UserId equals user.Id
 
                            select new GetDisputeForViewDto()
                            {
@@ -40,7 +53,10 @@ namespace localtour.Disputes
                                    Description = o.Description,
                                    Status = o.Status,
                                    Date = o.Date
-                               }
+                               },
+                               BookingCode = "B-" + booking.Id,
+                               TourName = tour.Name,
+                               UserFullName = user.FullName
                            };
 
             var pagedAndFilteredDisputes = disputes

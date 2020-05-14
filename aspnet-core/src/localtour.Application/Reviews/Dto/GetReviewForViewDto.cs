@@ -7,5 +7,9 @@ namespace localtour.Reviews.Dto
     public class GetReviewForViewDto
     {
         public ReviewDto Review { get; set; }
+
+        public string TourName { get; set; }
+
+        public string UserFullName { get; set; }
     }
 }

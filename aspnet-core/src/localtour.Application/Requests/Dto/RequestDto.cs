@@ -5,7 +5,6 @@ namespace localtour.Requests.Dto
 {
     public class RequestDto : EntityDto
     {
-
         public int TourId { get; set; }
 
         public string Description { get; set; }

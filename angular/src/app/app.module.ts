@@ -15,6 +15,7 @@ import { ServiceProxyModule } from '@shared/service-proxies/service-proxy.module
 import { SharedModule } from '@shared/shared.module';
 import { AngularFileUploaderModule } from "angular-file-uploader";
 import {TableModule} from 'primeng/table';
+import {PaginatorModule} from 'primeng/paginator';
 
 import { HomeComponent } from '@app/home/home.component';
 import { AboutComponent } from '@app/about/about.component';
@@ -117,6 +118,7 @@ import { DisputesComponent } from './disputes/disputes.component';
     TableModule,
     DlDateTimeDateModule,  // <--- Determines the data type of the model
     DlDateTimePickerModule,
+    PaginatorModule
   ],
   providers: [],
   entryComponents: [

@@ -3,12 +3,12 @@ using Abp.Authorization;
 using Abp.Domain.Repositories;
 using Abp.Linq.Extensions;
 using localtour.Authorization;
+using localtour.Authorization.Users;
+using localtour.Bookings;
 using localtour.Reviews.Dto;
+using localtour.Tours;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.IO;
 using System.Linq;
 using System.Linq.Dynamic.Core;
 using System.Threading.Tasks;
@@ -20,11 +20,17 @@ namespace localtour.Reviews
     {
         private readonly IRepository<Review, int> _reviewRepository;
         private readonly IWebHostEnvironment _hostEnvironment;
+        private readonly IRepository<Tour, int> _tourRepository;
+        private readonly IRepository<User, long> _userRepository;
+        private readonly IRepository<Booking, int> _bookingRepository;
 
-        public ReviewAppService(IRepository<Review, int> reviewRepository, IWebHostEnvironment hostEnvironment)
+        public ReviewAppService(IRepository<Review, int> reviewRepository, IWebHostEnvironment hostEnvironment, IRepository<Tour, int> tourRepository, IRepository<User, long> userRepository, IRepository<Booking, int> bookingRepository)
         {
             _reviewRepository = reviewRepository;
             _hostEnvironment = hostEnvironment;
+            _tourRepository = tourRepository;
+            _userRepository = userRepository;
+            _bookingRepository = bookingRepository;
         }
 
         public async Task<PagedResultDto<GetReviewForViewDto>> GetAll(GetAllReviewsInput input)
@@ -34,18 +40,23 @@ namespace localtour.Reviews
 
             var reviews = from o in filteredReviews
 
-                        select new GetReviewForViewDto()
-                        {
-                            Review = new ReviewDto
-                            {
-                                Id = o.Id,
-                                DatePosted = o.DatePosted,
-                                Description = o.Description,
-                                Rating = o.Rating,
-                                TourId = o.TourId,
-                                UserId = o.UserId
-                            }
-                        };
+                          join o1 in _tourRepository.GetAll() on o.TourId equals o1.Id
+                          join o2 in _userRepository.GetAll() on o.UserId equals o2.Id
+
+                          select new GetReviewForViewDto()
+                          {
+                              Review = new ReviewDto
+                              {
+                                  Id = o.Id,
+                                  DatePosted = o.DatePosted,
+                                  Description = o.Description,
+                                  Rating = o.Rating,
+                                  TourId = o.TourId,
+                                  UserId = o.UserId
+                              },
+                              TourName = o1.Name,
+                              UserFullName = o2.FullName
+                          };
 
             var pagedAndFilteredReviews = reviews
                 .OrderBy(input.Sorting ?? "Review.Id asc")

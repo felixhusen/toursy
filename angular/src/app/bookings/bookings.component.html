@@ -39,9 +39,10 @@
                 <td>{{item.booking.totalPrice | currency}}</td>
                 <td>
                     <button mat-icon-button color="primary"><mat-icon>edit</mat-icon></button>
-                    <button mat-icon-button color="accent"><mat-icon>delete</mat-icon></button>
+                    <button mat-icon-button color="accent" (click)="requestCancelBooking(item.booking.id)"><mat-icon>delete</mat-icon></button>
                 </td>
             </tr>
         </ng-template>
     </p-table>
+    <p-paginator [rows]="maxResultCount" [totalRecords]="totalCount" [rowsPerPageOptions]="maxResultCountOptions" (onPageChange)="paginate($event)"></p-paginator>
 </div>

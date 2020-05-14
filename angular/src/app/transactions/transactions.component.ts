@@ -48,6 +48,14 @@ export class TransactionsComponent extends AppComponentBase implements OnInit {
       });
   }
 
+  public paginate(event: any) {
+    this.maxResultCount = event.rows;
+    this.skipCount = this.maxResultCount * event.page;
+    console.log("Skip Count: " + this.skipCount);
+    console.log(event);
+    this.getTransactions();
+  }
+
   ngOnInit(): void {
     this.getTransactions();
   }

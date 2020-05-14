@@ -31,10 +31,11 @@
                 <td>{{item.tourName}}</td>
                 <td>{{item.transaction.cardNumber}}</td>
                 <td>{{item.transaction.nameOnCard}}</td>
-                <td>{{item.transaction.transactionDate}}</td>
+                <td>{{item.transaction.transactionDate | date}}</td>
                 <td>{{item.transaction.status}}</td>
                 <td>{{item.transaction.amount | currency}}</td>
             </tr>
         </ng-template>
     </p-table>
+    <p-paginator [rows]="maxResultCount" [totalRecords]="totalCount" [rowsPerPageOptions]="maxResultCountOptions" (onPageChange)="paginate($event)"></p-paginator>
 </div>

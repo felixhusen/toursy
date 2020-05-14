@@ -31,6 +31,14 @@ export class RequestsComponent extends AppComponentBase implements OnInit {
     super(injector);
   }
 
+  public paginate(event: any) {
+    this.maxResultCount = event.rows;
+    this.skipCount = this.maxResultCount * event.page;
+    console.log("Skip Count: " + this.skipCount);
+    console.log(event);
+    this.getRequests();
+  }
+
   public getRequests(event?: any): void {
     if (event) {
       this.pageEvent = event;

@@ -226,6 +226,58 @@ export class BookingServiceProxy {
      * @param id (optional) 
      * @return Success
      */
+    requestCancelBooking(id: number | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/app/Booking/RequestCancelBooking?";
+        if (id === null)
+            throw new Error("The parameter 'id' cannot be null.");
+        else if (id !== undefined)
+            url_ += "id=" + encodeURIComponent("" + id) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processRequestCancelBooking(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processRequestCancelBooking(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processRequestCancelBooking(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+
+    /**
+     * @param id (optional) 
+     * @return Success
+     */
     getBookingForView(id: number | undefined): Observable<GetBookingForViewDto> {
         let url_ = this.baseUrl + "/api/services/app/Booking/GetBookingForView?";
         if (id === null)
@@ -4503,6 +4555,9 @@ export interface IDisputeDto {
 
 export class GetDisputeForViewDto implements IGetDisputeForViewDto {
     dispute: DisputeDto;
+    bookingCode: string | undefined;
+    tourName: string | undefined;
+    userFullName: string | undefined;
 
     constructor(data?: IGetDisputeForViewDto) {
         if (data) {
@@ -4516,6 +4571,9 @@ export class GetDisputeForViewDto implements IGetDisputeForViewDto {
     init(data?: any) {
         if (data) {
             this.dispute = data["dispute"] ? DisputeDto.fromJS(data["dispute"]) : <any>undefined;
+            this.bookingCode = data["bookingCode"];
+            this.tourName = data["tourName"];
+            this.userFullName = data["userFullName"];
         }
     }
 
@@ -4529,6 +4587,9 @@ export class GetDisputeForViewDto implements IGetDisputeForViewDto {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["dispute"] = this.dispute ? this.dispute.toJSON() : <any>undefined;
+        data["bookingCode"] = this.bookingCode;
+        data["tourName"] = this.tourName;
+        data["userFullName"] = this.userFullName;
         return data; 
     }
 
@@ -4542,6 +4603,9 @@ export class GetDisputeForViewDto implements IGetDisputeForViewDto {
 
 export interface IGetDisputeForViewDto {
     dispute: DisputeDto;
+    bookingCode: string | undefined;
+    tourName: string | undefined;
+    userFullName: string | undefined;
 }
 
 export class GetDisputeForViewDtoPagedResultDto implements IGetDisputeForViewDtoPagedResultDto {
@@ -4754,6 +4818,9 @@ export interface IRequestDto {
 
 export class GetRequestForViewDto implements IGetRequestForViewDto {
     request: RequestDto;
+    tourName: string | undefined;
+    userFullName: string | undefined;
+    bookingCode: string | undefined;
 
     constructor(data?: IGetRequestForViewDto) {
         if (data) {
@@ -4767,6 +4834,9 @@ export class GetRequestForViewDto implements IGetRequestForViewDto {
     init(data?: any) {
         if (data) {
             this.request = data["request"] ? RequestDto.fromJS(data["request"]) : <any>undefined;
+            this.tourName = data["tourName"];
+            this.userFullName = data["userFullName"];
+            this.bookingCode = data["bookingCode"];
         }
     }
 
@@ -4780,6 +4850,9 @@ export class GetRequestForViewDto implements IGetRequestForViewDto {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["request"] = this.request ? this.request.toJSON() : <any>undefined;
+        data["tourName"] = this.tourName;
+        data["userFullName"] = this.userFullName;
+        data["bookingCode"] = this.bookingCode;
         return data; 
     }
 
@@ -4793,6 +4866,9 @@ export class GetRequestForViewDto implements IGetRequestForViewDto {
 
 export interface IGetRequestForViewDto {
     request: RequestDto;
+    tourName: string | undefined;
+    userFullName: string | undefined;
+    bookingCode: string | undefined;
 }
 
 export class GetRequestForViewDtoPagedResultDto implements IGetRequestForViewDtoPagedResultDto {
@@ -5009,6 +5085,8 @@ export interface IReviewDto {
 
 export class GetReviewForViewDto implements IGetReviewForViewDto {
     review: ReviewDto;
+    tourName: string | undefined;
+    userFullName: string | undefined;
 
     constructor(data?: IGetReviewForViewDto) {
         if (data) {
@@ -5022,6 +5100,8 @@ export class GetReviewForViewDto implements IGetReviewForViewDto {
     init(data?: any) {
         if (data) {
             this.review = data["review"] ? ReviewDto.fromJS(data["review"]) : <any>undefined;
+            this.tourName = data["tourName"];
+            this.userFullName = data["userFullName"];
         }
     }
 
@@ -5035,6 +5115,8 @@ export class GetReviewForViewDto implements IGetReviewForViewDto {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["review"] = this.review ? this.review.toJSON() : <any>undefined;
+        data["tourName"] = this.tourName;
+        data["userFullName"] = this.userFullName;
         return data; 
     }
 
@@ -5048,6 +5130,8 @@ export class GetReviewForViewDto implements IGetReviewForViewDto {
 
 export interface IGetReviewForViewDto {
     review: ReviewDto;
+    tourName: string | undefined;
+    userFullName: string | undefined;
 }
 
 export class GetReviewForViewDtoPagedResultDto implements IGetReviewForViewDtoPagedResultDto {

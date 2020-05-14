@@ -21,7 +21,7 @@ export class BookingsComponent extends AppComponentBase implements OnInit {
   public maxResultCount: number = 5;
   public skipCount: number = 0;
   public sort: string;
-  public maxResultCountOptions: number[] = [1, 5, 10, 25, 100];
+  public maxResultCountOptions: number[] = [5, 10, 25, 100];
   public pageEvent: PageEvent;
   public displayedColumns: string[] = ['booking.tourId', 'booking.userId', 'booking.address', 'booking.promoCode', 'booking.numberOfPeople', 'booking.totalPrice'];
 
@@ -47,6 +47,18 @@ export class BookingsComponent extends AppComponentBase implements OnInit {
         console.log("Result")
         console.log(this.bookings)
       });
+  }
+
+  public requestCancelBooking(id: number) {
+    const booking = this.bookings.find(e => e.booking.id == id);
+  }
+
+  public paginate(event: any) {
+    this.maxResultCount = event.rows;
+    this.skipCount = this.maxResultCount * event.page;
+    console.log("Skip Count: " + this.skipCount);
+    console.log(event);
+    this.getBookings();
   }
 
   ngOnInit(): void {
