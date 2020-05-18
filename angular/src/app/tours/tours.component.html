@@ -1,0 +1,71 @@
+<div [@routerTransition]>
+    <div class="row">
+        <div class="col-sm-8">
+            <h3 class="page-title mb-3">{{title}}</h3>
+
+        </div>
+        <div class="col-sm-4 text-right">
+            <button mat-mini-fab color="primary" [matMenuTriggerFor]="menu" class="mr-2">
+                <mat-icon>filter_list</mat-icon>
+            </button>
+            <mat-menu #menu="matMenu">
+                <button mat-menu-item (click)="toggleAllTours()">All Tours</button>
+                <button mat-menu-item (click)="toggleMyTours()">My Tours</button>
+                <button mat-menu-item [routerLink]="['/app/bookings/']" routerLinkActive="active">Booked Tours</button>
+            </mat-menu>
+            <button mat-mini-fab color="primary" (click)="createTour()">
+                <mat-icon>add</mat-icon>
+            </button>
+        </div>
+    </div>
+
+    <mat-card class="mb-3" style="padding: 0px;">
+        <form (submit)="getTours()">
+            <mat-form-field appearance="outline" class="mat-search-bar">
+                <input matInput placeholder="{{l('Search')}}" [(ngModel)]="nameFilter" name="NameFilter">
+                <button mat-icon-button matSuffix color="primary" aria-label="Search" type="submit">
+                    <mat-icon>search</mat-icon>
+                </button>
+            </mat-form-field>
+        </form>
+    </mat-card>
+
+    <div class="row" *ngIf="tours">
+        <div class="col-xs-12 col-sm-6 col-md-4 col-lg-4 mb-3" *ngFor="let item of tours">
+            <mat-card>
+                <img mat-card-image [src]="item.tourPictures.length > 0 ? item.tourPictures[0].link : defaultImageLink"
+                    alt="{{item.tour.name}}" class="tour-image">
+                <mat-card-content>
+                    <p>
+                        <i class="las la-calendar"></i>
+                        <span *ngIf="item.tourDates.length > 0; else noDate;">
+                            {{item.tourDates[item.tourDates.length - 1].startDate | date:'dd/MM/yyyy'}}</span>
+                        <ng-template #noDate><span> Unavailable</span></ng-template>
+                    </p>
+                    <p>
+                        <i class="las la-map-marker"></i>
+                        {{item.tour.locationName}}
+                    </p>
+                    <mat-card-title class="text-truncate">{{item.tour.name}}</mat-card-title>
+                    <mat-card-subtitle class="text-truncate">{{item.tour.price | currency:'AUD':'symbol-narrow'}}
+                    </mat-card-subtitle>
+                    <p class="text-truncate">{{item.tour.description}}</p>
+                </mat-card-content>
+                <mat-card-actions>
+                    <button mat-button color="primary" [routerLink]="['/app/bookings/create-booking/' + item.tour.id]"
+                        routerLinkActive="active" [disabled]="item.tourDates.length == 0">{{l("Book")}}</button>
+                    <button mat-button color="primary" [routerLink]="[item.tour.id]"
+                        routerLinkActive="active">{{l("Details")}}</button>
+                    <button mat-button color="accent" (click)="editTour(item.tour.id)"
+                        *ngIf="item.tour.userId == this.userId">{{l("Edit")}}</button>
+                </mat-card-actions>
+            </mat-card>
+        </div>
+    </div>
+
+    <mat-card class="mb-3">
+        <mat-paginator [length]="totalCount" [pageSize]="maxResultCount" [pageSizeOptions]="maxResultCountOptions"
+            (page)="this.getTours($event)">
+        </mat-paginator>
+    </mat-card>
+</div>

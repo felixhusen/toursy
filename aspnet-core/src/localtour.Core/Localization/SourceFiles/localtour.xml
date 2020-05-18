@@ -105,5 +105,18 @@
     <text name="RoleDeleteWarningMessage">Role {0} will be deleted and unassigned from all assigned users.</text>
     <text name="TenantDeleteWarningMessage">Tenant {0} will be deleted.</text>
     <text name="SearchWithThreeDot">Search...</text>
+    <text name="Tours">Tours</text>
+    <text name="Tour">Tour</text>
+    <text name="Bookings">Bookings</text>
+    <text name="Booking">Booking</text>
+    <text name="Transactions">Transactions</text>
+    <text name="Transaction">Transaction</text>
+    <text name="Disputes">Disputes</text>
+    <text name="Dispute">Dispute</text>
+    <text name="Requests">Requests</text>
+    <text name="Request">Request</text>
+    <text name="Reviews">Reviews</text>
+    <text name="Review">Review</text>
+    <text name="Dashboard">Dashboard</text>
   </texts>
 </localizationDictionary>

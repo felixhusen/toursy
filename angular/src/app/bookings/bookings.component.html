@@ -1,0 +1,48 @@
+<div [@routerTransition]>
+
+    <h3 class="page-title mb-3">Bookings</h3>
+
+    <mat-card class="mb-3" style="padding: 0px;">
+        <form (submit)="getBookings()">
+            <mat-form-field appearance="outline" class="mat-search-bar">
+                <input matInput placeholder="{{l('Search')}}" [(ngModel)]="nameFilter" name="NameFilter">
+                <button mat-icon-button matSuffix color="primary" aria-label="Search" type="submit">
+                    <mat-icon>search</mat-icon>
+                </button>
+            </mat-form-field>
+        </form>
+    </mat-card>
+
+    <p-table [value]="bookings" styleClass="ui-table-customers">
+        <ng-template pTemplate="header">
+            <tr>
+                <th>Booking Number</th>
+                <th>Tour</th>
+                <th>Name</th>
+                <th>Phone Number</th>
+                <th>Number of People</th>
+                <th>Status</th>
+                <th>Total Price</th>
+                <th>Action</th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-item>
+            <tr>
+                <td>
+                    <button mat-flat-button color="primary">{{item.booking.id}}</button>
+                </td>
+                <td>{{item.tourName}}</td>
+                <td>{{item.booking.name}}</td>
+                <td>{{item.booking.phoneNumber}}</td>
+                <td>{{item.booking.numberOfPeople}} person(s)</td>
+                <td>{{item.booking.status}}</td>
+                <td>{{item.booking.totalPrice | currency}}</td>
+                <td>
+                    <button mat-icon-button color="primary"><mat-icon>edit</mat-icon></button>
+                    <button mat-icon-button color="accent" (click)="requestCancelBooking(item.booking.id)"><mat-icon>delete</mat-icon></button>
+                </td>
+            </tr>
+        </ng-template>
+    </p-table>
+    <p-paginator [rows]="maxResultCount" [totalRecords]="totalCount" [rowsPerPageOptions]="maxResultCountOptions" (onPageChange)="paginate($event)"></p-paginator>
+</div>

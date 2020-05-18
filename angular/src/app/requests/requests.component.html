@@ -1,0 +1,39 @@
+<div [@routerTransition]>
+
+    <h3 class="page-title mb-3">Requests</h3>
+
+    <mat-card class="mb-3" style="padding: 0px;">
+        <form (submit)="getRequests()">
+            <mat-form-field appearance="outline" class="mat-search-bar">
+                <input matInput placeholder="{{l('Search')}}" [(ngModel)]="searchQuery" name="SearchQuery">
+                <button mat-icon-button matSuffix color="primary" aria-label="Search" type="submit">
+                    <mat-icon>search</mat-icon>
+                </button>
+            </mat-form-field>
+        </form>
+    </mat-card>
+
+    <p-table [value]="requests" styleClass="ui-table-customers">
+        <ng-template pTemplate="header">
+            <tr>
+                <th>Request ID</th>
+                <th>Tour</th>
+                <th>User</th>
+                <th>Description</th>
+                <th>Date</th>
+                <th>Status</th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-item>
+            <tr>
+                <td><button mat-flat-button color="primary">{{item.request.id}}</button></td>
+                <td>{{item.tourName}}</td>
+                <td>{{item.userFullName}}</td>
+                <td>{{item.request.description}}</td>
+                <td>{{item.request.date | date}}</td>
+                <td>{{item.request.status}}</td>
+            </tr>
+        </ng-template>
+    </p-table>
+    <p-paginator [rows]="maxResultCount" [totalRecords]="totalCount" [rowsPerPageOptions]="maxResultCountOptions" (onPageChange)="paginate($event)"></p-paginator>
+</div>

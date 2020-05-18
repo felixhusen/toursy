@@ -1,0 +1,145 @@
+<div [@routerTransition]>
+
+    <mat-card class="pa-3 mb-3">
+        <mat-horizontal-stepper [linear]="isLinear" #stepper>
+            <mat-step>
+                <form #bookingForm="ngForm" (ngSubmit)="submitBooking()">
+                    <ng-template matStepLabel>Booking Information</ng-template>
+
+                    <h3 class="header-title">Booking Information</h3>
+
+                    <mat-form-field appearance="fill">
+                        <mat-label>Name</mat-label>
+                        <input matInput type="text" name="Name" [(ngModel)]="booking.name" required>
+                    </mat-form-field>
+
+                    <mat-form-field appearance="fill">
+                        <mat-label>Email</mat-label>
+                        <input matInput type="email" name="Email" [(ngModel)]="booking.email" required>
+                    </mat-form-field>
+
+                    <mat-form-field appearance="fill">
+                        <mat-label>Phone number</mat-label>
+                        <input matInput type="tel" min="0" step="1" name="PhoneNumber" [(ngModel)]="booking.phoneNumber"
+                            required>
+                    </mat-form-field>
+
+                    <mat-form-field appearance="fill">
+                        <mat-label>Address</mat-label>
+                        <input matInput type="text" name="Address" [(ngModel)]="booking.address" required>
+                    </mat-form-field>
+
+                    <div class="row">
+                        <div class="col-xs-12 col-md-6">
+                            <mat-form-field appearance="fill">
+                                <mat-label>Suburb</mat-label>
+                                <input matInput type="text" name="Suburb" [(ngModel)]="booking.suburb" required>
+                            </mat-form-field>
+                        </div>
+                        <div class="col-xs-12 col-md-6">
+                            <mat-form-field appearance="fill">
+                                <mat-label>State</mat-label>
+                                <mat-select [(ngModel)]="booking.stateId" name="State">
+                                    <mat-option value="1">NSW</mat-option>
+                                    <mat-option value="2">VIC</mat-option>
+                                    <mat-option value="3">QLD</mat-option>
+                                    <mat-option value="4">WA</mat-option>
+                                    <mat-option value="5">NT</mat-option>
+                                    <mat-option value="6">TAS</mat-option>
+                                    <mat-option value="7">SA</mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </div>
+                    </div>
+
+                    <mat-form-field appearance="fill">
+                        <mat-label>Postcode</mat-label>
+                        <input matInput type="number" min="0" step="1" name="PostCode" [(ngModel)]="booking.postCode"
+                            required>
+                    </mat-form-field>
+
+                    <mat-form-field appearance="fill">
+                        <mat-label>Number Of People</mat-label>
+                        <input matInput type="number" min="0" step="1" name="NumberOfPeople"
+                            [(ngModel)]="booking.numberOfPeople" placeholder="Number of people" required>
+                    </mat-form-field>
+
+                    <mat-form-field appearance="fill">
+                        <mat-label>Promo Code</mat-label>
+                        <input matInput type="text" name="PromoCode" [(ngModel)]="booking.promoCode">
+                    </mat-form-field>
+
+                    <div *ngIf="tour">
+                        <h3 class="header-title">Tour Information</h3>
+                        <img [src]="tour.tourPictures[0].link" alt="tour.tour.name" class="tour-preview-image" />
+                        <h4 class="header-title">{{tour.tour.name}}</h4>
+                        <p class="mb-3">{{tour.tour.description}}</p>
+                        <h4 class="header-title">Total Price: {{(tour.tour.price * booking.numberOfPeople) | currency}}
+                        </h4>
+                    </div>
+
+                    <button mat-flat-button matStepperNext type="submit" color="primary"
+                        [disabled]="!bookingForm.form.valid">Submit</button>
+
+                </form>
+            </mat-step>
+            <mat-step>
+                <form #transactionForm="ngForm" (ngSubmit)="submitTransaction()">
+                    <ng-template matStepLabel>Payment Information</ng-template>
+                    <div *ngIf="tour">
+                        <h3 class="header-title">Payment Information</h3>
+                        <h4 class="header-title">Price: {{tour.tour.price | currency}} per person</h4>
+                        <p class="mb-3">If you wish to make a negotiation for this tour, click here</p>
+                        <p class="mb-3">Persons attending: {{booking.numberOfPeople}}</p>
+                        <h4 class="header-title">Amount Due: {{transaction.amount | currency}}</h4>
+                        <p class="mb-3">Please complete the payment form</p>
+                    </div>
+
+                    <mat-form-field appearance="fill">
+                        <mat-label>Card Number</mat-label>
+                        <input matInput type="text" name="CardNumber" [(ngModel)]="transaction.cardNumber" required>
+                    </mat-form-field>
+
+                    <mat-form-field appearance="fill">
+                        <mat-label>Name on card</mat-label>
+                        <input matInput type="text" name="NameOnCard" [(ngModel)]="transaction.nameOnCard" required>
+                    </mat-form-field>
+
+                    <div class="row">
+                        <div class="col-xs-12 col-md-6">
+                            <mat-form-field appearance="fill">
+                                <mat-label>Exp Month</mat-label>
+                                <input matInput type="text" name="ExpMonth" [(ngModel)]="transaction.expMonth" required>
+                            </mat-form-field>
+                        </div>
+                        <div class="col-xs-12 col-md-6">
+                            <mat-form-field appearance="fill">
+                                <mat-label>Exp year</mat-label>
+                                <input matInput type="text" name="ExpYear" [(ngModel)]="transaction.expYear" required>
+                            </mat-form-field>
+                        </div>
+                    </div>
+
+                    <mat-form-field appearance="fill">
+                        <mat-label>CVC</mat-label>
+                        <input matInput type="number" name="CVCCode" [(ngModel)]="transaction.CVCCode" required>
+                    </mat-form-field>
+
+                    <button mat-flat-button matStepperNext color="primary" type="submit"
+                        [disabled]="!transactionForm.form.valid">Complete Payment</button>
+                </form>
+            </mat-step>
+            <mat-step>
+                <ng-template matStepLabel>Done</ng-template>
+                <div class="text-center">
+                    <h3 class="header-title">Thank You.</h3>
+                    <p class="mb-3">Your booking has been successfully procceed. A confirmation email will be sent to
+                        {{booking.email}} shortly.</p>
+                    <button mat-raised-button type="button" [routerLink]="['/app/bookings/']"
+                        routerLinkActive="active">Okay</button>
+                </div>
+
+            </mat-step>
+        </mat-horizontal-stepper>
+    </mat-card>
+</div>

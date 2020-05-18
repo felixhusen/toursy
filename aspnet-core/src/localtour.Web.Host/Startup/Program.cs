@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
+using System.IO;
 
 namespace localtour.Web.Host.Startup
 {
@@ -13,6 +14,10 @@ namespace localtour.Web.Host.Startup
         public static IWebHost BuildWebHost(string[] args)
         {
             return WebHost.CreateDefaultBuilder(args)
+                .UseKestrel(opt => opt.AddServerHeader = false)
+                .UseContentRoot(Directory.GetCurrentDirectory())
+                .UseIIS()
+                .UseIISIntegration()
                 .UseStartup<Startup>()
                 .Build();
         }
