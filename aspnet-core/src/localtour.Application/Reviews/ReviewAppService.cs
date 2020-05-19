@@ -36,7 +36,7 @@ namespace localtour.Reviews
         public async Task<PagedResultDto<GetReviewForViewDto>> GetAll(GetAllReviewsInput input)
         {
             var filteredReviews = _reviewRepository.GetAll()
-                                        .WhereIf(!string.IsNullOrWhiteSpace(input.Query), e => false || e.Description.Contains(input.Query));
+                                        .WhereIf(!string.IsNullOrWhiteSpace(input.Query), e => false || e.Description.Contains(input.Query) || e.TourFk.Name.Contains(input.Query) || e.UserFk.FullName.Contains(input.Query));
 
             var reviews = from o in filteredReviews
 

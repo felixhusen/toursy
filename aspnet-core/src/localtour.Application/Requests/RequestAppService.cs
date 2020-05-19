@@ -37,7 +37,7 @@ namespace localtour.Requests
         public async Task<PagedResultDto<GetRequestForViewDto>> GetAll(GetAllRequestsInput input)
         {
             var filteredRequests = _requestRepository.GetAll()
-                                        .WhereIf(!string.IsNullOrWhiteSpace(input.Query), e => false || e.Description.Contains(input.Query));
+                                        .WhereIf(!string.IsNullOrWhiteSpace(input.Query), e => false || e.Description.Contains(input.Query) || e.BookingFk.Status.Contains(input.Query) || e.BookingFk.Name.Contains(input.Query) || e.BookingFk.TourFk.Name.Contains(input.Query));
 
             var requests = from o in filteredRequests
 

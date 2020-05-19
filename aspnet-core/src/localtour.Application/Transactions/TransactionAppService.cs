@@ -32,7 +32,7 @@ namespace localtour.Transactions
 
         public async Task<PagedResultDto<GetTransactionForViewDto>> GetAll(GetAllTransactionsInput input)
         {
-            var filteredTransactions = _transactionRepository.GetAll();
+            var filteredTransactions = _transactionRepository.GetAll().WhereIf(!string.IsNullOrWhiteSpace(input.Query), e => false || e.NameOnCard.Contains(input.Query) || e.BookingFk.Name.Contains(input.Query) || e.BookingFk.Email.Contains(input.Query));
 
             var transactions = from o in filteredTransactions
 

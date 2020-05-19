@@ -36,7 +36,7 @@ namespace localtour.Disputes
 
         public async Task<PagedResultDto<GetDisputeForViewDto>> GetAll(GetAllDisputesInput input)
         {
-            var filteredDisputes = _disputeRepository.GetAll().WhereIf(!string.IsNullOrWhiteSpace(input.Query), e => false || e.Description.Contains(input.Query));
+            var filteredDisputes = _disputeRepository.GetAll().WhereIf(!string.IsNullOrWhiteSpace(input.Query), e => false || e.Description.Contains(input.Query) || e.Status.Contains(input.Query) || e.BookingFk.Name.Contains(input.Query) || e.BookingFk.TourFk.Name.Contains(input.Query));
 
             var disputes = from o in filteredDisputes
 
