@@ -8,6 +8,8 @@ import {
 } from "@shared/service-proxies/service-proxies";
 import * as moment from "moment";
 import { PageEvent } from "@angular/material/paginator";
+import { CreateMessageDialogComponent } from "./create-message/create-message-dialog.component";
+import { MatDialog } from "@angular/material";
 
 @Component({
   templateUrl: "./messages.component.html",
@@ -26,7 +28,8 @@ export class MessagesComponent extends AppComponentBase implements OnInit {
 
   constructor(
     injector: Injector,
-    private _messageService: MessageServiceProxy
+    private _messageService: MessageServiceProxy,
+    private _dialog: MatDialog
   ) {
     super(injector);
   }
@@ -40,6 +43,17 @@ export class MessagesComponent extends AppComponentBase implements OnInit {
 
     this._messageService.getMessages().subscribe((result) => {
       this.messages = result.items;
+    });
+  }
+
+  public createMessage(): void {
+    let createMessageDialog;
+    createMessageDialog = this._dialog.open(CreateMessageDialogComponent);
+
+    createMessageDialog.afterClosed().subscribe((result) => {
+      if (result) {
+        this.getMessages();
+      }
     });
   }
 

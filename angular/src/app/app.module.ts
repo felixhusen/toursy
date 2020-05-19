@@ -58,6 +58,7 @@ import { RequestsComponent } from './requests/requests.component';
 import { DisputesComponent } from './disputes/disputes.component';
 import { MessagesComponent } from './messages/messages.component';
 import { MessageDetailsComponent } from './message-details/message-details.component';
+import { CreateMessageDialogComponent } from './messages/create-message/create-message-dialog.component';
 
 @NgModule({
   declarations: [
@@ -103,7 +104,8 @@ import { MessageDetailsComponent } from './message-details/message-details.compo
     DisputesComponent,
     // messages
     MessagesComponent,
-    MessageDetailsComponent
+    MessageDetailsComponent,
+    CreateMessageDialogComponent
   ],
   imports: [
     CommonModule,
@@ -148,6 +150,8 @@ import { MessageDetailsComponent } from './message-details/message-details.compo
     RequestsComponent,
     // disputes
     DisputesComponent,
+    // messages
+    CreateMessageDialogComponent
   ]
 })
 export class AppModule {}
