@@ -36,13 +36,15 @@ namespace localtour.Disputes
 
         public async Task<PagedResultDto<GetDisputeForViewDto>> GetAll(GetAllDisputesInput input)
         {
-            var filteredDisputes = _disputeRepository.GetAll().WhereIf(!string.IsNullOrWhiteSpace(input.Query), e => false || e.Description.Contains(input.Query));
+            var filteredDisputes = _disputeRepository.GetAll().WhereIf(!string.IsNullOrWhiteSpace(input.Query), e => false || e.Description.Contains(input.Query) || e.Status.Contains(input.Query) || e.BookingFk.Name.Contains(input.Query) || e.BookingFk.TourFk.Name.Contains(input.Query));
 
             var disputes = from o in filteredDisputes
 
                            join booking in _bookingRepository.GetAll() on o.BookingId equals booking.Id
                            join tour in _tourRepository.GetAll() on booking.TourId equals tour.Id
                            join user in _userRepository.GetAll() on booking.UserId equals user.Id
+
+                           where booking.UserId == AbpSession.UserId
 
                            select new GetDisputeForViewDto()
                            {

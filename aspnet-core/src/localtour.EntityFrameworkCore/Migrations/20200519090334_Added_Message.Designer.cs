@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using localtour.EntityFrameworkCore;
 
 namespace localtour.Migrations
 {
     [DbContext(typeof(localtourDbContext))]
-    partial class localtourDbContextModelSnapshot : ModelSnapshot
+    [Migration("20200519090334_Added_Message")]
+    partial class Added_Message
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

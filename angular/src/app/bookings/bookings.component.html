@@ -5,7 +5,7 @@
     <mat-card class="mb-3" style="padding: 0px;">
         <form (submit)="getBookings()">
             <mat-form-field appearance="outline" class="mat-search-bar">
-                <input matInput placeholder="{{l('Search')}}" [(ngModel)]="nameFilter" name="NameFilter">
+                <input matInput placeholder="{{l('Search')}}" [(ngModel)]="searchQuery" name="SearchQuery">
                 <button mat-icon-button matSuffix color="primary" aria-label="Search" type="submit">
                     <mat-icon>search</mat-icon>
                 </button>

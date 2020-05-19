@@ -37,13 +37,15 @@ namespace localtour.Requests
         public async Task<PagedResultDto<GetRequestForViewDto>> GetAll(GetAllRequestsInput input)
         {
             var filteredRequests = _requestRepository.GetAll()
-                                        .WhereIf(!string.IsNullOrWhiteSpace(input.Query), e => false || e.Description.Contains(input.Query));
+                                        .WhereIf(!string.IsNullOrWhiteSpace(input.Query), e => false || e.Description.Contains(input.Query) || e.BookingFk.Status.Contains(input.Query) || e.BookingFk.Name.Contains(input.Query) || e.BookingFk.TourFk.Name.Contains(input.Query));
 
             var requests = from o in filteredRequests
 
                            join tour in _tourRepository.GetAll() on o.TourId equals tour.Id
                            join user in _userRepository.GetAll() on o.UserId equals user.Id
                            join booking in _bookingRepository.GetAll() on o.BookingId equals booking.Id
+
+                           where booking.UserId == AbpSession.UserId
 
                            select new GetRequestForViewDto()
                            {

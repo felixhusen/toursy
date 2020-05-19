@@ -12,6 +12,7 @@ using localtour.Transactions;
 using localtour.Disputes;
 using localtour.States;
 using localtour.TourDates;
+using localtour.Messages;
 
 namespace localtour.EntityFrameworkCore
 {
@@ -27,6 +28,8 @@ namespace localtour.EntityFrameworkCore
         public virtual DbSet<Dispute> Disputes { get; set; }
         public virtual DbSet<State> States { get; set; }
         public virtual DbSet<TourDate> TourDates { get; set; }
+
+        public virtual DbSet<Message> Messages { get; set; }
 
         public localtourDbContext(DbContextOptions<localtourDbContext> options)
             : base(options)
@@ -46,6 +49,8 @@ namespace localtour.EntityFrameworkCore
             {
                 t.HasIndex(e => new { e.TenantId });
             });
+
+            modelBuilder.Entity<Message>();
 
             modelBuilder.Entity<TourDate>(t =>
             {
