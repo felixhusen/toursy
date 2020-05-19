@@ -35,7 +35,7 @@ namespace localtour.Bookings
 
         public async Task<PagedResultDto<GetBookingForViewDto>> GetAll(GetAllBookingsInput input)
         {
-            var filteredBookings = _bookingRepository.GetAll().WhereIf(!string.IsNullOrWhiteSpace(input.Query), e => false || e.Suburb.Contains(input.Query));
+            var filteredBookings = _bookingRepository.GetAll().Where(e => e.UserId == AbpSession.UserId).WhereIf(!string.IsNullOrWhiteSpace(input.Query), e => false || e.Suburb.Contains(input.Query));
 
             var bookings = from o in filteredBookings
 

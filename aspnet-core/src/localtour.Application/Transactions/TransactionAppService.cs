@@ -42,6 +42,8 @@ namespace localtour.Transactions
                                join o2 in _tourRepository.GetAll() on s1.TourId equals o2.Id into j2
                                from s2 in j2.DefaultIfEmpty()
 
+                               where s1.UserId == AbpSession.UserId
+
                                select new GetTransactionForViewDto()
                                {
                                    Transaction = new TransactionDto

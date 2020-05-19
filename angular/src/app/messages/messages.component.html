@@ -1,0 +1,18 @@
+<div [@routerTransition]>
+
+    <h3 class="page-title mb-3">Messages</h3>
+
+    <mat-card>
+        <mat-list>
+            <mat-list-item *ngFor="let item of messages" [routerLink]="['/app/messages/' + item.message.senderId]"
+                routerLinkActive="active">
+                <mat-icon mat-list-icon>perm_identity</mat-icon>
+                <div mat-line>{{item.senderName}}</div>
+                <div mat-line>{{item.message.content}}</div>
+                <div mat-line>{{item.message.dateSent | date}}</div>
+                <mat-divider></mat-divider>
+            </mat-list-item>
+        </mat-list>
+    </mat-card>
+
+</div>

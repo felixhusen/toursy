@@ -859,6 +859,185 @@ export class DisputeServiceProxy {
 }
 
 @Injectable()
+export class MessageServiceProxy {
+    private http: HttpClient;
+    private baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+    constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl ? baseUrl : "";
+    }
+
+    /**
+     * @return Success
+     */
+    getMessages(): Observable<GetMessageForViewDtoPagedResultDto> {
+        let url_ = this.baseUrl + "/api/services/app/Message/GetMessages";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "text/plain"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetMessages(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetMessages(<any>response_);
+                } catch (e) {
+                    return <Observable<GetMessageForViewDtoPagedResultDto>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<GetMessageForViewDtoPagedResultDto>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetMessages(response: HttpResponseBase): Observable<GetMessageForViewDtoPagedResultDto> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = GetMessageForViewDtoPagedResultDto.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<GetMessageForViewDtoPagedResultDto>(<any>null);
+    }
+
+    /**
+     * @param body (optional) 
+     * @return Success
+     */
+    sendMessage(body: CreateMessageDto | undefined): Observable<GetMessageForViewDto> {
+        let url_ = this.baseUrl + "/api/services/app/Message/SendMessage";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json-patch+json", 
+                "Accept": "text/plain"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processSendMessage(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processSendMessage(<any>response_);
+                } catch (e) {
+                    return <Observable<GetMessageForViewDto>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<GetMessageForViewDto>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processSendMessage(response: HttpResponseBase): Observable<GetMessageForViewDto> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = GetMessageForViewDto.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<GetMessageForViewDto>(<any>null);
+    }
+
+    /**
+     * @param senderId (optional) 
+     * @return Success
+     */
+    getMessagesBySender(senderId: number | undefined): Observable<GetMessageForViewDto[]> {
+        let url_ = this.baseUrl + "/api/services/app/Message/GetMessagesBySender?";
+        if (senderId === null)
+            throw new Error("The parameter 'senderId' cannot be null.");
+        else if (senderId !== undefined)
+            url_ += "SenderId=" + encodeURIComponent("" + senderId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "text/plain"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetMessagesBySender(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetMessagesBySender(<any>response_);
+                } catch (e) {
+                    return <Observable<GetMessageForViewDto[]>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<GetMessageForViewDto[]>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetMessagesBySender(response: HttpResponseBase): Observable<GetMessageForViewDto[]> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (Array.isArray(resultData200)) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200.push(GetMessageForViewDto.fromJS(item));
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<GetMessageForViewDto[]>(<any>null);
+    }
+}
+
+@Injectable()
 export class RequestServiceProxy {
     private http: HttpClient;
     private baseUrl: string;
@@ -4755,6 +4934,218 @@ export class GetDisputeForEditOutput implements IGetDisputeForEditOutput {
 
 export interface IGetDisputeForEditOutput {
     dispute: CreateOrEditDisputeDto;
+}
+
+export class MessageDto implements IMessageDto {
+    dateSent: moment.Moment;
+    content: string | undefined;
+    receiverId: number | undefined;
+    senderId: number | undefined;
+    id: number;
+
+    constructor(data?: IMessageDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.dateSent = data["dateSent"] ? moment(data["dateSent"].toString()) : <any>undefined;
+            this.content = data["content"];
+            this.receiverId = data["receiverId"];
+            this.senderId = data["senderId"];
+            this.id = data["id"];
+        }
+    }
+
+    static fromJS(data: any): MessageDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new MessageDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["dateSent"] = this.dateSent ? this.dateSent.toISOString() : <any>undefined;
+        data["content"] = this.content;
+        data["receiverId"] = this.receiverId;
+        data["senderId"] = this.senderId;
+        data["id"] = this.id;
+        return data; 
+    }
+
+    clone(): MessageDto {
+        const json = this.toJSON();
+        let result = new MessageDto();
+        result.init(json);
+        return result;
+    }
+}
+
+export interface IMessageDto {
+    dateSent: moment.Moment;
+    content: string | undefined;
+    receiverId: number | undefined;
+    senderId: number | undefined;
+    id: number;
+}
+
+export class GetMessageForViewDto implements IGetMessageForViewDto {
+    message: MessageDto;
+    senderName: string | undefined;
+    receiverName: string | undefined;
+
+    constructor(data?: IGetMessageForViewDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.message = data["message"] ? MessageDto.fromJS(data["message"]) : <any>undefined;
+            this.senderName = data["senderName"];
+            this.receiverName = data["receiverName"];
+        }
+    }
+
+    static fromJS(data: any): GetMessageForViewDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new GetMessageForViewDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["message"] = this.message ? this.message.toJSON() : <any>undefined;
+        data["senderName"] = this.senderName;
+        data["receiverName"] = this.receiverName;
+        return data; 
+    }
+
+    clone(): GetMessageForViewDto {
+        const json = this.toJSON();
+        let result = new GetMessageForViewDto();
+        result.init(json);
+        return result;
+    }
+}
+
+export interface IGetMessageForViewDto {
+    message: MessageDto;
+    senderName: string | undefined;
+    receiverName: string | undefined;
+}
+
+export class GetMessageForViewDtoPagedResultDto implements IGetMessageForViewDtoPagedResultDto {
+    totalCount: number;
+    items: GetMessageForViewDto[] | undefined;
+
+    constructor(data?: IGetMessageForViewDtoPagedResultDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.totalCount = data["totalCount"];
+            if (Array.isArray(data["items"])) {
+                this.items = [] as any;
+                for (let item of data["items"])
+                    this.items.push(GetMessageForViewDto.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): GetMessageForViewDtoPagedResultDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new GetMessageForViewDtoPagedResultDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["totalCount"] = this.totalCount;
+        if (Array.isArray(this.items)) {
+            data["items"] = [];
+            for (let item of this.items)
+                data["items"].push(item.toJSON());
+        }
+        return data; 
+    }
+
+    clone(): GetMessageForViewDtoPagedResultDto {
+        const json = this.toJSON();
+        let result = new GetMessageForViewDtoPagedResultDto();
+        result.init(json);
+        return result;
+    }
+}
+
+export interface IGetMessageForViewDtoPagedResultDto {
+    totalCount: number;
+    items: GetMessageForViewDto[] | undefined;
+}
+
+export class CreateMessageDto implements ICreateMessageDto {
+    content: string | undefined;
+    receiverId: number | undefined;
+
+    constructor(data?: ICreateMessageDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.content = data["content"];
+            this.receiverId = data["receiverId"];
+        }
+    }
+
+    static fromJS(data: any): CreateMessageDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new CreateMessageDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["content"] = this.content;
+        data["receiverId"] = this.receiverId;
+        return data; 
+    }
+
+    clone(): CreateMessageDto {
+        const json = this.toJSON();
+        let result = new CreateMessageDto();
+        result.init(json);
+        return result;
+    }
+}
+
+export interface ICreateMessageDto {
+    content: string | undefined;
+    receiverId: number | undefined;
 }
 
 export class RequestDto implements IRequestDto {

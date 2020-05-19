@@ -18,6 +18,8 @@ import { TourDetailsComponent } from "./tour-details/tour-details.component";
 import { UserDetailsComponent } from "./user-details/user-details.component";
 import { CreateBookingComponent } from "./bookings/create-booking/create-booking.component";
 import { CreateTransactionComponent } from "./transactions/create-transaction/create-transaction.component";
+import { MessagesComponent } from "./messages/messages.component";
+import { MessageDetailsComponent } from "./message-details/message-details.component";
 
 @NgModule({
   imports: [
@@ -54,6 +56,16 @@ import { CreateTransactionComponent } from "./transactions/create-transaction/cr
           {
             path: "disputes",
             component: DisputesComponent,
+            canActivate: [AppRouteGuard],
+          },
+          {
+            path: "messages",
+            component: MessagesComponent,
+            canActivate: [AppRouteGuard],
+          },
+          {
+            path: "messages/:id",
+            component: MessageDetailsComponent,
             canActivate: [AppRouteGuard],
           },
           {

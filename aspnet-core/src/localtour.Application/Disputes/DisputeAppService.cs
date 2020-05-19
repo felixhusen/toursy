@@ -44,6 +44,8 @@ namespace localtour.Disputes
                            join tour in _tourRepository.GetAll() on booking.TourId equals tour.Id
                            join user in _userRepository.GetAll() on booking.UserId equals user.Id
 
+                           where booking.UserId == AbpSession.UserId
+
                            select new GetDisputeForViewDto()
                            {
                                Dispute = new DisputeDto

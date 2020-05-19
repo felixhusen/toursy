@@ -56,6 +56,8 @@ import { ReviewsComponent } from './reviews/reviews.component';
 import { RequestsComponent } from './requests/requests.component';
 // disputes
 import { DisputesComponent } from './disputes/disputes.component';
+import { MessagesComponent } from './messages/messages.component';
+import { MessageDetailsComponent } from './message-details/message-details.component';
 
 @NgModule({
   declarations: [
@@ -99,7 +101,9 @@ import { DisputesComponent } from './disputes/disputes.component';
     RequestsComponent,
     // disputes
     DisputesComponent,
-
+    // messages
+    MessagesComponent,
+    MessageDetailsComponent
   ],
   imports: [
     CommonModule,

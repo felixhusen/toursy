@@ -19,6 +19,8 @@
     <Compile Remove="Migrations\20200513071659_Modify_Booig.Designer.cs" />
     <Compile Remove="Migrations\20200513072556_Modify_Entities.cs" />
     <Compile Remove="Migrations\20200513072556_Modify_Entities.Designer.cs" />
+    <Compile Remove="Migrations\20200519090153_Added_Message.cs" />
+    <Compile Remove="Migrations\20200519090153_Added_Message.Designer.cs" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="3.1.0" />

@@ -1,0 +1,23 @@
+<div [@routerTransition]>
+
+    <h3 class="page-title mb-3">{{sender.fullName}}</h3>
+
+    <mat-card>
+        <mat-list class="chat-list">
+            <mat-list-item *ngFor="let item of messages">
+                <div mat-line>{{item.senderName}}: {{item.message.content}}</div>
+                <div mat-line>{{item.message.dateSent | date}}</div>
+                <mat-divider></mat-divider>
+            </mat-list-item>
+        </mat-list>
+        <br />
+        <form autocomplete="off" #chatBoxForm="ngForm" (ngSubmit)="sendMessage()">
+            <mat-form-field appearance="outline" autocomplete="off">
+                <mat-label>Send message...</mat-label>
+                <input matInput type="text" placeholder="Send message..." name="Content" [(ngModel)]="chatBox">
+                <mat-icon matSuffix>send</mat-icon>
+            </mat-form-field>
+        </form>
+    </mat-card>
+
+</div>
