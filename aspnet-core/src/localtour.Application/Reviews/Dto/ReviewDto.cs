@@ -1,8 +1,11 @@
 ﻿using Abp.Application.Services.Dto;
+using Abp.AutoMapper;
 using System;
 
 namespace localtour.Reviews.Dto
 {
+    [AutoMapTo(typeof(Review))]
+    [AutoMapFrom(typeof(Review))]
     public class ReviewDto : EntityDto
     {
 

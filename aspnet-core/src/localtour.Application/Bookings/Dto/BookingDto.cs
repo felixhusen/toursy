@@ -1,7 +1,10 @@
 ﻿using Abp.Application.Services.Dto;
+using Abp.AutoMapper;
 
 namespace localtour.Bookings.Dto
 {
+    [AutoMapTo(typeof(Booking))]
+    [AutoMapFrom(typeof(Booking))]
     public class BookingDto : EntityDto
     {
         public int? TourId { get; set; }

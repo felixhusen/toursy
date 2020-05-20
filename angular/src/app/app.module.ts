@@ -63,6 +63,7 @@ import { DisputesComponent } from "./disputes/disputes.component";
 import { MessagesComponent } from "./messages/messages.component";
 import { MessageDetailsComponent } from "./message-details/message-details.component";
 import { CreateMessageDialogComponent } from "./messages/create-message/create-message-dialog.component";
+import { CreateOrEditRequestDialogComponent } from "./requests/create-or-edit-request/create-or-edit-request-dialog.component";
 
 @NgModule({
   declarations: [
@@ -104,6 +105,7 @@ import { CreateMessageDialogComponent } from "./messages/create-message/create-m
     ReviewsComponent,
     // requests
     RequestsComponent,
+    CreateOrEditRequestDialogComponent,
     // disputes
     DisputesComponent,
     // messages
@@ -153,6 +155,7 @@ import { CreateMessageDialogComponent } from "./messages/create-message/create-m
     ReviewsComponent,
     // requests
     RequestsComponent,
+    CreateOrEditRequestDialogComponent,
     // disputes
     DisputesComponent,
     // messages

@@ -7,6 +7,8 @@ import {
 } from "@shared/service-proxies/service-proxies";
 import * as moment from "moment";
 import { PageEvent } from "@angular/material/paginator";
+import { CreateOrEditRequestDialogComponent } from "./create-or-edit-request/create-or-edit-request-dialog.component";
+import { MatDialog } from "@angular/material";
 
 @Component({
   templateUrl: "./requests.component.html",
@@ -26,7 +28,8 @@ export class RequestsComponent extends AppComponentBase implements OnInit {
 
   constructor(
     injector: Injector,
-    private _requestService: RequestServiceProxy
+    private _requestService: RequestServiceProxy,
+    private _dialog: MatDialog
   ) {
     super(injector);
   }
@@ -37,6 +40,23 @@ export class RequestsComponent extends AppComponentBase implements OnInit {
     console.log("Skip Count: " + this.skipCount);
     console.log(event);
     this.getRequests();
+  }
+
+  private showCreateOrEditTourDialog(id?: number): void {
+    let createOrEditRequestDialog;
+    if (id === undefined || id <= 0) {
+      createOrEditRequestDialog = this._dialog.open(CreateOrEditRequestDialogComponent);
+    } else {
+      createOrEditRequestDialog = this._dialog.open(CreateOrEditRequestDialogComponent, {
+          data: id
+      });
+    }
+
+    createOrEditRequestDialog.afterClosed().subscribe((result) => {
+      if (result) {
+        this.getRequests();
+      }
+    });
   }
 
   public getRequests(event?: any): void {

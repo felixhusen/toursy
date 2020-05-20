@@ -45,7 +45,7 @@ namespace localtour.Requests
                            join user in _userRepository.GetAll() on o.UserId equals user.Id
                            join booking in _bookingRepository.GetAll() on o.BookingId equals booking.Id
 
-                           where booking.UserId == AbpSession.UserId
+                           where o.UserId == AbpSession.UserId
 
                            select new GetRequestForViewDto()
                            {
@@ -55,7 +55,8 @@ namespace localtour.Requests
                                    TourId = o.TourId,
                                    Description = o.Description,
                                    Status = o.Status,
-                                   Date = o.Date
+                                   Date = o.Date,
+                                   BookingId = o.BookingId
                                },
                                TourName = tour.Name,
                                UserFullName = user.FullName,
@@ -105,7 +106,7 @@ namespace localtour.Requests
             }
         }
 
-        [AbpAuthorize(PermissionNames.Pages_Request_Create)]
+        //[AbpAuthorize(PermissionNames.Pages_Request_Create)]
         protected virtual async Task Create(CreateOrEditRequestDto input)
         {
             var request = ObjectMapper.Map<Request>(input);
@@ -113,6 +114,8 @@ namespace localtour.Requests
             request.Status = "Pending";
 
             request.Date = DateTime.Now;
+
+            request.UserId = AbpSession.UserId;
 
             if (AbpSession.TenantId != null)
             {
@@ -123,7 +126,7 @@ namespace localtour.Requests
             await _requestRepository.InsertAsync(request);
         }
 
-        [AbpAuthorize(PermissionNames.Pages_Request_Edit)]
+        //[AbpAuthorize(PermissionNames.Pages_Request_Edit)]
         protected virtual async Task Update(CreateOrEditRequestDto input)
         {
             var request = await _requestRepository.FirstOrDefaultAsync((int)input.Id);

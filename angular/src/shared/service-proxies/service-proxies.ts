@@ -5153,6 +5153,7 @@ export class RequestDto implements IRequestDto {
     description: string | undefined;
     status: string | undefined;
     date: moment.Moment | undefined;
+    bookingId: number | undefined;
     id: number;
 
     constructor(data?: IRequestDto) {
@@ -5170,6 +5171,7 @@ export class RequestDto implements IRequestDto {
             this.description = data["description"];
             this.status = data["status"];
             this.date = data["date"] ? moment(data["date"].toString()) : <any>undefined;
+            this.bookingId = data["bookingId"];
             this.id = data["id"];
         }
     }
@@ -5187,6 +5189,7 @@ export class RequestDto implements IRequestDto {
         data["description"] = this.description;
         data["status"] = this.status;
         data["date"] = this.date ? this.date.toISOString() : <any>undefined;
+        data["bookingId"] = this.bookingId;
         data["id"] = this.id;
         return data; 
     }
@@ -5204,6 +5207,7 @@ export interface IRequestDto {
     description: string | undefined;
     status: string | undefined;
     date: moment.Moment | undefined;
+    bookingId: number | undefined;
     id: number;
 }
 
@@ -5320,6 +5324,7 @@ export interface IGetRequestForViewDtoPagedResultDto {
 export class CreateOrEditRequestDto implements ICreateOrEditRequestDto {
     tourId: number;
     description: string | undefined;
+    bookingId: number;
     id: number | undefined;
 
     constructor(data?: ICreateOrEditRequestDto) {
@@ -5335,6 +5340,7 @@ export class CreateOrEditRequestDto implements ICreateOrEditRequestDto {
         if (data) {
             this.tourId = data["tourId"];
             this.description = data["description"];
+            this.bookingId = data["bookingId"];
             this.id = data["id"];
         }
     }
@@ -5350,6 +5356,7 @@ export class CreateOrEditRequestDto implements ICreateOrEditRequestDto {
         data = typeof data === 'object' ? data : {};
         data["tourId"] = this.tourId;
         data["description"] = this.description;
+        data["bookingId"] = this.bookingId;
         data["id"] = this.id;
         return data; 
     }
@@ -5365,6 +5372,7 @@ export class CreateOrEditRequestDto implements ICreateOrEditRequestDto {
 export interface ICreateOrEditRequestDto {
     tourId: number;
     description: string | undefined;
+    bookingId: number;
     id: number | undefined;
 }
 
