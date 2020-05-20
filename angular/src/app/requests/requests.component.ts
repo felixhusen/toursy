@@ -9,6 +9,7 @@ import * as moment from "moment";
 import { PageEvent } from "@angular/material/paginator";
 import { CreateOrEditRequestDialogComponent } from "./create-or-edit-request/create-or-edit-request-dialog.component";
 import { MatDialog } from "@angular/material";
+import { FileDownloadService } from "@shared/utils/file-download.service";
 
 @Component({
   templateUrl: "./requests.component.html",
@@ -29,6 +30,7 @@ export class RequestsComponent extends AppComponentBase implements OnInit {
   constructor(
     injector: Injector,
     private _requestService: RequestServiceProxy,
+    private _fileDownloadService: FileDownloadService,
     private _dialog: MatDialog
   ) {
     super(injector);
@@ -40,6 +42,13 @@ export class RequestsComponent extends AppComponentBase implements OnInit {
     console.log("Skip Count: " + this.skipCount);
     console.log(event);
     this.getRequests();
+  }
+
+  public exportToExcel(): void {
+    this._requestService.getRequestsToExcel(this.searchQuery, undefined, undefined, undefined)
+      .subscribe((result) => {
+        this._fileDownloadService.downloadTempFile(result);
+      });
   }
 
   private showCreateOrEditRequestDialog(id?: number): void {

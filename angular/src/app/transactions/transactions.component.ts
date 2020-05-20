@@ -9,6 +9,7 @@ import {
 } from "@shared/service-proxies/service-proxies";
 import * as moment from "moment";
 import { PageEvent } from "@angular/material/paginator";
+import { FileDownloadService } from "@shared/utils/file-download.service";
 
 @Component({
   templateUrl: "./transactions.component.html",
@@ -27,7 +28,7 @@ export class TransactionsComponent extends AppComponentBase implements OnInit {
   public maxResultCountOptions: number[] = [1, 5, 10, 25, 100];
   public pageEvent: PageEvent;
 
-  constructor(injector: Injector, private _transactionService: TransactionServiceProxy) {
+  constructor(injector: Injector, private _transactionService: TransactionServiceProxy, private _fileDownloadService: FileDownloadService) {
     super(injector);
   }
 
@@ -45,6 +46,13 @@ export class TransactionsComponent extends AppComponentBase implements OnInit {
         this.totalCount = result.totalCount;
         console.log("Result")
         console.log(this.transactions)
+      });
+  }
+
+  public exportToExcel(): void {
+    this._transactionService.getTransactionsToExcel(this.searchQuery, undefined, undefined, undefined)
+      .subscribe((result) => {
+        this._fileDownloadService.downloadTempFile(result);
       });
   }
 

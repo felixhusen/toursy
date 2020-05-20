@@ -13,6 +13,7 @@ using localtour.Disputes;
 using localtour.States;
 using localtour.TourDates;
 using localtour.Messages;
+using localtour.Storage;
 
 namespace localtour.EntityFrameworkCore
 {
@@ -29,6 +30,7 @@ namespace localtour.EntityFrameworkCore
         public virtual DbSet<State> States { get; set; }
         public virtual DbSet<TourDate> TourDates { get; set; }
 
+        public virtual DbSet<BinaryObject> BinaryObjects { get; set; }
         public virtual DbSet<Message> Messages { get; set; }
 
         public localtourDbContext(DbContextOptions<localtourDbContext> options)
@@ -51,6 +53,8 @@ namespace localtour.EntityFrameworkCore
             });
 
             modelBuilder.Entity<Message>();
+
+            modelBuilder.Entity<BinaryObject>();
 
             modelBuilder.Entity<TourDate>(t =>
             {

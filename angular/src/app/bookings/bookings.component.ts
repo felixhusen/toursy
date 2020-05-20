@@ -7,6 +7,7 @@ import {
 } from "@shared/service-proxies/service-proxies";
 import * as moment from "moment";
 import { PageEvent } from "@angular/material/paginator";
+import { FileDownloadService } from "@shared/utils/file-download.service";
 
 @Component({
   templateUrl: "./bookings.component.html",
@@ -27,7 +28,8 @@ export class BookingsComponent extends AppComponentBase implements OnInit {
 
   constructor(
     injector: Injector,
-    private _bookingService: BookingServiceProxy
+    private _bookingService: BookingServiceProxy,
+    private _fileDownloadService: FileDownloadService
   ) {
     super(injector);
   }
@@ -46,6 +48,14 @@ export class BookingsComponent extends AppComponentBase implements OnInit {
         this.totalCount = result.totalCount;
         console.log("Result")
         console.log(this.bookings)
+      });
+  }
+
+  public exportToExcel(): void {
+    this._bookingService
+      .getBookingsToExcel(this.searchQuery, undefined, undefined, undefined)
+      .subscribe((result) => {
+        this._fileDownloadService.downloadTempFile(result);
       });
   }
 

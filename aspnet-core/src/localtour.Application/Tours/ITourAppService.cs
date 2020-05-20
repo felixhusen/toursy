@@ -1,5 +1,6 @@
 ﻿using Abp.Application.Services;
 using Abp.Application.Services.Dto;
+using localtour.DataExporting.Excel.EpPlus;
 using localtour.Tours.Dto;
 using Microsoft.AspNetCore.Http;
 using System;
@@ -14,6 +15,8 @@ namespace localtour.Tours
         Task<PagedResultDto<GetTourForViewDto>> GetAll(GetAllToursInput input);
 
         Task<GetTourForViewDto> GetTourForView(int id);
+
+        Task<FileDto> GetToursToExcel(GetAllToursInput input);
 
         Task<GetTourForEditOutput> GetTourForEdit(EntityDto input);
 

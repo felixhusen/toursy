@@ -5,6 +5,8 @@ using Abp.Linq.Extensions;
 using localtour.Authorization;
 using localtour.Authorization.Users;
 using localtour.Bookings.Dto;
+using localtour.Bookings.Exporting;
+using localtour.DataExporting.Excel.EpPlus;
 using localtour.States;
 using localtour.Tours;
 using Microsoft.AspNetCore.Hosting;
@@ -23,14 +25,16 @@ namespace localtour.Bookings
         private readonly IRepository<State, int> _stateRepository;
         private readonly IRepository<User, long> _userRepository;
         private readonly IWebHostEnvironment _hostEnvironment;
+        private readonly IBookingsExcelExporter _bookingsExcelExporter;
 
-        public BookingAppService(IRepository<Booking, int> bookingRepository, IRepository<Tour, int> tourRepository, IRepository<State, int> stateRepository, IRepository<User, long> userRepository, IWebHostEnvironment hostEnvironment)
+        public BookingAppService(IRepository<Booking, int> bookingRepository, IRepository<Tour, int> tourRepository, IRepository<State, int> stateRepository, IRepository<User, long> userRepository, IWebHostEnvironment hostEnvironment, IBookingsExcelExporter bookingsExcelExporter)
         {
             _bookingRepository = bookingRepository;
             _tourRepository = tourRepository;
             _stateRepository = stateRepository;
             _userRepository = userRepository;
             _hostEnvironment = hostEnvironment;
+            _bookingsExcelExporter = bookingsExcelExporter;
         }
 
         public async Task<PagedResultDto<GetBookingForViewDto>> GetAll(GetAllBookingsInput input)
@@ -83,6 +87,51 @@ namespace localtour.Bookings
                 totalCount,
                 await pagedAndFilteredBookings.ToListAsync()
             );
+        }
+
+        public async Task<FileDto> GetBookingsToExcel(GetAllBookingsInput input)
+        {
+            var filteredBookings = _bookingRepository.GetAll().Where(e => e.UserId == AbpSession.UserId).WhereIf(!string.IsNullOrWhiteSpace(input.Query), e => false || e.Suburb.Contains(input.Query) || e.Name.Contains(input.Query) || e.Email.Contains(input.Query) || e.Email.Contains(input.Query) || e.Address.Contains(input.Query) || e.TourFk.Name.Contains(input.Query) || e.TourFk.LocationName.Contains(input.Query));
+
+            var bookings = from o in filteredBookings
+
+                           join o1 in _tourRepository.GetAll() on o.TourId equals o1.Id into j1
+                           from s1 in j1.DefaultIfEmpty()
+
+                           join o2 in _stateRepository.GetAll() on o.StateId equals o2.Id into j2
+                           from s2 in j2.DefaultIfEmpty()
+
+                           join o3 in _userRepository.GetAll() on o.UserId equals o3.Id into j3
+                           from s3 in j3.DefaultIfEmpty()
+
+                           select new GetBookingForViewDto()
+                           {
+                               Booking = new BookingDto
+                               {
+                                   Id = o.Id,
+                                   TourId = o.TourId,
+                                   UserId = o.UserId,
+                                   Address = o.Address,
+                                   StateId = o.StateId,
+                                   Suburb = o.Suburb,
+                                   PostCode = o.PostCode,
+                                   PromoCode = o.PromoCode,
+                                   TotalPrice = o.TotalPrice,
+                                   Name = o.Name,
+                                   PhoneNumber = o.PhoneNumber,
+                                   NumberOfPeople = o.NumberOfPeople,
+                                   Status = o.Status,
+                                   Email = o.Email
+                               },
+                               BookingCode = "B-" + o.Id,
+                               TourName = s1 != null ? s1.Name : null,
+                               StateCode = s2 != null ? s2.Code : null,
+                               UserFullName = s3 != null ? s3.FullName : null
+                           };
+
+            var results = await bookings.OrderBy(input.Sorting ?? "Booking.Id asc").ToListAsync();
+
+            return _bookingsExcelExporter.ExportToFile(results);
         }
 
         public async Task RequestCancelBooking(int id)

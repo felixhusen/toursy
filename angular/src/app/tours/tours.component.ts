@@ -10,6 +10,7 @@ import { PageEvent } from "@angular/material/paginator";
 import { MatDialog } from "@angular/material";
 import { CreateOrEditTourDialogComponent } from "./create-or-edit-tour/create-or-edit-tour-dialog.component";
 import { AppSessionService } from "@shared/session/app-session.service";
+import { FileDownloadService } from "@shared/utils/file-download.service";
 
 @Component({
   templateUrl: "./tours.component.html",
@@ -42,6 +43,7 @@ export class ToursComponent extends AppComponentBase implements OnInit {
     injector: Injector,
     private _tourService: TourServiceProxy,
     private _appSessionService: AppSessionService,
+    private _fileDownloadService: FileDownloadService,
     private _dialog: MatDialog
   ) {
     super(injector);
@@ -71,6 +73,27 @@ export class ToursComponent extends AppComponentBase implements OnInit {
       .subscribe((result) => {
         this.tours = result.items;
         this.totalCount = result.totalCount;
+      });
+  }
+
+  public exportToExcel(): void {
+
+    this._tourService
+      .getToursToExcel(
+        this.nameFilter,
+        this.priceFilter,
+        this.descriptionFilter,
+        this.startDateFilter,
+        this.endDateFilter,
+        this.longitudeFilter,
+        this.latitudeFilter,
+        this.userIdFilter,
+        undefined,
+        undefined,
+        undefined
+      )
+      .subscribe((result) => {
+        this._fileDownloadService.downloadTempFile(result);
       });
   }
 

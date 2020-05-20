@@ -1,5 +1,6 @@
 ﻿using Abp.Application.Services;
 using Abp.Application.Services.Dto;
+using localtour.DataExporting.Excel.EpPlus;
 using localtour.Transactions.Dto;
 using Microsoft.AspNetCore.Http;
 using System;
@@ -12,6 +13,8 @@ namespace localtour.Transactions
     public interface ITransactionAppService : IApplicationService
     {
         Task<PagedResultDto<GetTransactionForViewDto>> GetAll(GetAllTransactionsInput input);
+
+        Task<FileDto> GetTransactionsToExcel(GetAllTransactionsInput input);
 
         Task<GetTransactionForViewDto> GetTransactionForView(int id);
 

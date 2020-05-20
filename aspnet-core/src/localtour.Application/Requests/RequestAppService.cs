@@ -5,7 +5,9 @@ using Abp.Linq.Extensions;
 using localtour.Authorization;
 using localtour.Authorization.Users;
 using localtour.Bookings;
+using localtour.DataExporting.Excel.EpPlus;
 using localtour.Requests.Dto;
+using localtour.Requests.Exporting;
 using localtour.Tours;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -24,14 +26,16 @@ namespace localtour.Requests
         private readonly IRepository<Tour, int> _tourRepository;
         private readonly IRepository<User, long> _userRepository;
         private readonly IRepository<Booking, int> _bookingRepository;
+        private readonly IRequestsExcelExporter _requestsExcelExporter;
 
-        public RequestAppService(IRepository<Request, int> requestRepository, IWebHostEnvironment hostEnvironment, IRepository<Tour, int> tourRepository, IRepository<User, long> userRepository, IRepository<Booking, int> bookingRepository)
+        public RequestAppService(IRepository<Request, int> requestRepository, IWebHostEnvironment hostEnvironment, IRepository<Tour, int> tourRepository, IRepository<User, long> userRepository, IRepository<Booking, int> bookingRepository, IRequestsExcelExporter requestsExcelExporter)
         {
             _requestRepository = requestRepository;
             _hostEnvironment = hostEnvironment;
             _tourRepository = tourRepository;
             _userRepository = userRepository;
             _bookingRepository = bookingRepository;
+            _requestsExcelExporter = requestsExcelExporter;
         }
 
         public async Task<PagedResultDto<GetRequestForViewDto>> GetAll(GetAllRequestsInput input)
@@ -73,6 +77,41 @@ namespace localtour.Requests
                 totalCount,
                 await pagedAndFilteredRequests.ToListAsync()
             );
+        }
+
+        public async Task<FileDto> GetRequestsToExcel(GetAllRequestsInput input)
+        {
+            var filteredRequests = _requestRepository.GetAll()
+                                        .WhereIf(!string.IsNullOrWhiteSpace(input.Query), e => false || e.Description.Contains(input.Query) || e.BookingFk.Status.Contains(input.Query) || e.BookingFk.Name.Contains(input.Query) || e.BookingFk.TourFk.Name.Contains(input.Query));
+
+            var requests = from o in filteredRequests
+
+                           join tour in _tourRepository.GetAll() on o.TourId equals tour.Id
+                           join user in _userRepository.GetAll() on o.UserId equals user.Id
+                           join booking in _bookingRepository.GetAll() on o.BookingId equals booking.Id
+
+                           where o.UserId == AbpSession.UserId
+
+                           select new GetRequestForViewDto()
+                           {
+                               Request = new RequestDto
+                               {
+                                   Id = o.Id,
+                                   TourId = o.TourId,
+                                   Description = o.Description,
+                                   Status = o.Status,
+                                   Date = o.Date,
+                                   BookingId = o.BookingId
+                               },
+                               TourName = tour.Name,
+                               UserFullName = user.FullName,
+                               BookingCode = "B-" + booking.Id
+                           };
+
+            var result = await requests
+                .OrderBy(input.Sorting ?? "Request.Id asc").ToListAsync();
+
+            return _requestsExcelExporter.ExportToFile(result);
         }
 
         public async Task<GetRequestForViewDto> GetRequestForView(int id)

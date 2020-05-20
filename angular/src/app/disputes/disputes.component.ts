@@ -9,6 +9,7 @@ import * as moment from "moment";
 import { PageEvent } from "@angular/material/paginator";
 import { CreateOrEditDisputeDialogComponent } from "./create-or-edit-dispute/create-or-edit-dispute-dialog.component";
 import { MatDialog } from "@angular/material";
+import { FileDownloadService } from "@shared/utils/file-download.service";
 
 @Component({
   templateUrl: "./disputes.component.html",
@@ -29,6 +30,7 @@ export class DisputesComponent extends AppComponentBase implements OnInit {
   constructor(
     injector: Injector,
     private _disputeService: DisputeServiceProxy,
+    private _fileDownloadService: FileDownloadService,
     private _dialog: MatDialog
   ) {
     super(injector);
@@ -46,6 +48,13 @@ export class DisputesComponent extends AppComponentBase implements OnInit {
       .subscribe((result) => {
         this.disputes = result.items;
         this.totalCount = result.totalCount;
+      });
+  }
+
+  public exportToExcel(): void {
+    this._disputeService.getDisputesToExcel(this.searchQuery, undefined, undefined, undefined)
+      .subscribe((result) => {
+        this._fileDownloadService.downloadTempFile(result);
       });
   }
 
