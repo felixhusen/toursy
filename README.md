@@ -1,37 +1,20 @@
-# Important
+# Toursy (localtour)
 
-Issues of this repository are tracked on https://github.com/aspnetboilerplate/aspnetboilerplate. Please create your issues on https://github.com/aspnetboilerplate/aspnetboilerplate/issues.
+This is an app created based on the project specifications for the subject CSCI334 System Design at The University of Wollongong. The software is built with Aspnetboilerplate Template with .NET Core and angular.
 
-# Introduction
+# Project Specification
 
-This is a template to create **ASP.NET Core MVC / Angular** based startup projects for [ASP.NET Boilerplate](https://aspnetboilerplate.com/Pages/Documents). It has 2 different versions:
-
-1. [ASP.NET Core MVC & jQuery](https://aspnetboilerplate.com/Pages/Documents/Zero/Startup-Template-Core) (server rendered multi-page application).
-2. [ASP.NET Core & Angular](https://aspnetboilerplate.com/Pages/Documents/Zero/Startup-Template-Angular) (single page application).
+The sharing economy (also known as the peer-to-peer or collaborative economy) has attracted increasing popularity in recent years. Platforms such as Uber (https://www.uber.com) and Airbnb (https://www.airbnb.com.au/) are being used by millions of people around the world.  
  
-User Interface is based on [BSB Admin theme](https://github.com/gurayyarar/AdminBSBMaterialDesign).
- 
-# Download
+In this project, you are asked to design and develop an Uber-like software system which enables people to share their local knowledge and lifestyles with tourists (in the same way as they do with a visiting friend). The system serves as a platform that connects tourists with local people who are able to provide a local tour guide for a given period of time.
 
-Create & download your project from https://aspnetboilerplate.com/Templates
+# Key Requirements
 
-# Screenshots
+The system should support at least the following key aspects:  
 
-#### Sample Dashboard Page
-![](_screenshots/module-zero-core-template-ui-home.png)
-
-#### User Creation Modal
-![](_screenshots/module-zero-core-template-ui-user-create-modal.png)
-
-#### Login Page
-
-![](_screenshots/module-zero-core-template-ui-login.png)
-
-# Documentation
-
-* [ASP.NET Core MVC & jQuery version.](https://aspnetboilerplate.com/Pages/Documents/Zero/Startup-Template-Core)
-* [ASP.NET Core & Angular  version.](https://aspnetboilerplate.com/Pages/Documents/Zero/Startup-Template-Angular)
-
-# License
-
-[MIT](LICENSE).
+ - Manage different types of users, user profiles, and their reviews/ratings.  
+ - Manage a wide range of local tours (e.g. enable providers to create new tours, edit existing tours, adjust prices, and other relevant tour managements) and their reviews/ratings.  
+ - Enable tourists to quickly connect with local tour guides (e.g. search for tours, make bookings, send requests, negotiate on price and requirements, etc.)  
+ - Manage transactions between consumers and providers.  
+ - Manage and facilitate dispute resolutions.  
+ - Manage and generate various relevant reports.

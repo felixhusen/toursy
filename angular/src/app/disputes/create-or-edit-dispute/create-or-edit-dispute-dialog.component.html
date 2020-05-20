@@ -1,0 +1,36 @@
+<form autocomplete="off" #createTourModal="ngForm" (ngSubmit)="save()">
+  <h1 mat-dialog-title>{{title}}</h1>
+  <mat-dialog-content style="width:500px;">
+    <mat-tab-group>
+      <mat-tab label="Dispute Details">
+        <br />
+        <div class="row-fluid">
+          <div class="col-12">
+            <mat-form-field appearance="fill">
+              <mat-label>Booking</mat-label>
+              <mat-select [(ngModel)]="dispute.dispute.bookingId" name="Booking">
+                <mat-option *ngFor="let booking of bookings" [value]="booking.booking.id">B-{{booking.booking.id}}: {{booking.tourName}}</mat-option>
+              </mat-select>
+            </mat-form-field>
+            <mat-form-field appearance="fill">
+              <mat-label>Description</mat-label>
+              <textarea matInput name="Description" placeholder="Description"
+                [(ngModel)]="dispute.dispute.description" required></textarea>
+            </mat-form-field>
+          </div>
+        </div>
+      </mat-tab>
+    </mat-tab-group>
+  </mat-dialog-content>
+  <div mat-dialog-actions align="end">
+    <button mat-button type="button" [disabled]="saving" (click)="close(false)">
+      {{ "Cancel" | localize }}
+    </button>
+    <button mat-flat-button type="button" flex="15" color="accent" (click)="deleteTour()" *ngIf="_id">
+      {{ "Delete" | localize }}
+    </button>
+    <button mat-flat-button type="submit" flex="15" color="primary" [disabled]="!createTourModal.form.valid || saving">
+      {{ "Save" | localize }}
+    </button>
+  </div>
+</form>

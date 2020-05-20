@@ -5,7 +5,10 @@
 
         </div>
         <div class="col-sm-4 text-right">
-            <button mat-mini-fab color="primary" [matMenuTriggerFor]="menu" class="mr-2">
+            <button mat-mini-fab color="primary" (click)="exportToExcel()" class="mr-1">
+                <mat-icon>cloud_download</mat-icon>
+            </button>
+            <button mat-mini-fab color="primary" [matMenuTriggerFor]="menu" class="mr-1">
                 <mat-icon>filter_list</mat-icon>
             </button>
             <mat-menu #menu="matMenu">

@@ -1,6 +1,7 @@
 ﻿using Abp.Application.Services.Dto;
 using Abp.Domain.Repositories;
 using localtour.Authorization.Users;
+using localtour.Helpers;
 using localtour.Messages.Dto;
 using localtour.States;
 using localtour.Tours;
@@ -57,14 +58,13 @@ namespace localtour.Messages
                                    SenderName = sender.FullName
                                };
 
-                var pagedAndFilteredMessages = messages
-                    .OrderBy("Message.DateSent asc");
+                var results = messages.OrderBy("Message.DateSent asc").DistinctBy(e => e.Message.SenderId);
 
-                var totalCount = await messages.CountAsync();
+                var totalCount = results.Count();
 
                 return new PagedResultDto<GetMessageForViewDto>(
                     totalCount,
-                    await pagedAndFilteredMessages.ToListAsync()
+                    results.ToList()
                 );
             }
             catch (Exception e)

@@ -54,6 +54,7 @@ import {
 import { BlockDirective } from './directives/block.directive';
 import { BusyDirective } from './directives/busy.directive';
 import { EqualValidator } from './directives/equal-validator.directive';
+import { FileDownloadService } from './utils/file-download.service';
 @NgModule({
     imports: [
         CommonModule,
@@ -158,7 +159,8 @@ export class SharedModule {
                 AppSessionService,
                 AppUrlService,
                 AppAuthService,
-                AppRouteGuard
+                AppRouteGuard,
+                FileDownloadService
             ]
         };
     }

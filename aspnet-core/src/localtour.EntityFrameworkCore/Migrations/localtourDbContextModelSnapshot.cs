@@ -1679,6 +1679,24 @@ namespace localtour.Migrations
                     b.ToTable("States");
                 });
 
+            modelBuilder.Entity("localtour.Storage.BinaryObject", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<byte[]>("Bytes")
+                        .IsRequired()
+                        .HasColumnType("varbinary(max)");
+
+                    b.Property<int?>("TenantId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("AppBinaryObjects");
+                });
+
             modelBuilder.Entity("localtour.TourDates.TourDate", b =>
                 {
                     b.Property<int>("Id")

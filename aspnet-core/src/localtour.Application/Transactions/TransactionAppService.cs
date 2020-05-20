@@ -4,8 +4,10 @@ using Abp.Domain.Repositories;
 using Abp.Linq.Extensions;
 using localtour.Authorization;
 using localtour.Bookings;
+using localtour.DataExporting.Excel.EpPlus;
 using localtour.Tours;
 using localtour.Transactions.Dto;
+using localtour.Transactions.Exporting;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
@@ -21,13 +23,15 @@ namespace localtour.Transactions
         private readonly IWebHostEnvironment _hostEnvironment;
         private readonly IRepository<Booking, int> _bookingRepository;
         private readonly IRepository<Tour, int> _tourRepository;
+        private readonly ITransactionsExcelExporter _transactionsExcelExporter;
 
-        public TransactionAppService(IRepository<Transaction, int> transactionRepository, IRepository<Booking, int> bookingRepository, IRepository<Tour, int> tourRepository, IWebHostEnvironment hostEnvironment)
+        public TransactionAppService(IRepository<Transaction, int> transactionRepository, IRepository<Booking, int> bookingRepository, IRepository<Tour, int> tourRepository, IWebHostEnvironment hostEnvironment, ITransactionsExcelExporter transactionsExcelExporter)
         {
             _transactionRepository = transactionRepository;
             _bookingRepository = bookingRepository;
             _tourRepository = tourRepository;
             _hostEnvironment = hostEnvironment;
+            _transactionsExcelExporter = transactionsExcelExporter;
         }
 
         public async Task<PagedResultDto<GetTransactionForViewDto>> GetAll(GetAllTransactionsInput input)
@@ -70,6 +74,41 @@ namespace localtour.Transactions
                 totalCount,
                 await pagedAndFilteredTransactions.ToListAsync()
             );
+        }
+
+        public async Task<FileDto> GetTransactionsToExcel(GetAllTransactionsInput input)
+        {
+            var filteredTransactions = _transactionRepository.GetAll().WhereIf(!string.IsNullOrWhiteSpace(input.Query), e => false || e.NameOnCard.Contains(input.Query) || e.BookingFk.Name.Contains(input.Query) || e.BookingFk.Email.Contains(input.Query));
+
+            var transactions = from o in filteredTransactions
+
+                               join o1 in _bookingRepository.GetAll() on o.BookingId equals o1.Id into j1
+                               from s1 in j1.DefaultIfEmpty()
+
+                               join o2 in _tourRepository.GetAll() on s1.TourId equals o2.Id into j2
+                               from s2 in j2.DefaultIfEmpty()
+
+                               where s1.UserId == AbpSession.UserId
+
+                               select new GetTransactionForViewDto()
+                               {
+                                   Transaction = new TransactionDto
+                                   {
+                                       Id = o.Id,
+                                       TransactionDate = o.TransactionDate,
+                                       Amount = o.Amount,
+                                       BookingId = o.BookingId,
+                                       CardNumber = o.CardNumber.Substring(o.CardNumber.Length - 4),
+                                       NameOnCard = o.NameOnCard,
+                                       Status = o.Status
+                                   },
+                                   TourName = s2.Name,
+                                   BookingCode = "B-" + s1.Id
+                               };
+
+            var result = await transactions.OrderBy(input.Sorting ?? "Transaction.Id asc").ToListAsync();
+
+            return _transactionsExcelExporter.ExportToFile(result);
         }
 
         public async Task<GetTransactionForViewDto> GetTransactionForView(int id)

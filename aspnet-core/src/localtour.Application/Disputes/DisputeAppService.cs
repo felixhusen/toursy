@@ -5,7 +5,9 @@ using Abp.Linq.Extensions;
 using localtour.Authorization;
 using localtour.Authorization.Users;
 using localtour.Bookings;
+using localtour.DataExporting.Excel.EpPlus;
 using localtour.Disputes.Dto;
+using localtour.Disputes.Exporting;
 using localtour.Tours;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -24,14 +26,16 @@ namespace localtour.Disputes
         private readonly IRepository<Tour, int> _tourRepository;
         private readonly IRepository<User, long> _userRepository;
         private readonly IRepository<Booking, int> _bookingRepository;
+        private readonly IDisputesExcelExporter _disputesExcelExporter;
 
-        public DisputeAppService(IRepository<Dispute, int> disputeRepository, IWebHostEnvironment hostEnvironment, IRepository<Tour, int> tourRepository, IRepository<User, long> userRepository, IRepository<Booking, int> bookingRepository)
+        public DisputeAppService(IRepository<Dispute, int> disputeRepository, IWebHostEnvironment hostEnvironment, IRepository<Tour, int> tourRepository, IRepository<User, long> userRepository, IRepository<Booking, int> bookingRepository, IDisputesExcelExporter disputesExcelExporter)
         {
             _disputeRepository = disputeRepository;
             _hostEnvironment = hostEnvironment;
             _tourRepository = tourRepository;
             _userRepository = userRepository;
             _bookingRepository = bookingRepository;
+            _disputesExcelExporter = disputesExcelExporter;
         }
 
         public async Task<PagedResultDto<GetDisputeForViewDto>> GetAll(GetAllDisputesInput input)
@@ -73,6 +77,38 @@ namespace localtour.Disputes
             );
         }
 
+        public async Task<FileDto> GetDisputesToExcel(GetAllDisputesInput input)
+        {
+            var filteredDisputes = _disputeRepository.GetAll().WhereIf(!string.IsNullOrWhiteSpace(input.Query), e => false || e.Description.Contains(input.Query) || e.Status.Contains(input.Query) || e.BookingFk.Name.Contains(input.Query) || e.BookingFk.TourFk.Name.Contains(input.Query));
+
+            var disputes = from o in filteredDisputes
+
+                           join booking in _bookingRepository.GetAll() on o.BookingId equals booking.Id
+                           join tour in _tourRepository.GetAll() on booking.TourId equals tour.Id
+                           join user in _userRepository.GetAll() on booking.UserId equals user.Id
+
+                           where booking.UserId == AbpSession.UserId
+
+                           select new GetDisputeForViewDto()
+                           {
+                               Dispute = new DisputeDto
+                               {
+                                   Id = o.Id,
+                                   BookingId = o.BookingId,
+                                   Description = o.Description,
+                                   Status = o.Status,
+                                   Date = o.Date
+                               },
+                               BookingCode = "B-" + booking.Id,
+                               TourName = tour.Name,
+                               UserFullName = user.FullName
+                           };
+
+            var result = await disputes.OrderBy(input.Sorting ?? "Dispute.Id asc").ToListAsync();
+
+            return _disputesExcelExporter.ExportToFile(result);
+        }
+
         public async Task<GetDisputeForViewDto> GetDisputeForView(int id)
         {
             var dispute = await _disputeRepository.GetAsync(id);
@@ -104,11 +140,10 @@ namespace localtour.Disputes
             }
         }
 
-        [AbpAuthorize(PermissionNames.Pages_Dispute_Create)]
+        //[AbpAuthorize(PermissionNames.Pages_Dispute_Create)]
         protected virtual async Task Create(CreateOrEditDisputeDto input)
         {
             var dispute = ObjectMapper.Map<Dispute>(input);
-
 
             if (AbpSession.TenantId != null)
             {
@@ -122,7 +157,7 @@ namespace localtour.Disputes
             await _disputeRepository.InsertAsync(dispute);
         }
 
-        [AbpAuthorize(PermissionNames.Pages_Dispute_Edit)]
+        //[AbpAuthorize(PermissionNames.Pages_Dispute_Edit)]
         protected virtual async Task Update(CreateOrEditDisputeDto input)
         {
             var dispute = await _disputeRepository.FirstOrDefaultAsync((int)input.Id);

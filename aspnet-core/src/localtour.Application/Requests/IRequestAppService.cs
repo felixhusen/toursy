@@ -1,5 +1,6 @@
 ﻿using Abp.Application.Services;
 using Abp.Application.Services.Dto;
+using localtour.DataExporting.Excel.EpPlus;
 using localtour.Requests.Dto;
 using Microsoft.AspNetCore.Http;
 using System;
@@ -12,6 +13,8 @@ namespace localtour.Requests
     public interface IRequestAppService : IApplicationService
     {
         Task<PagedResultDto<GetRequestForViewDto>> GetAll(GetAllRequestsInput input);
+
+        Task<FileDto> GetRequestsToExcel(GetAllRequestsInput input);
 
         Task<GetRequestForViewDto> GetRequestForView(int id);
 

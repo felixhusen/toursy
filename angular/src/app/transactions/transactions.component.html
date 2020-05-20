@@ -1,6 +1,15 @@
 <div [@routerTransition]>
 
-    <h3 class="page-title mb-3">Transactions</h3>
+    <div class="row">
+        <div class="col-sm-8">
+            <h3 class="page-title mb-3">Transactions</h3>
+        </div>
+        <div class="col-sm-4 text-right">
+            <button mat-mini-fab color="primary" (click)="exportToExcel()">
+                <mat-icon>cloud_download</mat-icon>
+            </button>
+        </div>
+    </div>
 
     <mat-card class="mb-3" style="padding: 0px;">
         <form (submit)="getTransactions()">
