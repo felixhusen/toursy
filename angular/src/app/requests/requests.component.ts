@@ -42,7 +42,7 @@ export class RequestsComponent extends AppComponentBase implements OnInit {
     this.getRequests();
   }
 
-  private showCreateOrEditTourDialog(id?: number): void {
+  private showCreateOrEditRequestDialog(id?: number): void {
     let createOrEditRequestDialog;
     if (id === undefined || id <= 0) {
       createOrEditRequestDialog = this._dialog.open(CreateOrEditRequestDialogComponent);

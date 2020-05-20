@@ -104,11 +104,10 @@ namespace localtour.Disputes
             }
         }
 
-        [AbpAuthorize(PermissionNames.Pages_Dispute_Create)]
+        //[AbpAuthorize(PermissionNames.Pages_Dispute_Create)]
         protected virtual async Task Create(CreateOrEditDisputeDto input)
         {
             var dispute = ObjectMapper.Map<Dispute>(input);
-
 
             if (AbpSession.TenantId != null)
             {
@@ -122,7 +121,7 @@ namespace localtour.Disputes
             await _disputeRepository.InsertAsync(dispute);
         }
 
-        [AbpAuthorize(PermissionNames.Pages_Dispute_Edit)]
+        //[AbpAuthorize(PermissionNames.Pages_Dispute_Edit)]
         protected virtual async Task Update(CreateOrEditDisputeDto input)
         {
             var dispute = await _disputeRepository.FirstOrDefaultAsync((int)input.Id);
