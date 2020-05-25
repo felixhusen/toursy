@@ -1,28 +1,15 @@
-﻿using Abp.Runtime.Session;
-using Abp.Timing.Timezone;
+﻿using Abp.Collections.Extensions;
 using localtour.DataExporting.Excel.EpPlus;
-using localtour.Tours.Dto;
 using localtour.Storage;
+using localtour.Tours.Dto;
 using System.Collections.Generic;
 using System.Linq;
-using Abp.Collections.Extensions;
 
 namespace localtour.Tours.Exporting
 {
     public class ToursExcelExporter : EpPlusExcelExporterBase, IToursExcelExporter
     {
-
-        private readonly ITimeZoneConverter _timeZoneConverter;
-        private readonly IAbpSession _abpSession;
-
-        public ToursExcelExporter(
-            ITimeZoneConverter timeZoneConverter,
-            IAbpSession abpSession,
-            ITempFileCacheManager tempFileCacheManager) : base(tempFileCacheManager)
-        {
-            _timeZoneConverter = timeZoneConverter;
-            _abpSession = abpSession;
-        }
+        public ToursExcelExporter(ITempFileCacheManager tempFileCacheManager) : base(tempFileCacheManager) {}
 
         public FileDto ExportToFile(List<GetTourForViewDto> bookings)
         {

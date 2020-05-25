@@ -7,6 +7,7 @@ using localtour.Authorization.Users;
 using localtour.Bookings.Dto;
 using localtour.Bookings.Exporting;
 using localtour.DataExporting.Excel.EpPlus;
+using localtour.Helpers;
 using localtour.States;
 using localtour.Tours;
 using Microsoft.AspNetCore.Hosting;
@@ -39,7 +40,7 @@ namespace localtour.Bookings
 
         public async Task<PagedResultDto<GetBookingForViewDto>> GetAll(GetAllBookingsInput input)
         {
-            var filteredBookings = _bookingRepository.GetAll().Where(e => e.UserId == AbpSession.UserId).WhereIf(!string.IsNullOrWhiteSpace(input.Query), e => false || e.Suburb.Contains(input.Query) || e.Name.Contains(input.Query) || e.Email.Contains(input.Query) || e.Email.Contains(input.Query) || e.Address.Contains(input.Query) || e.TourFk.Name.Contains(input.Query) || e.TourFk.LocationName.Contains(input.Query));
+            var filteredBookings = _bookingRepository.GetAll().AppendBookingMainFilter(input, AbpSession.UserId);
 
             var bookings = from o in filteredBookings
 
@@ -91,7 +92,7 @@ namespace localtour.Bookings
 
         public async Task<FileDto> GetBookingsToExcel(GetAllBookingsInput input)
         {
-            var filteredBookings = _bookingRepository.GetAll().Where(e => e.UserId == AbpSession.UserId).WhereIf(!string.IsNullOrWhiteSpace(input.Query), e => false || e.Suburb.Contains(input.Query) || e.Name.Contains(input.Query) || e.Email.Contains(input.Query) || e.Email.Contains(input.Query) || e.Address.Contains(input.Query) || e.TourFk.Name.Contains(input.Query) || e.TourFk.LocationName.Contains(input.Query));
+            var filteredBookings = _bookingRepository.GetAll().AppendBookingMainFilter(input, AbpSession.UserId);
 
             var bookings = from o in filteredBookings
 
