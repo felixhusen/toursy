@@ -18,8 +18,7 @@ namespace localtour.Tours.Exporting
         public ToursExcelExporter(
             ITimeZoneConverter timeZoneConverter,
             IAbpSession abpSession,
-            ITempFileCacheManager tempFileCacheManager) :
-    base(tempFileCacheManager)
+            ITempFileCacheManager tempFileCacheManager) : base(tempFileCacheManager)
         {
             _timeZoneConverter = timeZoneConverter;
             _abpSession = abpSession;
