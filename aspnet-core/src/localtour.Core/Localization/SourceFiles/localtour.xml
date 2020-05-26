@@ -118,5 +118,29 @@
     <text name="Reviews">Reviews</text>
     <text name="Review">Review</text>
     <text name="Dashboard">Dashboard</text>
+    <text name="ViewTour">View Tour</text>
+    <text name="ViewAllTour">View All Tour</text>
+    <text name="ViewTransaction">View Transaction</text>
+    <text name="ViewAllTransaction">View All Transaction</text>
+    <text name="ViewReview">View Review</text>
+    <text name="ViewAllReview">View All Review</text>
+    <text name="ViewRequest">View Request</text>
+    <text name="ViewAllRequest">View All Request</text>
+    <text name="ViewDispute">View Dispute</text>
+    <text name="ViewAllDispute">View All Dispute</text>
+    <text name="EditTour">Edit Tour</text>
+    <text name="DeleteTour">Delete Tour</text>
+    <text name="EditBooking">Edit Booking</text>
+    <text name="DeleteBooking">Delete Booking</text>
+    <text name="EditRequest">Edit Request</text>
+    <text name="DeleteRequest">Delete Request</text>
+    <text name="EditReview">Edit Review</text>
+    <text name="DeleteReview">Delete Review</text>
+    <text name="EditTransaction">Edit Transaction</text>
+    <text name="DeleteTransaction">Delete Transaction</text>
+    <text name="EditDispute">Edit Dispute</text>
+    <text name="DeleteDispute">Delete Dispute</text>
+    <text name="CreateTour">Create Tour</text>
+    <text name="ApproveTour">Approve Tour</text>
   </texts>
 </localizationDictionary>

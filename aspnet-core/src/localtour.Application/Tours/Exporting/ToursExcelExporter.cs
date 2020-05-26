@@ -11,7 +11,7 @@ namespace localtour.Tours.Exporting
     {
         public ToursExcelExporter(ITempFileCacheManager tempFileCacheManager) : base(tempFileCacheManager) {}
 
-        public FileDto ExportToFile(List<GetTourForViewDto> bookings)
+        public FileDto ExportToFile(List<GetTourForViewDto> tours)
         {
             return CreateExcelPackage(
                 "Tours.xlsx",
@@ -29,7 +29,7 @@ namespace localtour.Tours.Exporting
                         );
 
                     AddObjects(
-                        sheet, 2, bookings,
+                        sheet, 2, tours,
                         _ => _.Tour.Id,
                         _ => _.Tour.Name,
                         _ => _.TourDates.Select(t => t.StartDate.ToString("dd/MM/yyyy")).JoinAsString(","),

@@ -16,11 +16,43 @@ namespace localtour.Authorization.Roles
                 )
             );
 
+            // Static tourist role
+            roleManagementConfig.StaticRoles.Add(
+                new StaticRoleDefinition(
+                    StaticRoleNames.Host.Tourist,
+                    MultiTenancySides.Tenant
+                )
+            );
+
+            // Static tour guide role
+            roleManagementConfig.StaticRoles.Add(
+                new StaticRoleDefinition(
+                    StaticRoleNames.Host.TourGuide,
+                    MultiTenancySides.Tenant
+                )
+            );
+
             // Static tenant roles
 
             roleManagementConfig.StaticRoles.Add(
                 new StaticRoleDefinition(
                     StaticRoleNames.Tenants.Admin,
+                    MultiTenancySides.Tenant
+                )
+            );
+
+            // Static tourist role
+            roleManagementConfig.StaticRoles.Add(
+                new StaticRoleDefinition(
+                    StaticRoleNames.Tenants.Tourist,
+                    MultiTenancySides.Tenant
+                )
+            );
+
+            // Static tour guide role
+            roleManagementConfig.StaticRoles.Add(
+                new StaticRoleDefinition(
+                    StaticRoleNames.Tenants.TourGuide,
                     MultiTenancySides.Tenant
                 )
             );

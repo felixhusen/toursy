@@ -7725,6 +7725,7 @@ export class TourDto implements ITourDto {
     longitude: string | undefined;
     latitude: string | undefined;
     userId: number | undefined;
+    rating: number | undefined;
     id: number;
 
     constructor(data?: ITourDto) {
@@ -7745,6 +7746,7 @@ export class TourDto implements ITourDto {
             this.longitude = data["longitude"];
             this.latitude = data["latitude"];
             this.userId = data["userId"];
+            this.rating = data["rating"];
             this.id = data["id"];
         }
     }
@@ -7765,6 +7767,7 @@ export class TourDto implements ITourDto {
         data["longitude"] = this.longitude;
         data["latitude"] = this.latitude;
         data["userId"] = this.userId;
+        data["rating"] = this.rating;
         data["id"] = this.id;
         return data; 
     }
@@ -7785,6 +7788,7 @@ export interface ITourDto {
     longitude: string | undefined;
     latitude: string | undefined;
     userId: number | undefined;
+    rating: number | undefined;
     id: number;
 }
 
