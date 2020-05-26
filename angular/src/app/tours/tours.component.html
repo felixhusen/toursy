@@ -39,13 +39,13 @@
                 <img mat-card-image [src]="item.tourPictures.length > 0 ? item.tourPictures[0].link : defaultImageLink"
                     alt="{{item.tour.name}}" class="tour-image">
                 <mat-card-content>
-                    <p>
+                    <p class="text-truncate">
                         <i class="las la-calendar"></i>
                         <span *ngIf="item.tourDates.length > 0; else noDate;">
                             {{item.tourDates[item.tourDates.length - 1].startDate | date:'dd/MM/yyyy'}}</span>
                         <ng-template #noDate><span> Unavailable</span></ng-template>
                     </p>
-                    <p>
+                    <p class="text-truncate">
                         <i class="las la-map-marker"></i>
                         {{item.tour.locationName}}
                     </p>
