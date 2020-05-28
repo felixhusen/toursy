@@ -16,6 +16,10 @@ namespace localtour.Transactions
 
         Task<FileDto> GetTransactionsToExcel(GetAllTransactionsInput input);
 
+        Task CancelTransaction(int id);
+
+        Task ApproveTransaction(int id);
+
         Task<GetTransactionForViewDto> GetTransactionForView(int id);
 
         Task<GetTransactionForEditOutput> GetTransactionForEdit(EntityDto input);

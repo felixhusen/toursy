@@ -19,7 +19,7 @@ export class ReviewsComponent extends AppComponentBase implements OnInit {
   public searchQuery: string;
   public reviews: GetReviewForViewDto[];
   public totalCount: number;
-  public maxResultCount: number = 5;
+  public maxResultCount: number = 25;
   public skipCount: number = 0;
   public sort: string;
   public maxResultCountOptions: number[] = [1, 5, 10, 25, 100];

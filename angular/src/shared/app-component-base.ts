@@ -53,4 +53,22 @@ export abstract class AppComponentBase {
     isGranted(permissionName: string): boolean {
         return this.permission.isGranted(permissionName);
     }
+
+    isGrantedAny(...permissions: string[]): boolean {
+        if (!permissions) {
+            return false;
+        }
+
+        for (const permission of permissions) {
+            if (this.isGranted(permission)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    s(key: string): string {
+        return abp.setting.get(key);
+    }
 }

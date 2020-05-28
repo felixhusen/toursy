@@ -55,6 +55,7 @@ import { BlockDirective } from './directives/block.directive';
 import { BusyDirective } from './directives/busy.directive';
 import { EqualValidator } from './directives/equal-validator.directive';
 import { FileDownloadService } from './utils/file-download.service';
+import { PermissionPipe } from './pipes/permission.pipe';
 @NgModule({
     imports: [
         CommonModule,
@@ -100,6 +101,7 @@ import { FileDownloadService } from './utils/file-download.service';
     declarations: [
         AbpPaginationControlsComponent,
         LocalizePipe,
+        PermissionPipe,
         BlockDirective,
         BusyDirective,
         EqualValidator
@@ -107,6 +109,7 @@ import { FileDownloadService } from './utils/file-download.service';
     exports: [
         AbpPaginationControlsComponent,
         LocalizePipe,
+        PermissionPipe,
         BlockDirective,
         BusyDirective,
         EqualValidator,

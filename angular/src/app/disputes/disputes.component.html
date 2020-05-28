@@ -2,12 +2,20 @@
 
     <div class="row">
         <div class="col-sm-8">
-            <h3 class="page-title mb-3">Disputes</h3>
+            <h3 class="page-title mb-3">{{title}}</h3>
         </div>
         <div class="col-sm-4 text-right">
             <button mat-mini-fab color="primary" (click)="exportToExcel()" class="mr-1">
                 <mat-icon>cloud_download</mat-icon>
             </button>
+            <button mat-mini-fab color="primary" [matMenuTriggerFor]="menu" class="mr-1">
+                <mat-icon>filter_list</mat-icon>
+            </button>
+            <mat-menu #menu="matMenu">
+                <button mat-menu-item (click)="toggleMyDispute()">My Disputes</button>
+                <button mat-menu-item (click)="toggleCustomerDispute()" *ngIf="'Pages.Dispute.ViewAll' | permission">Customer's Disputes</button>
+                <button mat-menu-item (click)="togglePendingRequests()" *ngIf="'Pages.Dispute.ViewAll' | permission">Pending Requests</button>
+            </mat-menu>
             <button mat-mini-fab color="primary" (click)="showCreateOrEditDisputeDialog()">
                 <mat-icon>add</mat-icon>
             </button>

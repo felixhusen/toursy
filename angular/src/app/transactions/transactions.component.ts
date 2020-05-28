@@ -22,11 +22,13 @@ export class TransactionsComponent extends AppComponentBase implements OnInit {
   public searchQuery: string;
   public transactions: GetTransactionForViewDto[];
   public totalCount: number;
-  public maxResultCount: number = 5;
+  public maxResultCount: number = 25;
   public skipCount: number = 0;
   public sort: string;
   public maxResultCountOptions: number[] = [1, 5, 10, 25, 100];
   public pageEvent: PageEvent;
+  public title: string = "My Transactions";
+  public mode: string;
 
   constructor(injector: Injector, private _transactionService: TransactionServiceProxy, private _fileDownloadService: FileDownloadService) {
     super(injector);
@@ -40,7 +42,7 @@ export class TransactionsComponent extends AppComponentBase implements OnInit {
     }
 
     this._transactionService
-      .getAll(this.searchQuery, this.sort, this.skipCount, this.maxResultCount)
+      .getAll(this.searchQuery, this.mode, this.sort, this.skipCount, this.maxResultCount)
       .subscribe((result) => {
         this.transactions = result.items;
         this.totalCount = result.totalCount;
@@ -49,8 +51,39 @@ export class TransactionsComponent extends AppComponentBase implements OnInit {
       });
   }
 
+  public toggleMyTransaction() {
+    this.title = "My Transactions";
+    this.mode = undefined;
+    this.getTransactions();
+  }
+
+  public toggleCustomerTransaction() {
+    this.title = "Customer's Transactions";
+    this.mode = "CustomerTransactions";
+    this.getTransactions();
+  }
+
+  public toggleCancellationRequests() {
+    this.title = "Transaction Cancellation Requests";
+    this.mode = "CancellationRequests";
+    this.getTransactions();
+  }
+
+  public togglePendingRequests() {
+    this.title = "Pending Requests";
+    this.mode = "PendingRequests";
+    this.getTransactions();
+  }
+
+  public async requestCancelTransaction(id: number) {
+    if (confirm("Are you sure to cancel this transaction?")) {
+      await this._transactionService.cancelTransaction(id).toPromise();
+      this.getTransactions();
+    }
+  }
+
   public exportToExcel(): void {
-    this._transactionService.getTransactionsToExcel(this.searchQuery, undefined, undefined, undefined)
+    this._transactionService.getTransactionsToExcel(this.searchQuery, this.mode, undefined, undefined, undefined)
       .subscribe((result) => {
         this._fileDownloadService.downloadTempFile(result);
       });

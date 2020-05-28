@@ -21,11 +21,13 @@ export class DisputesComponent extends AppComponentBase implements OnInit {
   public searchQuery: string;
   public disputes: GetDisputeForViewDto[];
   public totalCount: number;
-  public maxResultCount: number = 5;
+  public maxResultCount: number = 25;
   public skipCount: number = 0;
   public sort: string;
   public maxResultCountOptions: number[] = [1, 5, 10, 25, 100];
   public pageEvent: PageEvent;
+  public title: string = "My Disputes";
+  public mode: string;
 
   constructor(
     injector: Injector,
@@ -44,15 +46,33 @@ export class DisputesComponent extends AppComponentBase implements OnInit {
     }
 
     this._disputeService
-      .getAll(this.searchQuery, this.sort, this.skipCount, this.maxResultCount)
+      .getAll(this.searchQuery, this.mode, this.sort, this.skipCount, this.maxResultCount)
       .subscribe((result) => {
         this.disputes = result.items;
         this.totalCount = result.totalCount;
       });
   }
 
+  public toggleMyDispute() {
+    this.title = "My Disputes";
+    this.mode = undefined;
+    this.getDisputes();
+  }
+
+  public toggleCustomerDispute() {
+    this.title = "Customer's Disputes";
+    this.mode = "CustomerDisputes";
+    this.getDisputes();
+  }
+
+  public togglePendingRequests() {
+    this.title = "Pending Requests";
+    this.mode = "PendingRequests";
+    this.getDisputes();
+  }
+
   public exportToExcel(): void {
-    this._disputeService.getDisputesToExcel(this.searchQuery, undefined, undefined, undefined)
+    this._disputeService.getDisputesToExcel(this.searchQuery, this.mode, undefined, undefined, undefined)
       .subscribe((result) => {
         this._fileDownloadService.downloadTempFile(result);
       });

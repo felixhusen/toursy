@@ -6,6 +6,7 @@ using localtour.Authorization;
 using localtour.Authorization.Users;
 using localtour.Bookings;
 using localtour.DataExporting.Excel.EpPlus;
+using localtour.Helpers;
 using localtour.Requests.Dto;
 using localtour.Requests.Exporting;
 using localtour.Tours;
@@ -40,8 +41,7 @@ namespace localtour.Requests
 
         public async Task<PagedResultDto<GetRequestForViewDto>> GetAll(GetAllRequestsInput input)
         {
-            var filteredRequests = _requestRepository.GetAll()
-                                        .WhereIf(!string.IsNullOrWhiteSpace(input.Query), e => false || e.Description.Contains(input.Query) || e.BookingFk.Status.Contains(input.Query) || e.BookingFk.Name.Contains(input.Query) || e.BookingFk.TourFk.Name.Contains(input.Query));
+            var filteredRequests = _requestRepository.GetAll().AppendRequestMainFilter(input, AbpSession.UserId);
 
             var requests = from o in filteredRequests
 
@@ -68,7 +68,7 @@ namespace localtour.Requests
                            };
 
             var pagedAndFilteredRequests = requests
-                .OrderBy(input.Sorting ?? "Request.Id asc")
+                .OrderBy(input.Sorting ?? "Request.Id desc")
                 .PageBy(input);
 
             var totalCount = await requests.CountAsync();
@@ -79,10 +79,25 @@ namespace localtour.Requests
             );
         }
 
+        [AbpAuthorize(PermissionNames.Pages_Request_Edit)]
+        public async Task CancelRequest(int id)
+        {
+            var request = await _requestRepository.GetAsync(id);
+            request.Status = "Cancellation Requested";
+            await _requestRepository.UpdateAsync(request);
+        }
+
+        [AbpAuthorize(PermissionNames.Pages_Request_Edit)]
+        public async Task ApproveRequest(int id)
+        {
+            var request = await _requestRepository.GetAsync(id);
+            request.Status = "Success";
+            await _requestRepository.UpdateAsync(request);
+        }
+
         public async Task<FileDto> GetRequestsToExcel(GetAllRequestsInput input)
         {
-            var filteredRequests = _requestRepository.GetAll()
-                                        .WhereIf(!string.IsNullOrWhiteSpace(input.Query), e => false || e.Description.Contains(input.Query) || e.BookingFk.Status.Contains(input.Query) || e.BookingFk.Name.Contains(input.Query) || e.BookingFk.TourFk.Name.Contains(input.Query));
+            var filteredRequests = _requestRepository.GetAll().AppendRequestMainFilter(input, AbpSession.UserId);
 
             var requests = from o in filteredRequests
 
@@ -169,7 +184,7 @@ namespace localtour.Requests
         protected virtual async Task Update(CreateOrEditRequestDto input)
         {
             var request = await _requestRepository.FirstOrDefaultAsync((int)input.Id);
-            
+
             ObjectMapper.Map(input, request);
 
             request.Date = DateTime.Now;

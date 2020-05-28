@@ -7,3 +7,4 @@ bin/
 aspnet-core/src/localtour.Web.Host/App_Data/Logs/
 aspnet-core/src/localtour.Web.Mvc/App_Data/Logs/
 aspnet-core/src/localtour.Migrator/Logs/Logs.txt
+aspnet-core/src/localtour.Web.Host/wwwroot/common/uploads/

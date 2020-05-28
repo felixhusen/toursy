@@ -8,6 +8,7 @@ using localtour.Bookings;
 using localtour.DataExporting.Excel.EpPlus;
 using localtour.Disputes.Dto;
 using localtour.Disputes.Exporting;
+using localtour.Helpers;
 using localtour.Tours;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -40,7 +41,7 @@ namespace localtour.Disputes
 
         public async Task<PagedResultDto<GetDisputeForViewDto>> GetAll(GetAllDisputesInput input)
         {
-            var filteredDisputes = _disputeRepository.GetAll().WhereIf(!string.IsNullOrWhiteSpace(input.Query), e => false || e.Description.Contains(input.Query) || e.Status.Contains(input.Query) || e.BookingFk.Name.Contains(input.Query) || e.BookingFk.TourFk.Name.Contains(input.Query));
+            var filteredDisputes = _disputeRepository.GetAll().AppendDisputeMainFilter(input, AbpSession.UserId);
 
             var disputes = from o in filteredDisputes
 
@@ -67,7 +68,7 @@ namespace localtour.Disputes
                            };
 
             var pagedAndFilteredDisputes = disputes
-                .OrderBy(input.Sorting ?? "Dispute.Id asc")
+                .OrderBy(input.Sorting ?? "Dispute.Id desc")
                 .PageBy(input);
 
             var totalCount = await disputes.CountAsync();
@@ -78,9 +79,25 @@ namespace localtour.Disputes
             );
         }
 
+        [AbpAuthorize(PermissionNames.Pages_Dispute_Edit)]
+        public async Task CancelDispute(int id)
+        {
+            var dispute = await _disputeRepository.GetAsync(id);
+            dispute.Status = "Cancellation Requested";
+            await _disputeRepository.UpdateAsync(dispute);
+        }
+
+        [AbpAuthorize(PermissionNames.Pages_Dispute_Edit)]
+        public async Task ApproveDispute(int id)
+        {
+            var dispute = await _disputeRepository.GetAsync(id);
+            dispute.Status = "Success";
+            await _disputeRepository.UpdateAsync(dispute);
+        }
+
         public async Task<FileDto> GetDisputesToExcel(GetAllDisputesInput input)
         {
-            var filteredDisputes = _disputeRepository.GetAll().WhereIf(!string.IsNullOrWhiteSpace(input.Query), e => false || e.Description.Contains(input.Query) || e.Status.Contains(input.Query) || e.BookingFk.Name.Contains(input.Query) || e.BookingFk.TourFk.Name.Contains(input.Query));
+            var filteredDisputes = _disputeRepository.GetAll().AppendDisputeMainFilter(input, AbpSession.UserId);
 
             var disputes = from o in filteredDisputes
 

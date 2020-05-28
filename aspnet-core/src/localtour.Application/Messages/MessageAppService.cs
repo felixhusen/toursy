@@ -37,7 +37,7 @@ namespace localtour.Messages
         {
             try
             {
-                var filteredMessages = _messageRepository.GetAll().Where(e => e.ReceiverId == AbpSession.UserId);
+                var filteredMessages = _messageRepository.GetAll().Where(e => e.ReceiverId == AbpSession.UserId || e.SenderId == AbpSession.UserId);
 
                 var messages = from o in filteredMessages
 
@@ -58,7 +58,7 @@ namespace localtour.Messages
                                    SenderName = sender.FullName
                                };
 
-                var results = messages.OrderBy("Message.DateSent asc").DistinctBy(e => e.Message.SenderId);
+                var results = messages.OrderBy("Message.DateSent desc").DistinctBy(e => e.Message.SenderId);
 
                 var totalCount = results.Count();
 
@@ -125,7 +125,7 @@ namespace localtour.Messages
                            };
 
             var pagedAndFilteredMessages = messages
-                .OrderBy("Message.DateSent asc");
+                .OrderBy("Message.DateSent desc");
 
             return await pagedAndFilteredMessages.ToListAsync();
         }

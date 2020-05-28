@@ -8,5 +8,7 @@ namespace localtour.Bookings.Dto
     public class GetAllBookingsInput : PagedAndSortedResultRequestDto
     {
         public string Query { get; set; }
+
+        public string Mode { get; set; }
     }
 }

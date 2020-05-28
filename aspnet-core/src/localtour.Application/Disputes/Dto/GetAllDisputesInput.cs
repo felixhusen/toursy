@@ -8,5 +8,7 @@ namespace localtour.Disputes.Dto
     public class GetAllDisputesInput : PagedAndSortedResultRequestDto
     {
         public string Query { get; set; }
+
+        public string Mode { get; set; }
     }
 }

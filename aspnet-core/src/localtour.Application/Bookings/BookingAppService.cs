@@ -79,7 +79,7 @@ namespace localtour.Bookings
                            };
 
             var pagedAndFilteredBookings = bookings
-                .OrderBy(input.Sorting ?? "Booking.Id asc")
+                .OrderBy(input.Sorting ?? "Booking.Id desc")
                 .PageBy(input);
 
             var totalCount = await bookings.CountAsync();
@@ -88,6 +88,22 @@ namespace localtour.Bookings
                 totalCount,
                 await pagedAndFilteredBookings.ToListAsync()
             );
+        }
+
+        [AbpAuthorize(PermissionNames.Pages_Booking_Edit)]
+        public async Task CancelBooking(int id)
+        {
+            var booking = await _bookingRepository.GetAsync(id);
+            booking.Status = "Cancellation Requested";
+            await _bookingRepository.UpdateAsync(booking);
+        }
+
+        [AbpAuthorize(PermissionNames.Pages_Booking_Edit)]
+        public async Task ApproveBooking(int id)
+        {
+            var booking = await _bookingRepository.GetAsync(id);
+            booking.Status = "Success";
+            await _bookingRepository.UpdateAsync(booking);
         }
 
         public async Task<FileDto> GetBookingsToExcel(GetAllBookingsInput input)

@@ -82,7 +82,7 @@ namespace localtour.Tours
                             };
 
                 var pagedAndFilteredTours = tours
-                    .OrderBy(input.Sorting ?? "Tour.Id asc")
+                    .OrderBy(input.Sorting ?? "Tour.Id desc")
                     .PageBy(input);
 
                 var totalCount = await tours.CountAsync();

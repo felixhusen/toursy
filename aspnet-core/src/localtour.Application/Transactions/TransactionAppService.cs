@@ -3,7 +3,7 @@ using Abp.Authorization;
 using Abp.Domain.Repositories;
 using Abp.Linq.Extensions;
 using localtour.Authorization;
-using localtour.Bookings;
+using localtour.Transactions;
 using localtour.DataExporting.Excel.EpPlus;
 using localtour.Tours;
 using localtour.Transactions.Dto;
@@ -13,6 +13,8 @@ using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Linq.Dynamic.Core;
 using System.Threading.Tasks;
+using localtour.Bookings;
+using localtour.Helpers;
 
 namespace localtour.Transactions
 {
@@ -36,7 +38,7 @@ namespace localtour.Transactions
 
         public async Task<PagedResultDto<GetTransactionForViewDto>> GetAll(GetAllTransactionsInput input)
         {
-            var filteredTransactions = _transactionRepository.GetAll().WhereIf(!string.IsNullOrWhiteSpace(input.Query), e => false || e.NameOnCard.Contains(input.Query) || e.BookingFk.Name.Contains(input.Query) || e.BookingFk.Email.Contains(input.Query));
+            var filteredTransactions = _transactionRepository.GetAll().AppendTransactionMainFilter(input, AbpSession.UserId);
 
             var transactions = from o in filteredTransactions
 
@@ -45,8 +47,6 @@ namespace localtour.Transactions
 
                                join o2 in _tourRepository.GetAll() on s1.TourId equals o2.Id into j2
                                from s2 in j2.DefaultIfEmpty()
-
-                               where s1.UserId == AbpSession.UserId
 
                                select new GetTransactionForViewDto()
                                {
@@ -65,7 +65,7 @@ namespace localtour.Transactions
                                };
 
             var pagedAndFilteredTransactions = transactions
-                .OrderBy(input.Sorting ?? "Transaction.Id asc")
+                .OrderBy(input.Sorting ?? "Transaction.Id desc")
                 .PageBy(input);
 
             var totalCount = await transactions.CountAsync();
@@ -78,7 +78,7 @@ namespace localtour.Transactions
 
         public async Task<FileDto> GetTransactionsToExcel(GetAllTransactionsInput input)
         {
-            var filteredTransactions = _transactionRepository.GetAll().WhereIf(!string.IsNullOrWhiteSpace(input.Query), e => false || e.NameOnCard.Contains(input.Query) || e.BookingFk.Name.Contains(input.Query) || e.BookingFk.Email.Contains(input.Query));
+            var filteredTransactions = _transactionRepository.GetAll().AppendTransactionMainFilter(input, AbpSession.UserId);
 
             var transactions = from o in filteredTransactions
 
@@ -87,8 +87,6 @@ namespace localtour.Transactions
 
                                join o2 in _tourRepository.GetAll() on s1.TourId equals o2.Id into j2
                                from s2 in j2.DefaultIfEmpty()
-
-                               where s1.UserId == AbpSession.UserId
 
                                select new GetTransactionForViewDto()
                                {
@@ -142,10 +140,27 @@ namespace localtour.Transactions
             }
         }
 
+        [AbpAuthorize(PermissionNames.Pages_Transaction_Edit)]
+        public async Task CancelTransaction(int id)
+        {
+            var transaction = await _transactionRepository.GetAsync(id);
+            transaction.Status = "Cancellation Requested";
+            await _transactionRepository.UpdateAsync(transaction);
+        }
+
+        [AbpAuthorize(PermissionNames.Pages_Transaction_Edit)]
+        public async Task ApproveTransaction(int id)
+        {
+            var transaction = await _transactionRepository.GetAsync(id);
+            transaction.Status = "Success";
+            await _transactionRepository.UpdateAsync(transaction);
+        }
+
         protected virtual async Task Create(CreateOrEditTransactionDto input)
         {
             var transaction = ObjectMapper.Map<Transaction>(input);
 
+            transaction.Status = "Success";
 
             if (AbpSession.TenantId != null)
             {

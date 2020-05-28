@@ -21,11 +21,13 @@ export class RequestsComponent extends AppComponentBase implements OnInit {
   public searchQuery: string;
   public requests: GetRequestForViewDto[];
   public totalCount: number;
-  public maxResultCount: number = 5;
+  public maxResultCount: number = 25;
   public skipCount: number = 0;
   public sort: string;
   public maxResultCountOptions: number[] = [1, 5, 10, 25, 100];
   public pageEvent: PageEvent;
+  public title: string = "My Requests";
+  public mode: string;
 
   constructor(
     injector: Injector,
@@ -45,10 +47,28 @@ export class RequestsComponent extends AppComponentBase implements OnInit {
   }
 
   public exportToExcel(): void {
-    this._requestService.getRequestsToExcel(this.searchQuery, undefined, undefined, undefined)
+    this._requestService.getRequestsToExcel(this.searchQuery, this.mode, undefined, undefined, undefined)
       .subscribe((result) => {
         this._fileDownloadService.downloadTempFile(result);
       });
+  }
+
+  public toggleMyRequests() {
+    this.title = "My Requests";
+    this.mode = undefined;
+    this.getRequests();
+  }
+
+  public toggleCustomerRequests() {
+    this.title = "Customer's Requests";
+    this.mode = "CustomerRequests";
+    this.getRequests();
+  }
+
+  public togglePendingRequests() {
+    this.title = "Pending Requests";
+    this.mode = "PendingRequests";
+    this.getRequests();
   }
 
   private showCreateOrEditRequestDialog(id?: number): void {
@@ -76,7 +96,7 @@ export class RequestsComponent extends AppComponentBase implements OnInit {
     }
 
     this._requestService
-      .getAll(this.searchQuery, this.sort, this.skipCount, this.maxResultCount)
+      .getAll(this.searchQuery, this.mode, this.sort, this.skipCount, this.maxResultCount)
       .subscribe((result) => {
         this.requests = result.items;
         this.totalCount = result.totalCount;
