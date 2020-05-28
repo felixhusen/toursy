@@ -27,9 +27,6 @@
       <mat-tab label="Dates">
         <br />
         <div class="row-fluid">
-          <!-- <dl-date-time-picker startView="day" maxView="year" minView="minute" minuteStep="5"
-            [(ngModel)]="startDate" name="StartDate">
-          </dl-date-time-picker> -->
           <mat-form-field appearance="fill">
             <mat-label>Start Date</mat-label>
             <input matInput name="StartDate" placeholder="Start Date" [(ngModel)]="startDate" maxlength="32"
@@ -38,19 +35,28 @@
             <mat-datepicker #startDatePicker></mat-datepicker>
           </mat-form-field>
           <mat-form-field appearance="fill">
+            <mat-label>Start Time</mat-label>
+            <input matInput name="startTime" placeholder="Start Time" [(ngModel)]="startTime" type="time" />
+          </mat-form-field>
+          <mat-form-field appearance="fill">
             <mat-label>End Date</mat-label>
             <input matInput name="EndDate" placeholder="End Date" [(ngModel)]="endDate" maxlength="32"
               [matDatepicker]="endDatePicker" />
             <mat-datepicker-toggle matSuffix [for]="endDatePicker"></mat-datepicker-toggle>
             <mat-datepicker #endDatePicker></mat-datepicker>
           </mat-form-field>
-          <button type="button" mat-flat-button (click)="addDate()" color="primary" [disabled]="!endDate && !startDate">Add Date</button>
+          <mat-form-field appearance="fill">
+            <mat-label>End Time</mat-label>
+            <input matInput name="endTime" placeholder="End Time" [(ngModel)]="endTime" type="time">
+          </mat-form-field>
+          <button type="button" mat-flat-button (click)="addDate()" color="primary" [disabled]="!startDate && !startTime && !endDate && !endTime">Add Date</button>
           <mat-list>
             <div mat-subheader>Tour Dates</div>
             <mat-list-item *ngFor="let date of tourDates">
               <mat-icon mat-list-icon>calendar_today</mat-icon>
               <div mat-line>Start Date: {{date.startDate | date:'short'}}</div>
               <div mat-line>End Date: {{date.endDate | date:'short'}}</div>
+              <div><mat-icon mat-list-icon (click)="deleteDate(date.id);" ngClass="clickable">highlight_off</mat-icon></div>
             </mat-list-item>
           </mat-list>
         </div>
