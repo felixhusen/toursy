@@ -1483,15 +1483,15 @@ export class MessageServiceProxy {
     }
 
     /**
-     * @param senderId (optional) 
+     * @param userId (optional) 
      * @return Success
      */
-    getMessagesBySender(senderId: number | undefined): Observable<GetMessageForViewDto[]> {
-        let url_ = this.baseUrl + "/api/services/app/Message/GetMessagesBySender?";
-        if (senderId === null)
-            throw new Error("The parameter 'senderId' cannot be null.");
-        else if (senderId !== undefined)
-            url_ += "SenderId=" + encodeURIComponent("" + senderId) + "&"; 
+    getMessagesByRelatedUserId(userId: number | undefined): Observable<GetMessageForViewDto[]> {
+        let url_ = this.baseUrl + "/api/services/app/Message/GetMessagesByRelatedUserId?";
+        if (userId === null)
+            throw new Error("The parameter 'userId' cannot be null.");
+        else if (userId !== undefined)
+            url_ += "UserId=" + encodeURIComponent("" + userId) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -1503,11 +1503,11 @@ export class MessageServiceProxy {
         };
 
         return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processGetMessagesBySender(response_);
+            return this.processGetMessagesByRelatedUserId(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
                 try {
-                    return this.processGetMessagesBySender(<any>response_);
+                    return this.processGetMessagesByRelatedUserId(<any>response_);
                 } catch (e) {
                     return <Observable<GetMessageForViewDto[]>><any>_observableThrow(e);
                 }
@@ -1516,7 +1516,7 @@ export class MessageServiceProxy {
         }));
     }
 
-    protected processGetMessagesBySender(response: HttpResponseBase): Observable<GetMessageForViewDto[]> {
+    protected processGetMessagesByRelatedUserId(response: HttpResponseBase): Observable<GetMessageForViewDto[]> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -6242,8 +6242,8 @@ export interface IMessageDto {
 
 export class GetMessageForViewDto implements IGetMessageForViewDto {
     message: MessageDto;
-    senderName: string | undefined;
-    receiverName: string | undefined;
+    displayName: string | undefined;
+    relatedUserId: number | undefined;
 
     constructor(data?: IGetMessageForViewDto) {
         if (data) {
@@ -6257,8 +6257,8 @@ export class GetMessageForViewDto implements IGetMessageForViewDto {
     init(data?: any) {
         if (data) {
             this.message = data["message"] ? MessageDto.fromJS(data["message"]) : <any>undefined;
-            this.senderName = data["senderName"];
-            this.receiverName = data["receiverName"];
+            this.displayName = data["displayName"];
+            this.relatedUserId = data["relatedUserId"];
         }
     }
 
@@ -6272,8 +6272,8 @@ export class GetMessageForViewDto implements IGetMessageForViewDto {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["message"] = this.message ? this.message.toJSON() : <any>undefined;
-        data["senderName"] = this.senderName;
-        data["receiverName"] = this.receiverName;
+        data["displayName"] = this.displayName;
+        data["relatedUserId"] = this.relatedUserId;
         return data; 
     }
 
@@ -6287,8 +6287,8 @@ export class GetMessageForViewDto implements IGetMessageForViewDto {
 
 export interface IGetMessageForViewDto {
     message: MessageDto;
-    senderName: string | undefined;
-    receiverName: string | undefined;
+    displayName: string | undefined;
+    relatedUserId: number | undefined;
 }
 
 export class GetMessageForViewDtoPagedResultDto implements IGetMessageForViewDtoPagedResultDto {
