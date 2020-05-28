@@ -15,6 +15,7 @@ namespace localtour.EntityFrameworkCore.Seed
 {
     public static class SeedHelper
     {
+
         public static void SeedHostDb(IIocResolver iocResolver)
         {
             WithDbContext<localtourDbContext>(iocResolver, SeedHostDb);
@@ -43,10 +44,15 @@ namespace localtour.EntityFrameworkCore.Seed
             // Host seed
             new InitialHostDbBuilder(context).Create();
 
-            // Default tenant seed (in host database).
             new DefaultTenantBuilder(context).Create();
             new TenantRoleAndUserBuilder(context, 1).Create();
             new TourDataBuilder(context).Create();
+            new StateDataBuilder(context).Create();
+            new BookingDataBuilder(context).Create();
+            new TransactionDataBuilder(context).Create();
+            new ReviewDataBuilder(context).Create();
+            new RequestDataBuilder(context).Create();
+            new DisputeDataBuilder(context).Create();
         }
 
         private static void WithDbContext<TDbContext>(IIocResolver iocResolver, Action<TDbContext> contextAction)

@@ -13,5 +13,7 @@ namespace localtour.Disputes.Dto
         public int? BookingId { get; set; }
 
         public string Description { get; set; }
+
+        public long? UserId { get; set; }
     }
 }

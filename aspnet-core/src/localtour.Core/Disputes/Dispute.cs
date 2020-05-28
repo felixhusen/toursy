@@ -1,4 +1,5 @@
 ﻿using Abp.Domain.Entities;
+using localtour.Authorization.Users;
 using localtour.Bookings;
 using System;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -14,6 +15,11 @@ namespace localtour.Disputes
 
         [ForeignKey("BookingId")]
         public Booking BookingFk { get; set; }
+
+        public virtual long? UserId { get; set; }
+
+        [ForeignKey("UserId")]
+        public User UserFk { get; set; }
 
         public virtual string Description { get; set; }
 

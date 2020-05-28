@@ -1,6 +1,7 @@
 ﻿using Abp.Authorization;
 using Abp.Authorization.Roles;
 using Abp.Authorization.Users;
+using Abp.Domain.Uow;
 using Abp.MultiTenancy;
 using localtour.Authorization;
 using localtour.Authorization.Roles;
@@ -8,6 +9,7 @@ using localtour.Authorization.Users;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -17,11 +19,13 @@ namespace localtour.EntityFrameworkCore.Seed.Tenants
     {
         private readonly localtourDbContext _context;
         private readonly int _tenantId;
+        private readonly IUnitOfWorkManager _unitOfWorkManager;
 
         public TenantRoleAndUserBuilder(localtourDbContext context, int tenantId)
         {
             _context = context;
             _tenantId = tenantId;
+            //_unitOfWorkManager = unitOfWorkManager;
         }
 
         public void Create()
@@ -165,6 +169,33 @@ namespace localtour.EntityFrameworkCore.Seed.Tenants
             }
         }
 
+        private void CreateRandomUsers()
+        {
+            if (_context.Users.Count() == 1)
+            {
+                var users = SeedHelper.SeedData<User>("users.json");
+                Random random = new Random();
+                foreach (var user in users)
+                {
+                    user.Password = new PasswordHasher<User>(new OptionsWrapper<PasswordHasherOptions>(new PasswordHasherOptions())).HashPassword(user, "123qwe");
+                    user.IsEmailConfirmed = true;
+                    user.IsActive = true;
+                    user.NormalizedEmailAddress = user.EmailAddress.ToUpper();
+                    user.NormalizedUserName = user.UserName.ToUpper();
+                    user.Roles = new List<UserRole>();
+                }
+                _context.Users.AddRange(users);
+                _context.SaveChanges();
+                // add user role
+                foreach (var user in users)
+                {
+                    var generatedNumber = random.Next(2, 4);
+                    _context.UserRoles.Add(new UserRole(_tenantId, user.Id, generatedNumber));
+                }
+                _context.SaveChanges();
+            }
+        }
+
         private void CreateRolesAndUsers()
         {
             CreateAdminRoleAndUser();
@@ -173,6 +204,7 @@ namespace localtour.EntityFrameworkCore.Seed.Tenants
 
             CreateTourGuideRoleAndUser();
 
+            CreateRandomUsers();
         }
     }
 }

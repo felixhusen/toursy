@@ -58,7 +58,8 @@ namespace localtour.Disputes
                                    BookingId = o.BookingId,
                                    Description = o.Description,
                                    Status = o.Status,
-                                   Date = o.Date
+                                   Date = o.Date,
+                                   UserId = o.UserId
                                },
                                BookingCode = "B-" + booking.Id,
                                TourName = tour.Name,
@@ -97,7 +98,8 @@ namespace localtour.Disputes
                                    BookingId = o.BookingId,
                                    Description = o.Description,
                                    Status = o.Status,
-                                   Date = o.Date
+                                   Date = o.Date,
+                                   UserId = o.UserId
                                },
                                BookingCode = "B-" + booking.Id,
                                TourName = tour.Name,

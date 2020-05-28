@@ -16,5 +16,7 @@ namespace localtour.Disputes.Dto
         public string Status { get; set; }
 
         public DateTime? Date { get; set; }
+
+        public long? UserId { get; set; }
     }
 }
