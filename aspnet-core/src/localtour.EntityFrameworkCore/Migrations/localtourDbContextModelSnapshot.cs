@@ -1449,6 +1449,9 @@ namespace localtour.Migrations
                     b.Property<decimal>("TotalPrice")
                         .HasColumnType("decimal(18,2)");
 
+                    b.Property<int?>("TourDateId")
+                        .HasColumnType("int");
+
                     b.Property<int?>("TourId")
                         .HasColumnType("int");
 
@@ -1458,6 +1461,8 @@ namespace localtour.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("TenantId");
+
+                    b.HasIndex("TourDateId");
 
                     b.HasIndex("TourId");
 
@@ -1488,11 +1493,16 @@ namespace localtour.Migrations
                     b.Property<int?>("TenantId")
                         .HasColumnType("int");
 
+                    b.Property<long?>("UserId")
+                        .HasColumnType("bigint");
+
                     b.HasKey("Id");
 
                     b.HasIndex("BookingId");
 
                     b.HasIndex("TenantId");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("Disputes");
                 });
@@ -2007,6 +2017,10 @@ namespace localtour.Migrations
 
             modelBuilder.Entity("localtour.Bookings.Booking", b =>
                 {
+                    b.HasOne("localtour.TourDates.TourDate", "TourDateFk")
+                        .WithMany()
+                        .HasForeignKey("TourDateId");
+
                     b.HasOne("localtour.Tours.Tour", "TourFk")
                         .WithMany()
                         .HasForeignKey("TourId");
@@ -2021,6 +2035,10 @@ namespace localtour.Migrations
                     b.HasOne("localtour.Bookings.Booking", "BookingFk")
                         .WithMany()
                         .HasForeignKey("BookingId");
+
+                    b.HasOne("localtour.Authorization.Users.User", "UserFk")
+                        .WithMany()
+                        .HasForeignKey("UserId");
                 });
 
             modelBuilder.Entity("localtour.MultiTenancy.Tenant", b =>

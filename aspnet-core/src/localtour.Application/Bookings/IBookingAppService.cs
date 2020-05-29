@@ -16,6 +16,10 @@ namespace localtour.Bookings
 
         Task<GetBookingForViewDto> GetBookingForView(int id);
 
+        Task ApproveBooking(int id);
+
+        Task CancelBooking(int id);
+
         Task<GetBookingForEditOutput> GetBookingForEdit(EntityDto input);
 
         Task<FileDto> GetBookingsToExcel(GetAllBookingsInput input);

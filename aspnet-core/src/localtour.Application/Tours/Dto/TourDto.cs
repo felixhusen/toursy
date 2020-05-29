@@ -22,5 +22,7 @@ namespace localtour.Tours.Dto
         public string Latitude { get; set; }
 
         public long? UserId { get; set; }
+
+        public decimal? Rating { get; set; }
     }
 }

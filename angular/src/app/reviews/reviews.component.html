@@ -22,6 +22,7 @@
                 <th>Rating</th>
                 <th>Description</th>
                 <th>Date Posted</th>
+                <th>Actions</th>
             </tr>
         </ng-template>
         <ng-template pTemplate="body" let-item>
@@ -32,6 +33,11 @@
                 <td>{{item.review.rating}}</td>
                 <td>{{item.review.description}}</td>
                 <td>{{item.review.datePosted | date}}</td>
+                <td>
+                    <button mat-icon-button color="accent" *ngIf="item.review.userId == userId || ('Pages.Review.Edit' | permission)" (click)="deleteReview(item.review.id)">
+                        <mat-icon>delete</mat-icon>
+                    </button>
+                </td>
             </tr>
         </ng-template>
     </p-table>

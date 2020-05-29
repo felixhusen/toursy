@@ -26,18 +26,19 @@
     </mat-card>
 
     <div class="row">
+        <mat-progress-bar mode="indeterminate" *ngIf="loading"></mat-progress-bar>
         <div class="col-xs-12 col-sm-6 col-md-4 col-lg-4 mb-3" *ngFor="let item of tours">
             <mat-card>
                 <img mat-card-image [src]="item.tourPictures.length > 0 ? item.tourPictures[0].link : defaultImageLink"
                     alt="{{item.tour.name}}" class="tour-image">
                 <mat-card-content>
-                    <p>
+                    <p class="text-truncate">
                         <i class="las la-calendar"></i>
                         <span *ngIf="item.tourDates.length > 0; else noDate;">
                             {{item.tourDates[item.tourDates.length - 1].startDate | date:'dd/MM/yyyy'}}</span>
                         <ng-template #noDate><span> Unavailable</span></ng-template>
                     </p>
-                    <p>
+                    <p class="text-truncate">
                         <i class="las la-map-marker"></i>
                         {{item.tour.locationName}}
                     </p>
@@ -49,10 +50,8 @@
                 <mat-card-actions>
                     <button mat-button color="primary" [routerLink]="['/app/bookings/create-booking/' + item.tour.id]"
                         routerLinkActive="active" [disabled]="item.tourDates.length == 0">{{l("Book")}}</button>
-                    <button mat-button color="primary" [routerLink]="[item.tour.id]"
+                    <button mat-button color="primary" [routerLink]="['/app/tours/' + item.tour.id]"
                         routerLinkActive="active">{{l("Details")}}</button>
-                    <button mat-button color="accent" (click)="editTour(item.tour.id)"
-                        *ngIf="item.tour.userId == this.userId">{{l("Edit")}}</button>
                 </mat-card-actions>
             </mat-card>
         </div>

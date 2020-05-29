@@ -2,12 +2,21 @@
 
     <div class="row">
         <div class="col-sm-8">
-            <h3 class="page-title mb-3">Bookings</h3>
+            <h3 class="page-title mb-3">{{title}}</h3>
         </div>
         <div class="col-sm-4 text-right">
-            <button mat-mini-fab color="primary" (click)="exportToExcel()">
+            <button mat-mini-fab color="primary" (click)="exportToExcel()" class="mr-1">
                 <mat-icon>cloud_download</mat-icon>
             </button>
+            <button mat-mini-fab color="primary" [matMenuTriggerFor]="menu" class="mr-1">
+                <mat-icon>filter_list</mat-icon>
+            </button>
+            <mat-menu #menu="matMenu">
+                <button mat-menu-item (click)="toggleMyBooking()">My Booking</button>
+                <button mat-menu-item (click)="toggleCustomerBooking()" *ngIf="'Pages.Booking.ViewAll' | permission">Customer's Bookings</button>
+                <button mat-menu-item (click)="toggleCancellationRequests()" *ngIf="'Pages.Booking.ViewAll' | permission">Cancellation Requests</button>
+                <button mat-menu-item (click)="togglePendingRequests()" *ngIf="'Pages.Booking.ViewAll' | permission">Pending Requests</button>
+            </mat-menu>
         </div>
     </div>
 
@@ -21,7 +30,7 @@
             </mat-form-field>
         </form>
     </mat-card>
-
+    <mat-progress-bar mode="indeterminate" *ngIf="loading"></mat-progress-bar>
     <p-table [value]="bookings" styleClass="ui-table-customers">
         <ng-template pTemplate="header">
             <tr>
@@ -31,7 +40,7 @@
                 <th>Phone Number</th>
                 <th>Number of People</th>
                 <th>Status</th>
-                <th>Total Price</th>
+                <th class="text-right">Total Price</th>
                 <th>Action</th>
             </tr>
         </ng-template>
@@ -45,13 +54,18 @@
                 <td>{{item.booking.phoneNumber}}</td>
                 <td>{{item.booking.numberOfPeople}} person(s)</td>
                 <td>{{item.booking.status}}</td>
-                <td>{{item.booking.totalPrice | currency}}</td>
+                <td class="text-right">{{item.booking.totalPrice | currency}}</td>
                 <td>
-                    <button mat-icon-button color="primary"><mat-icon>edit</mat-icon></button>
-                    <button mat-icon-button color="accent" (click)="requestCancelBooking(item.booking.id)"><mat-icon>delete</mat-icon></button>
+                    <button mat-icon-button color="primary" *ngIf="'Pages.Booking.Edit' | permission" (click)="showCreateOrEditBookingDialog(item.booking.id)">
+                        <mat-icon>edit</mat-icon>
+                    </button>
+                    <button mat-icon-button color="accent" (click)="requestCancelBooking(item.booking.id)">
+                        <mat-icon>delete</mat-icon>
+                    </button>
                 </td>
             </tr>
         </ng-template>
     </p-table>
-    <p-paginator [rows]="maxResultCount" [totalRecords]="totalCount" [rowsPerPageOptions]="maxResultCountOptions" (onPageChange)="paginate($event)"></p-paginator>
+    <p-paginator [rows]="maxResultCount" [totalRecords]="totalCount" [rowsPerPageOptions]="maxResultCountOptions"
+        (onPageChange)="paginate($event)"></p-paginator>
 </div>

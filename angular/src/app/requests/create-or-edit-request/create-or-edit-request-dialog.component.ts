@@ -57,7 +57,7 @@ export class CreateOrEditRequestDialogComponent extends AppComponentBase
 
   public getBookings(): void {
     this._bookingService
-      .getAll(undefined, undefined, undefined, undefined)
+      .getAll(undefined, undefined, undefined, undefined, undefined)
       .subscribe((result) => {
         this.bookings = result.items;
       });

@@ -37,7 +37,7 @@ namespace localtour.Messages
         {
             try
             {
-                var filteredMessages = _messageRepository.GetAll().Where(e => e.ReceiverId == AbpSession.UserId);
+                var filteredMessages = _messageRepository.GetAll().Where(e => e.ReceiverId == AbpSession.UserId || e.SenderId == AbpSession.UserId);
 
                 var messages = from o in filteredMessages
 
@@ -54,11 +54,11 @@ namespace localtour.Messages
                                        DateSent = o.DateSent,
                                        ReceiverId = o.ReceiverId
                                    },
-                                   ReceiverName = receiver.FullName,
-                                   SenderName = sender.FullName
+                                   DisplayName = receiver.Id == AbpSession.UserId ? sender.FullName : receiver.FullName,
+                                   RelatedUserId = receiver.Id == AbpSession.UserId ? sender.Id : receiver.Id
                                };
 
-                var results = messages.OrderBy("Message.DateSent asc").DistinctBy(e => e.Message.SenderId);
+                var results = messages.OrderBy("Message.DateSent desc").DistinctBy(e => e.DisplayName);
 
                 var totalCount = results.Count();
 
@@ -94,16 +94,16 @@ namespace localtour.Messages
             var output = new GetMessageForViewDto
             {
                 Message = ObjectMapper.Map<MessageDto>(message),
-                ReceiverName = receiver.FullName,
-                SenderName = sender.FullName
+                DisplayName = sender.FullName,
+                RelatedUserId = receiver.Id == AbpSession.UserId ? sender.Id : receiver.Id
             };
 
             return output;
         }
 
-        public async Task<List<GetMessageForViewDto>> GetMessagesBySender(int SenderId)
+        public async Task<List<GetMessageForViewDto>> GetMessagesByRelatedUserId(int UserId)
         {
-            var filteredMessages = _messageRepository.GetAll().Where(e => (e.SenderId == SenderId && e.ReceiverId == AbpSession.UserId) || (e.SenderId == AbpSession.UserId && e.ReceiverId == SenderId));
+            var filteredMessages = _messageRepository.GetAll().Where(e => (e.SenderId == UserId && e.ReceiverId == AbpSession.UserId) || (e.SenderId == AbpSession.UserId && e.ReceiverId == UserId));
 
             var messages = from o in filteredMessages
 
@@ -120,8 +120,8 @@ namespace localtour.Messages
                                    DateSent = o.DateSent,
                                    ReceiverId = o.ReceiverId
                                },
-                               ReceiverName = receiver.FullName,
-                               SenderName = sender.FullName
+                               DisplayName = sender.FullName,
+                               RelatedUserId = receiver.Id == AbpSession.UserId ? sender.Id : receiver.Id
                            };
 
             var pagedAndFilteredMessages = messages

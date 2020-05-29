@@ -34,6 +34,7 @@ namespace localtour.EntityFrameworkCore.Seed.Host
             if (adminRoleForHost == null)
             {
                 adminRoleForHost = _context.Roles.Add(new Role(null, StaticRoleNames.Host.Admin, StaticRoleNames.Host.Admin) { IsStatic = true, IsDefault = true }).Entity;
+
                 _context.SaveChanges();
             }
 

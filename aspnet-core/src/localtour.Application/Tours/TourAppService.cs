@@ -4,6 +4,8 @@ using Abp.Domain.Repositories;
 using Abp.Linq.Extensions;
 using localtour.Authorization;
 using localtour.DataExporting.Excel.EpPlus;
+using localtour.Helpers;
+using localtour.Reviews;
 using localtour.TourDates;
 using localtour.TourPictures;
 using localtour.Tours.Dto;
@@ -29,7 +31,9 @@ namespace localtour.Tours
         private readonly IWebHostEnvironment _hostEnvironment;
         private readonly IUserAppService _userAppService;
         private readonly IToursExcelExporter _toursExcelExporter;
-        public TourAppService(IRepository<Tour, int> tourRepository, IRepository<TourPicture, int> tourPictureRepository, IRepository<TourDate, int> tourDateRepository, IWebHostEnvironment hostEnvironment, IUserAppService userAppService, IToursExcelExporter toursExcelExporter)
+        private readonly IRepository<Review, int> _reviewRepository;
+
+        public TourAppService(IRepository<Tour, int> tourRepository, IRepository<TourPicture, int> tourPictureRepository, IRepository<TourDate, int> tourDateRepository, IWebHostEnvironment hostEnvironment, IUserAppService userAppService, IToursExcelExporter toursExcelExporter, IRepository<Review, int> reviewRepository)
         {
             _tourRepository = tourRepository;
             _tourPictureRepository = tourPictureRepository;
@@ -37,96 +41,95 @@ namespace localtour.Tours
             _userAppService = userAppService;
             _hostEnvironment = hostEnvironment;
             _toursExcelExporter = toursExcelExporter;
+            _reviewRepository = reviewRepository;
         }
 
         public async Task<PagedResultDto<GetTourForViewDto>> GetAll(GetAllToursInput input)
         {
-            var filteredTours = _tourRepository.GetAll()
-                                    .WhereIf(!string.IsNullOrWhiteSpace(input.Name), e => false || e.Name.Contains(input.Name))
-                                    .WhereIf(!string.IsNullOrWhiteSpace(input.Description), e => false || e.Name.Contains(input.Description))
-                                    .WhereIf(!string.IsNullOrWhiteSpace(input.Longitude), e => e.Longitude == input.Longitude)
-                                    .WhereIf(!string.IsNullOrWhiteSpace(input.Latitude), e => e.Latitude == input.Latitude)
-                                    .WhereIf(input.UserId != null, e => e.UserId == input.UserId);
+            try
+            {
+                var filteredTours = _tourRepository.GetAll().AppendTourMainFilter(input);
 
-            var tours = from o in filteredTours
+                var tours = from tour in filteredTours
 
-                        select new GetTourForViewDto()
-                        {
-                            Tour = new TourDto
+                            select new GetTourForViewDto()
                             {
-                                Id = o.Id,
-                                Name = o.Name,
-                                Price = o.Price,
-                                Description = o.Description,
-                                Latitude = o.Latitude,
-                                Longitude = o.Longitude,
-                                LocationName = o.LocationName,
-                                UserId = o.UserId
-                            },
-                            TourPictures = _tourPictureRepository.GetAll().Where(e => e.TourId == o.Id).Select(e => new TourPictureDto
-                            {
-                                Id = e.Id,
-                                Link = e.Link,
-                                TourId = e.Id
-                            }),
-                            TourDates = _tourDateRepository.GetAll().Where(e => e.TourId == o.Id).OrderByDescending(e => e.StartDate).Select(e => new TourDateDto
-                            {
-                                Id = e.Id,
-                                StartDate = e.StartDate,
-                                EndDate = e.EndDate,
-                                TourId = e.Id
-                            })
-                        };
+                                Tour = new TourDto
+                                {
+                                    Id = tour.Id,
+                                    Name = tour.Name,
+                                    Price = tour.Price,
+                                    Description = tour.Description,
+                                    Latitude = tour.Latitude,
+                                    Longitude = tour.Longitude,
+                                    LocationName = tour.LocationName,
+                                    UserId = tour.UserId,
+                                    Rating = (_reviewRepository.GetAll().Where(review => review.TourId == tour.Id).Count() > 0 ? (decimal?)(_reviewRepository.GetAll().Where(review => review.TourId == tour.Id).Sum(review => review.Rating) / _reviewRepository.GetAll().Where(review => review.TourId == tour.Id).Count()) : null)
+                                },
+                                TourPictures = _tourPictureRepository.GetAll().Where(tourPicture => tourPicture.TourId == tour.Id).Select(tourPicture => new TourPictureDto
+                                {
+                                    Id = tourPicture.Id,
+                                    Link = tourPicture.Link,
+                                    TourId = tourPicture.Id
+                                }),
+                                TourDates = _tourDateRepository.GetAll().Where(tourDate => tourDate.TourId == tour.Id).OrderByDescending(tourDate => tourDate.StartDate).Select(tourDate => new TourDateDto
+                                {
+                                    Id = tourDate.Id,
+                                    StartDate = tourDate.StartDate,
+                                    EndDate = tourDate.EndDate,
+                                    TourId = tourDate.Id
+                                })
+                            };
 
-            var pagedAndFilteredTours = tours
-                .OrderBy(input.Sorting ?? "Tour.Id asc")
-                .PageBy(input);
+                var pagedAndFilteredTours = tours
+                    .OrderBy(input.Sorting ?? "Tour.Id desc")
+                    .PageBy(input);
 
-            var totalCount = await tours.CountAsync();
+                var totalCount = await tours.CountAsync();
 
-            return new PagedResultDto<GetTourForViewDto>(
-                totalCount,
-                await pagedAndFilteredTours.ToListAsync()
-            );
-
+                return new PagedResultDto<GetTourForViewDto>(
+                    totalCount,
+                    await pagedAndFilteredTours.ToListAsync()
+                );
+            } catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
+            return null;
         }
 
         public async Task<FileDto> GetToursToExcel(GetAllToursInput input)
         {
-            var filteredTours = _tourRepository.GetAll()
-                                    .WhereIf(!string.IsNullOrWhiteSpace(input.Name), e => false || e.Name.Contains(input.Name))
-                                    .WhereIf(!string.IsNullOrWhiteSpace(input.Description), e => false || e.Name.Contains(input.Description))
-                                    .WhereIf(!string.IsNullOrWhiteSpace(input.Longitude), e => e.Longitude == input.Longitude)
-                                    .WhereIf(!string.IsNullOrWhiteSpace(input.Latitude), e => e.Latitude == input.Latitude)
-                                    .WhereIf(input.UserId != null, e => e.UserId == input.UserId);
+            var filteredTours = _tourRepository.GetAll().AppendTourMainFilter(input);
 
-            var tours = from o in filteredTours
+            var tours = from tour in filteredTours
 
                         select new GetTourForViewDto()
                         {
                             Tour = new TourDto
                             {
-                                Id = o.Id,
-                                Name = o.Name,
-                                Price = o.Price,
-                                Description = o.Description,
-                                Latitude = o.Latitude,
-                                Longitude = o.Longitude,
-                                LocationName = o.LocationName,
-                                UserId = o.UserId
+                                Id = tour.Id,
+                                Name = tour.Name,
+                                Price = tour.Price,
+                                Description = tour.Description,
+                                Latitude = tour.Latitude,
+                                Longitude = tour.Longitude,
+                                LocationName = tour.LocationName,
+                                UserId = tour.UserId,
+                                Rating = (_reviewRepository.GetAll().Where(review => review.TourId == tour.Id).Count() > 0 ? (decimal?)(_reviewRepository.GetAll().Where(review => review.TourId == tour.Id).Sum(review => review.Rating) / _reviewRepository.GetAll().Where(review => review.TourId == tour.Id).Count()) : null)
                             },
-                            TourPictures = _tourPictureRepository.GetAll().Where(e => e.TourId == o.Id).Select(e => new TourPictureDto
+                            TourPictures = _tourPictureRepository.GetAll().Where(tourPicture => tourPicture.TourId == tour.Id).Select(tourPicture => new TourPictureDto
                             {
-                                Id = e.Id,
-                                Link = e.Link,
-                                TourId = e.Id
+                                Id = tourPicture.Id,
+                                Link = tourPicture.Link,
+                                TourId = tourPicture.Id
                             }),
-                            TourDates = _tourDateRepository.GetAll().Where(e => e.TourId == o.Id).OrderByDescending(e => e.StartDate).Select(e => new TourDateDto
+                            TourDates = _tourDateRepository.GetAll().Where(tourDate => tourDate.TourId == tour.Id).OrderByDescending(tourDate => tourDate.StartDate).Select(tourDate => new TourDateDto
                             {
-                                Id = e.Id,
-                                StartDate = e.StartDate,
-                                EndDate = e.EndDate,
-                                TourId = e.Id
+                                Id = tourDate.Id,
+                                StartDate = tourDate.StartDate,
+                                EndDate = tourDate.EndDate,
+                                TourId = tourDate.Id
                             })
                         };
 
@@ -136,33 +139,61 @@ namespace localtour.Tours
 
         }
 
+        private IQueryable<TourPictureDto> TourPictures(int id)
+        {
+            return (from tourPicture in _tourPictureRepository.GetAll().Where(e => e.TourId == id)
+
+                    select new TourPictureDto
+                    {
+                        Id = tourPicture.Id,
+                        Link = tourPicture.Link,
+                        TourId = tourPicture.TourId
+                    });
+        }
+
+        private IQueryable<TourDateDto> TourDates(int id)
+        {
+            return (from date in _tourDateRepository.GetAll().Where(e => e.TourId == id)
+
+                    select new TourDateDto
+                    {
+                        Id = date.Id,
+                        StartDate = date.StartDate,
+                        EndDate = date.EndDate
+                    });
+        }
+
+        private decimal? CalculateOverallRating(int tourId)
+        {
+            try
+            {
+                var reviews = _reviewRepository.GetAll().Where(review => review.TourId == tourId);
+
+                var reviewCount = reviews.Count();
+
+                var totalRatings = reviews.Sum(review => review.Rating);
+
+                var overallRating = totalRatings / reviewCount;
+
+                return overallRating;
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
         public async Task<GetTourForViewDto> GetTourForView(int id)
         {
             var tour = await _tourRepository.GetAsync(id);
 
             var output = new GetTourForViewDto { Tour = ObjectMapper.Map<TourDto>(tour) };
 
-            var tourPictures = from o1 in _tourPictureRepository.GetAll().Where(e => e.TourId == id)
+            output.Tour.Rating = CalculateOverallRating(id);
 
-                               select new TourPictureDto
-                               {
-                                   Id = o1.Id,
-                                   Link = o1.Link,
-                                   TourId = o1.TourId
-                               };
+            output.TourDates = await TourDates(id).ToListAsync();
 
-            var tourDates = from o1 in _tourDateRepository.GetAll().Where(e => e.TourId == id)
-
-                            select new TourDateDto
-                            {
-                                Id = o1.Id,
-                                StartDate = o1.StartDate,
-                                EndDate = o1.EndDate
-                            };
-
-            output.TourDates = await tourDates.ToListAsync();
-
-            output.TourPictures = await tourPictures.ToListAsync();
+            output.TourPictures = await TourPictures(id).ToListAsync();
 
             return output;
         }
@@ -174,27 +205,9 @@ namespace localtour.Tours
 
             var output = new GetTourForEditOutput { Tour = ObjectMapper.Map<CreateOrEditTourDto>(tour) };
 
-            var tourPictures = from o1 in _tourPictureRepository.GetAll().Where(e => e.TourId == input.Id)
+            output.TourDates = await TourDates(input.Id).ToListAsync();
 
-                               select new TourPictureDto
-                               {
-                                   Id = o1.Id,
-                                   Link = o1.Link,
-                                   TourId = o1.TourId
-                               };
-
-            var tourDates = from o1 in _tourDateRepository.GetAll().Where(e => e.TourId == input.Id)
-
-                            select new TourDateDto
-                            {
-                                Id = o1.Id,
-                                StartDate = o1.StartDate,
-                                EndDate = o1.EndDate
-                            };
-
-            output.TourDates = await tourDates.ToListAsync();
-
-            output.TourPictures = await tourPictures.ToListAsync();
+            output.TourPictures = await TourPictures(input.Id).ToListAsync();
 
             return output;
         }

@@ -25,6 +25,7 @@ export class MessagesComponent extends AppComponentBase implements OnInit {
   public sort: string;
   public maxResultCountOptions: number[] = [1, 5, 10, 25, 100];
   public pageEvent: PageEvent;
+  public loading: boolean = false;
 
   constructor(
     injector: Injector,
@@ -35,6 +36,7 @@ export class MessagesComponent extends AppComponentBase implements OnInit {
   }
 
   public getMessages(event?: any): void {
+    this.loading = true;
     if (event) {
       this.pageEvent = event;
       this.skipCount = this.pageEvent.pageIndex * this.pageEvent.pageSize;
@@ -43,6 +45,7 @@ export class MessagesComponent extends AppComponentBase implements OnInit {
 
     this._messageService.getMessages().subscribe((result) => {
       this.messages = result.items;
+      this.loading = false;
     });
   }
 

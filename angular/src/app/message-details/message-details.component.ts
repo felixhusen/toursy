@@ -45,7 +45,7 @@ export class MessageDetailsComponent extends AppComponentBase
   }
 
   public getMessages(id: number): void {
-    this._messageService.getMessagesBySender(id).subscribe((result) => {
+    this._messageService.getMessagesByRelatedUserId(id).subscribe((result) => {
       this.messages = result;
     });
   }

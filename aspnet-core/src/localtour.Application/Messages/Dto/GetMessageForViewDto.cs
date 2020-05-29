@@ -8,8 +8,8 @@ namespace localtour.Messages.Dto
     {
         public MessageDto Message { get; set; }
 
-        public string SenderName { get; set; }
+        public string DisplayName { get; set; }
 
-        public string ReceiverName { get; set; }
+        public long? RelatedUserId { get; set; }
     }
 }

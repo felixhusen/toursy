@@ -153,17 +153,22 @@ export class BookingServiceProxy {
 
     /**
      * @param query (optional) 
+     * @param mode (optional) 
      * @param sorting (optional) 
      * @param skipCount (optional) 
      * @param maxResultCount (optional) 
      * @return Success
      */
-    getAll(query: string | undefined, sorting: string | undefined, skipCount: number | undefined, maxResultCount: number | undefined): Observable<GetBookingForViewDtoPagedResultDto> {
+    getAll(query: string | undefined, mode: string | undefined, sorting: string | undefined, skipCount: number | undefined, maxResultCount: number | undefined): Observable<GetBookingForViewDtoPagedResultDto> {
         let url_ = this.baseUrl + "/api/services/app/Booking/GetAll?";
         if (query === null)
             throw new Error("The parameter 'query' cannot be null.");
         else if (query !== undefined)
             url_ += "Query=" + encodeURIComponent("" + query) + "&"; 
+        if (mode === null)
+            throw new Error("The parameter 'mode' cannot be null.");
+        else if (mode !== undefined)
+            url_ += "Mode=" + encodeURIComponent("" + mode) + "&"; 
         if (sorting === null)
             throw new Error("The parameter 'sorting' cannot be null.");
         else if (sorting !== undefined)
@@ -223,18 +228,179 @@ export class BookingServiceProxy {
     }
 
     /**
+     * @param id (optional) 
+     * @return Success
+     */
+    cancelBooking(id: number | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/app/Booking/CancelBooking?";
+        if (id === null)
+            throw new Error("The parameter 'id' cannot be null.");
+        else if (id !== undefined)
+            url_ += "id=" + encodeURIComponent("" + id) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processCancelBooking(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processCancelBooking(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processCancelBooking(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+
+    /**
+     * @param id (optional) 
+     * @return Success
+     */
+    approveBooking(id: number | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/app/Booking/ApproveBooking?";
+        if (id === null)
+            throw new Error("The parameter 'id' cannot be null.");
+        else if (id !== undefined)
+            url_ += "id=" + encodeURIComponent("" + id) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processApproveBooking(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processApproveBooking(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processApproveBooking(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+
+    /**
+     * @param id (optional) 
+     * @return Success
+     */
+    approveBookingCancellation(id: number | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/app/Booking/ApproveBookingCancellation?";
+        if (id === null)
+            throw new Error("The parameter 'id' cannot be null.");
+        else if (id !== undefined)
+            url_ += "id=" + encodeURIComponent("" + id) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processApproveBookingCancellation(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processApproveBookingCancellation(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processApproveBookingCancellation(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+
+    /**
      * @param query (optional) 
+     * @param mode (optional) 
      * @param sorting (optional) 
      * @param skipCount (optional) 
      * @param maxResultCount (optional) 
      * @return Success
      */
-    getBookingsToExcel(query: string | undefined, sorting: string | undefined, skipCount: number | undefined, maxResultCount: number | undefined): Observable<FileDto> {
+    getBookingsToExcel(query: string | undefined, mode: string | undefined, sorting: string | undefined, skipCount: number | undefined, maxResultCount: number | undefined): Observable<FileDto> {
         let url_ = this.baseUrl + "/api/services/app/Booking/GetBookingsToExcel?";
         if (query === null)
             throw new Error("The parameter 'query' cannot be null.");
         else if (query !== undefined)
             url_ += "Query=" + encodeURIComponent("" + query) + "&"; 
+        if (mode === null)
+            throw new Error("The parameter 'mode' cannot be null.");
+        else if (mode !== undefined)
+            url_ += "Mode=" + encodeURIComponent("" + mode) + "&"; 
         if (sorting === null)
             throw new Error("The parameter 'sorting' cannot be null.");
         else if (sorting !== undefined)
@@ -711,17 +877,22 @@ export class DisputeServiceProxy {
 
     /**
      * @param query (optional) 
+     * @param mode (optional) 
      * @param sorting (optional) 
      * @param skipCount (optional) 
      * @param maxResultCount (optional) 
      * @return Success
      */
-    getAll(query: string | undefined, sorting: string | undefined, skipCount: number | undefined, maxResultCount: number | undefined): Observable<GetDisputeForViewDtoPagedResultDto> {
+    getAll(query: string | undefined, mode: string | undefined, sorting: string | undefined, skipCount: number | undefined, maxResultCount: number | undefined): Observable<GetDisputeForViewDtoPagedResultDto> {
         let url_ = this.baseUrl + "/api/services/app/Dispute/GetAll?";
         if (query === null)
             throw new Error("The parameter 'query' cannot be null.");
         else if (query !== undefined)
             url_ += "Query=" + encodeURIComponent("" + query) + "&"; 
+        if (mode === null)
+            throw new Error("The parameter 'mode' cannot be null.");
+        else if (mode !== undefined)
+            url_ += "Mode=" + encodeURIComponent("" + mode) + "&"; 
         if (sorting === null)
             throw new Error("The parameter 'sorting' cannot be null.");
         else if (sorting !== undefined)
@@ -781,18 +952,127 @@ export class DisputeServiceProxy {
     }
 
     /**
+     * @param id (optional) 
+     * @return Success
+     */
+    cancelDispute(id: number | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/app/Dispute/CancelDispute?";
+        if (id === null)
+            throw new Error("The parameter 'id' cannot be null.");
+        else if (id !== undefined)
+            url_ += "id=" + encodeURIComponent("" + id) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processCancelDispute(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processCancelDispute(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processCancelDispute(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+
+    /**
+     * @param id (optional) 
+     * @return Success
+     */
+    approveDispute(id: number | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/app/Dispute/ApproveDispute?";
+        if (id === null)
+            throw new Error("The parameter 'id' cannot be null.");
+        else if (id !== undefined)
+            url_ += "id=" + encodeURIComponent("" + id) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processApproveDispute(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processApproveDispute(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processApproveDispute(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+
+    /**
      * @param query (optional) 
+     * @param mode (optional) 
      * @param sorting (optional) 
      * @param skipCount (optional) 
      * @param maxResultCount (optional) 
      * @return Success
      */
-    getDisputesToExcel(query: string | undefined, sorting: string | undefined, skipCount: number | undefined, maxResultCount: number | undefined): Observable<FileDto> {
+    getDisputesToExcel(query: string | undefined, mode: string | undefined, sorting: string | undefined, skipCount: number | undefined, maxResultCount: number | undefined): Observable<FileDto> {
         let url_ = this.baseUrl + "/api/services/app/Dispute/GetDisputesToExcel?";
         if (query === null)
             throw new Error("The parameter 'query' cannot be null.");
         else if (query !== undefined)
             url_ += "Query=" + encodeURIComponent("" + query) + "&"; 
+        if (mode === null)
+            throw new Error("The parameter 'mode' cannot be null.");
+        else if (mode !== undefined)
+            url_ += "Mode=" + encodeURIComponent("" + mode) + "&"; 
         if (sorting === null)
             throw new Error("The parameter 'sorting' cannot be null.");
         else if (sorting !== undefined)
@@ -1255,15 +1535,15 @@ export class MessageServiceProxy {
     }
 
     /**
-     * @param senderId (optional) 
+     * @param userId (optional) 
      * @return Success
      */
-    getMessagesBySender(senderId: number | undefined): Observable<GetMessageForViewDto[]> {
-        let url_ = this.baseUrl + "/api/services/app/Message/GetMessagesBySender?";
-        if (senderId === null)
-            throw new Error("The parameter 'senderId' cannot be null.");
-        else if (senderId !== undefined)
-            url_ += "SenderId=" + encodeURIComponent("" + senderId) + "&"; 
+    getMessagesByRelatedUserId(userId: number | undefined): Observable<GetMessageForViewDto[]> {
+        let url_ = this.baseUrl + "/api/services/app/Message/GetMessagesByRelatedUserId?";
+        if (userId === null)
+            throw new Error("The parameter 'userId' cannot be null.");
+        else if (userId !== undefined)
+            url_ += "UserId=" + encodeURIComponent("" + userId) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -1275,11 +1555,11 @@ export class MessageServiceProxy {
         };
 
         return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processGetMessagesBySender(response_);
+            return this.processGetMessagesByRelatedUserId(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
                 try {
-                    return this.processGetMessagesBySender(<any>response_);
+                    return this.processGetMessagesByRelatedUserId(<any>response_);
                 } catch (e) {
                     return <Observable<GetMessageForViewDto[]>><any>_observableThrow(e);
                 }
@@ -1288,7 +1568,7 @@ export class MessageServiceProxy {
         }));
     }
 
-    protected processGetMessagesBySender(response: HttpResponseBase): Observable<GetMessageForViewDto[]> {
+    protected processGetMessagesByRelatedUserId(response: HttpResponseBase): Observable<GetMessageForViewDto[]> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -1328,17 +1608,22 @@ export class RequestServiceProxy {
 
     /**
      * @param query (optional) 
+     * @param mode (optional) 
      * @param sorting (optional) 
      * @param skipCount (optional) 
      * @param maxResultCount (optional) 
      * @return Success
      */
-    getAll(query: string | undefined, sorting: string | undefined, skipCount: number | undefined, maxResultCount: number | undefined): Observable<GetRequestForViewDtoPagedResultDto> {
+    getAll(query: string | undefined, mode: string | undefined, sorting: string | undefined, skipCount: number | undefined, maxResultCount: number | undefined): Observable<GetRequestForViewDtoPagedResultDto> {
         let url_ = this.baseUrl + "/api/services/app/Request/GetAll?";
         if (query === null)
             throw new Error("The parameter 'query' cannot be null.");
         else if (query !== undefined)
             url_ += "Query=" + encodeURIComponent("" + query) + "&"; 
+        if (mode === null)
+            throw new Error("The parameter 'mode' cannot be null.");
+        else if (mode !== undefined)
+            url_ += "Mode=" + encodeURIComponent("" + mode) + "&"; 
         if (sorting === null)
             throw new Error("The parameter 'sorting' cannot be null.");
         else if (sorting !== undefined)
@@ -1398,18 +1683,127 @@ export class RequestServiceProxy {
     }
 
     /**
+     * @param id (optional) 
+     * @return Success
+     */
+    cancelRequest(id: number | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/app/Request/CancelRequest?";
+        if (id === null)
+            throw new Error("The parameter 'id' cannot be null.");
+        else if (id !== undefined)
+            url_ += "id=" + encodeURIComponent("" + id) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processCancelRequest(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processCancelRequest(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processCancelRequest(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+
+    /**
+     * @param id (optional) 
+     * @return Success
+     */
+    approveRequest(id: number | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/app/Request/ApproveRequest?";
+        if (id === null)
+            throw new Error("The parameter 'id' cannot be null.");
+        else if (id !== undefined)
+            url_ += "id=" + encodeURIComponent("" + id) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processApproveRequest(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processApproveRequest(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processApproveRequest(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+
+    /**
      * @param query (optional) 
+     * @param mode (optional) 
      * @param sorting (optional) 
      * @param skipCount (optional) 
      * @param maxResultCount (optional) 
      * @return Success
      */
-    getRequestsToExcel(query: string | undefined, sorting: string | undefined, skipCount: number | undefined, maxResultCount: number | undefined): Observable<FileDto> {
+    getRequestsToExcel(query: string | undefined, mode: string | undefined, sorting: string | undefined, skipCount: number | undefined, maxResultCount: number | undefined): Observable<FileDto> {
         let url_ = this.baseUrl + "/api/services/app/Request/GetRequestsToExcel?";
         if (query === null)
             throw new Error("The parameter 'query' cannot be null.");
         else if (query !== undefined)
             url_ += "Query=" + encodeURIComponent("" + query) + "&"; 
+        if (mode === null)
+            throw new Error("The parameter 'mode' cannot be null.");
+        else if (mode !== undefined)
+            url_ += "Mode=" + encodeURIComponent("" + mode) + "&"; 
         if (sorting === null)
             throw new Error("The parameter 'sorting' cannot be null.");
         else if (sorting !== undefined)
@@ -3856,17 +4250,22 @@ export class TransactionServiceProxy {
 
     /**
      * @param query (optional) 
+     * @param mode (optional) 
      * @param sorting (optional) 
      * @param skipCount (optional) 
      * @param maxResultCount (optional) 
      * @return Success
      */
-    getAll(query: string | undefined, sorting: string | undefined, skipCount: number | undefined, maxResultCount: number | undefined): Observable<GetTransactionForViewDtoPagedResultDto> {
+    getAll(query: string | undefined, mode: string | undefined, sorting: string | undefined, skipCount: number | undefined, maxResultCount: number | undefined): Observable<GetTransactionForViewDtoPagedResultDto> {
         let url_ = this.baseUrl + "/api/services/app/Transaction/GetAll?";
         if (query === null)
             throw new Error("The parameter 'query' cannot be null.");
         else if (query !== undefined)
             url_ += "Query=" + encodeURIComponent("" + query) + "&"; 
+        if (mode === null)
+            throw new Error("The parameter 'mode' cannot be null.");
+        else if (mode !== undefined)
+            url_ += "Mode=" + encodeURIComponent("" + mode) + "&"; 
         if (sorting === null)
             throw new Error("The parameter 'sorting' cannot be null.");
         else if (sorting !== undefined)
@@ -3927,17 +4326,22 @@ export class TransactionServiceProxy {
 
     /**
      * @param query (optional) 
+     * @param mode (optional) 
      * @param sorting (optional) 
      * @param skipCount (optional) 
      * @param maxResultCount (optional) 
      * @return Success
      */
-    getTransactionsToExcel(query: string | undefined, sorting: string | undefined, skipCount: number | undefined, maxResultCount: number | undefined): Observable<FileDto> {
+    getTransactionsToExcel(query: string | undefined, mode: string | undefined, sorting: string | undefined, skipCount: number | undefined, maxResultCount: number | undefined): Observable<FileDto> {
         let url_ = this.baseUrl + "/api/services/app/Transaction/GetTransactionsToExcel?";
         if (query === null)
             throw new Error("The parameter 'query' cannot be null.");
         else if (query !== undefined)
             url_ += "Query=" + encodeURIComponent("" + query) + "&"; 
+        if (mode === null)
+            throw new Error("The parameter 'mode' cannot be null.");
+        else if (mode !== undefined)
+            url_ += "Mode=" + encodeURIComponent("" + mode) + "&"; 
         if (sorting === null)
             throw new Error("The parameter 'sorting' cannot be null.");
         else if (sorting !== undefined)
@@ -4142,6 +4546,162 @@ export class TransactionServiceProxy {
     }
 
     protected processCreateOrEdit(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+
+    /**
+     * @param id (optional) 
+     * @return Success
+     */
+    cancelTransaction(id: number | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/app/Transaction/CancelTransaction?";
+        if (id === null)
+            throw new Error("The parameter 'id' cannot be null.");
+        else if (id !== undefined)
+            url_ += "id=" + encodeURIComponent("" + id) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processCancelTransaction(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processCancelTransaction(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processCancelTransaction(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+
+    /**
+     * @param id (optional) 
+     * @return Success
+     */
+    approveTransaction(id: number | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/app/Transaction/ApproveTransaction?";
+        if (id === null)
+            throw new Error("The parameter 'id' cannot be null.");
+        else if (id !== undefined)
+            url_ += "id=" + encodeURIComponent("" + id) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processApproveTransaction(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processApproveTransaction(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processApproveTransaction(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+
+    /**
+     * @param id (optional) 
+     * @return Success
+     */
+    approveTransactionCancellation(id: number | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/app/Transaction/ApproveTransactionCancellation?";
+        if (id === null)
+            throw new Error("The parameter 'id' cannot be null.");
+        else if (id !== undefined)
+            url_ += "id=" + encodeURIComponent("" + id) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processApproveTransactionCancellation(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processApproveTransactionCancellation(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processApproveTransactionCancellation(response: HttpResponseBase): Observable<void> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -5003,6 +5563,7 @@ export interface IRegisterOutput {
 
 export class BookingDto implements IBookingDto {
     tourId: number | undefined;
+    tourDateId: number | undefined;
     userId: number | undefined;
     name: string | undefined;
     phoneNumber: string | undefined;
@@ -5029,6 +5590,7 @@ export class BookingDto implements IBookingDto {
     init(data?: any) {
         if (data) {
             this.tourId = data["tourId"];
+            this.tourDateId = data["tourDateId"];
             this.userId = data["userId"];
             this.name = data["name"];
             this.phoneNumber = data["phoneNumber"];
@@ -5055,6 +5617,7 @@ export class BookingDto implements IBookingDto {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["tourId"] = this.tourId;
+        data["tourDateId"] = this.tourDateId;
         data["userId"] = this.userId;
         data["name"] = this.name;
         data["phoneNumber"] = this.phoneNumber;
@@ -5081,6 +5644,7 @@ export class BookingDto implements IBookingDto {
 
 export interface IBookingDto {
     tourId: number | undefined;
+    tourDateId: number | undefined;
     userId: number | undefined;
     name: string | undefined;
     phoneNumber: string | undefined;
@@ -5102,6 +5666,8 @@ export class GetBookingForViewDto implements IGetBookingForViewDto {
     bookingCode: string | undefined;
     userFullName: string | undefined;
     stateCode: string | undefined;
+    tourStartDate: moment.Moment | undefined;
+    tourEndDate: moment.Moment | undefined;
 
     constructor(data?: IGetBookingForViewDto) {
         if (data) {
@@ -5119,6 +5685,8 @@ export class GetBookingForViewDto implements IGetBookingForViewDto {
             this.bookingCode = data["bookingCode"];
             this.userFullName = data["userFullName"];
             this.stateCode = data["stateCode"];
+            this.tourStartDate = data["tourStartDate"] ? moment(data["tourStartDate"].toString()) : <any>undefined;
+            this.tourEndDate = data["tourEndDate"] ? moment(data["tourEndDate"].toString()) : <any>undefined;
         }
     }
 
@@ -5136,6 +5704,8 @@ export class GetBookingForViewDto implements IGetBookingForViewDto {
         data["bookingCode"] = this.bookingCode;
         data["userFullName"] = this.userFullName;
         data["stateCode"] = this.stateCode;
+        data["tourStartDate"] = this.tourStartDate ? this.tourStartDate.toISOString() : <any>undefined;
+        data["tourEndDate"] = this.tourEndDate ? this.tourEndDate.toISOString() : <any>undefined;
         return data; 
     }
 
@@ -5153,6 +5723,8 @@ export interface IGetBookingForViewDto {
     bookingCode: string | undefined;
     userFullName: string | undefined;
     stateCode: string | undefined;
+    tourStartDate: moment.Moment | undefined;
+    tourEndDate: moment.Moment | undefined;
 }
 
 export class GetBookingForViewDtoPagedResultDto implements IGetBookingForViewDtoPagedResultDto {
@@ -5263,6 +5835,7 @@ export interface IFileDto {
 
 export class CreateOrEditBookingDto implements ICreateOrEditBookingDto {
     tourId: number | undefined;
+    tourDateId: number | undefined;
     userId: number | undefined;
     name: string | undefined;
     phoneNumber: string | undefined;
@@ -5289,6 +5862,7 @@ export class CreateOrEditBookingDto implements ICreateOrEditBookingDto {
     init(data?: any) {
         if (data) {
             this.tourId = data["tourId"];
+            this.tourDateId = data["tourDateId"];
             this.userId = data["userId"];
             this.name = data["name"];
             this.phoneNumber = data["phoneNumber"];
@@ -5315,6 +5889,7 @@ export class CreateOrEditBookingDto implements ICreateOrEditBookingDto {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["tourId"] = this.tourId;
+        data["tourDateId"] = this.tourDateId;
         data["userId"] = this.userId;
         data["name"] = this.name;
         data["phoneNumber"] = this.phoneNumber;
@@ -5341,6 +5916,7 @@ export class CreateOrEditBookingDto implements ICreateOrEditBookingDto {
 
 export interface ICreateOrEditBookingDto {
     tourId: number | undefined;
+    tourDateId: number | undefined;
     userId: number | undefined;
     name: string | undefined;
     phoneNumber: string | undefined;
@@ -5459,6 +6035,7 @@ export class DisputeDto implements IDisputeDto {
     description: string | undefined;
     status: string | undefined;
     date: moment.Moment | undefined;
+    userId: number | undefined;
     id: number;
 
     constructor(data?: IDisputeDto) {
@@ -5476,6 +6053,7 @@ export class DisputeDto implements IDisputeDto {
             this.description = data["description"];
             this.status = data["status"];
             this.date = data["date"] ? moment(data["date"].toString()) : <any>undefined;
+            this.userId = data["userId"];
             this.id = data["id"];
         }
     }
@@ -5493,6 +6071,7 @@ export class DisputeDto implements IDisputeDto {
         data["description"] = this.description;
         data["status"] = this.status;
         data["date"] = this.date ? this.date.toISOString() : <any>undefined;
+        data["userId"] = this.userId;
         data["id"] = this.id;
         return data; 
     }
@@ -5510,6 +6089,7 @@ export interface IDisputeDto {
     description: string | undefined;
     status: string | undefined;
     date: moment.Moment | undefined;
+    userId: number | undefined;
     id: number;
 }
 
@@ -5626,6 +6206,7 @@ export interface IGetDisputeForViewDtoPagedResultDto {
 export class CreateOrEditDisputeDto implements ICreateOrEditDisputeDto {
     bookingId: number | undefined;
     description: string | undefined;
+    userId: number | undefined;
     id: number | undefined;
 
     constructor(data?: ICreateOrEditDisputeDto) {
@@ -5641,6 +6222,7 @@ export class CreateOrEditDisputeDto implements ICreateOrEditDisputeDto {
         if (data) {
             this.bookingId = data["bookingId"];
             this.description = data["description"];
+            this.userId = data["userId"];
             this.id = data["id"];
         }
     }
@@ -5656,6 +6238,7 @@ export class CreateOrEditDisputeDto implements ICreateOrEditDisputeDto {
         data = typeof data === 'object' ? data : {};
         data["bookingId"] = this.bookingId;
         data["description"] = this.description;
+        data["userId"] = this.userId;
         data["id"] = this.id;
         return data; 
     }
@@ -5671,6 +6254,7 @@ export class CreateOrEditDisputeDto implements ICreateOrEditDisputeDto {
 export interface ICreateOrEditDisputeDto {
     bookingId: number | undefined;
     description: string | undefined;
+    userId: number | undefined;
     id: number | undefined;
 }
 
@@ -5778,8 +6362,8 @@ export interface IMessageDto {
 
 export class GetMessageForViewDto implements IGetMessageForViewDto {
     message: MessageDto;
-    senderName: string | undefined;
-    receiverName: string | undefined;
+    displayName: string | undefined;
+    relatedUserId: number | undefined;
 
     constructor(data?: IGetMessageForViewDto) {
         if (data) {
@@ -5793,8 +6377,8 @@ export class GetMessageForViewDto implements IGetMessageForViewDto {
     init(data?: any) {
         if (data) {
             this.message = data["message"] ? MessageDto.fromJS(data["message"]) : <any>undefined;
-            this.senderName = data["senderName"];
-            this.receiverName = data["receiverName"];
+            this.displayName = data["displayName"];
+            this.relatedUserId = data["relatedUserId"];
         }
     }
 
@@ -5808,8 +6392,8 @@ export class GetMessageForViewDto implements IGetMessageForViewDto {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["message"] = this.message ? this.message.toJSON() : <any>undefined;
-        data["senderName"] = this.senderName;
-        data["receiverName"] = this.receiverName;
+        data["displayName"] = this.displayName;
+        data["relatedUserId"] = this.relatedUserId;
         return data; 
     }
 
@@ -5823,8 +6407,8 @@ export class GetMessageForViewDto implements IGetMessageForViewDto {
 
 export interface IGetMessageForViewDto {
     message: MessageDto;
-    senderName: string | undefined;
-    receiverName: string | undefined;
+    displayName: string | undefined;
+    relatedUserId: number | undefined;
 }
 
 export class GetMessageForViewDtoPagedResultDto implements IGetMessageForViewDtoPagedResultDto {
@@ -7725,6 +8309,7 @@ export class TourDto implements ITourDto {
     longitude: string | undefined;
     latitude: string | undefined;
     userId: number | undefined;
+    rating: number | undefined;
     id: number;
 
     constructor(data?: ITourDto) {
@@ -7745,6 +8330,7 @@ export class TourDto implements ITourDto {
             this.longitude = data["longitude"];
             this.latitude = data["latitude"];
             this.userId = data["userId"];
+            this.rating = data["rating"];
             this.id = data["id"];
         }
     }
@@ -7765,6 +8351,7 @@ export class TourDto implements ITourDto {
         data["longitude"] = this.longitude;
         data["latitude"] = this.latitude;
         data["userId"] = this.userId;
+        data["rating"] = this.rating;
         data["id"] = this.id;
         return data; 
     }
@@ -7785,6 +8372,7 @@ export interface ITourDto {
     longitude: string | undefined;
     latitude: string | undefined;
     userId: number | undefined;
+    rating: number | undefined;
     id: number;
 }
 

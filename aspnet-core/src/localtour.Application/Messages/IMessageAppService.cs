@@ -13,7 +13,7 @@ namespace localtour.Messages
     {
         Task<PagedResultDto<GetMessageForViewDto>> GetMessages();
 
-        Task<List<GetMessageForViewDto>> GetMessagesBySender(int SenderId);
+        Task<List<GetMessageForViewDto>> GetMessagesByRelatedUserId(int UserId);
 
         Task<GetMessageForViewDto> SendMessage(CreateMessageDto input);
     }

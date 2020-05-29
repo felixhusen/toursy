@@ -2,12 +2,20 @@
 
     <div class="row">
         <div class="col-sm-8">
-            <h3 class="page-title mb-3">Requests</h3>
+            <h3 class="page-title mb-3">{{title}}</h3>
         </div>
         <div class="col-sm-4 text-right">
             <button mat-mini-fab color="primary" (click)="exportToExcel()" class="mr-1">
                 <mat-icon>cloud_download</mat-icon>
             </button>
+            <button mat-mini-fab color="primary" [matMenuTriggerFor]="menu" class="mr-1">
+                <mat-icon>filter_list</mat-icon>
+            </button>
+            <mat-menu #menu="matMenu">
+                <button mat-menu-item (click)="toggleMyRequests()">My Requests</button>
+                <button mat-menu-item (click)="toggleCustomerRequests()" *ngIf="'Pages.Request.ViewAll' | permission">Customer's Requests</button>
+                <button mat-menu-item (click)="togglePendingRequests()" *ngIf="'Pages.Request.ViewAll' | permission">Pending Requests</button>
+            </mat-menu>
             <button mat-mini-fab color="primary" (click)="showCreateOrEditRequestDialog()">
                 <mat-icon>add</mat-icon>
             </button>
@@ -24,7 +32,7 @@
             </mat-form-field>
         </form>
     </mat-card>
-
+    <mat-progress-bar mode="indeterminate" *ngIf="loading"></mat-progress-bar>
     <p-table [value]="requests" styleClass="ui-table-customers">
         <ng-template pTemplate="header">
             <tr>
@@ -34,6 +42,7 @@
                 <th>Description</th>
                 <th>Date</th>
                 <th>Status</th>
+                <th>Actions</th>
             </tr>
         </ng-template>
         <ng-template pTemplate="body" let-item>
@@ -44,6 +53,14 @@
                 <td>{{item.request.description}}</td>
                 <td>{{item.request.date | date}}</td>
                 <td>{{item.request.status}}</td>
+                <td>
+                    <button mat-icon-button color="accent" *ngIf="item.request.status === 'Pending'" (click)="deleteRequest(item.request.id)">
+                        <mat-icon>delete</mat-icon>
+                    </button>
+                    <button mat-icon-button color="primary" *ngIf="(item.request.status === 'Pending') && ('Pages.Request.Edit' | permission)" (click)="approveRequest(item.request.id)">
+                        <mat-icon>done</mat-icon>
+                    </button>
+                </td>
             </tr>
         </ng-template>
     </p-table>

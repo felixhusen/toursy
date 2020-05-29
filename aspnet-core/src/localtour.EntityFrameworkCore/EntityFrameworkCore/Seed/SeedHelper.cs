@@ -7,14 +7,34 @@ using Abp.EntityFrameworkCore.Uow;
 using Abp.MultiTenancy;
 using localtour.EntityFrameworkCore.Seed.Host;
 using localtour.EntityFrameworkCore.Seed.Tenants;
+using System.Collections.Generic;
+using System.IO;
+using Newtonsoft.Json;
 
 namespace localtour.EntityFrameworkCore.Seed
 {
     public static class SeedHelper
     {
+
         public static void SeedHostDb(IIocResolver iocResolver)
         {
             WithDbContext<localtourDbContext>(iocResolver, SeedHostDb);
+        }
+
+        public static List<TEntity> SeedData<TEntity>(string fileName)
+        {
+            string currentDirectory = Directory.GetCurrentDirectory();
+            string path = "seeds";
+            string fullPath = Path.Combine(currentDirectory, path, fileName);
+
+            var result = new List<TEntity>();
+            using (StreamReader reader = new StreamReader(fullPath))
+            {
+                string json = reader.ReadToEnd();
+                result = JsonConvert.DeserializeObject<List<TEntity>>(json);
+            }
+
+            return result;
         }
 
         public static void SeedHostDb(localtourDbContext context)
@@ -24,9 +44,15 @@ namespace localtour.EntityFrameworkCore.Seed
             // Host seed
             new InitialHostDbBuilder(context).Create();
 
-            // Default tenant seed (in host database).
             new DefaultTenantBuilder(context).Create();
             new TenantRoleAndUserBuilder(context, 1).Create();
+            new TourDataBuilder(context).Create();
+            new StateDataBuilder(context).Create();
+            new BookingDataBuilder(context).Create();
+            new TransactionDataBuilder(context).Create();
+            new ReviewDataBuilder(context).Create();
+            new RequestDataBuilder(context).Create();
+            new DisputeDataBuilder(context).Create();
         }
 
         private static void WithDbContext<TDbContext>(IIocResolver iocResolver, Action<TDbContext> contextAction)

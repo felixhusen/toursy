@@ -1,14 +1,17 @@
-﻿using System.Linq;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
-using Abp.Authorization;
+﻿using Abp.Authorization;
 using Abp.Authorization.Roles;
 using Abp.Authorization.Users;
+using Abp.Domain.Uow;
 using Abp.MultiTenancy;
 using localtour.Authorization;
 using localtour.Authorization.Roles;
 using localtour.Authorization.Users;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace localtour.EntityFrameworkCore.Seed.Tenants
 {
@@ -16,11 +19,13 @@ namespace localtour.EntityFrameworkCore.Seed.Tenants
     {
         private readonly localtourDbContext _context;
         private readonly int _tenantId;
+        private readonly IUnitOfWorkManager _unitOfWorkManager;
 
         public TenantRoleAndUserBuilder(localtourDbContext context, int tenantId)
         {
             _context = context;
             _tenantId = tenantId;
+            //_unitOfWorkManager = unitOfWorkManager;
         }
 
         public void Create()
@@ -28,7 +33,7 @@ namespace localtour.EntityFrameworkCore.Seed.Tenants
             CreateRolesAndUsers();
         }
 
-        private void CreateRolesAndUsers()
+        private void CreateAdminRoleAndUser()
         {
             // Admin role
 
@@ -84,6 +89,122 @@ namespace localtour.EntityFrameworkCore.Seed.Tenants
                 _context.UserRoles.Add(new UserRole(_tenantId, adminUser.Id, adminRole.Id));
                 _context.SaveChanges();
             }
+        }
+
+        private void CreateTouristRoleAndUser()
+        {
+            // Tourist role
+            var touristRole = _context.Roles.IgnoreQueryFilters().FirstOrDefault(r => r.TenantId == _tenantId && r.Name == StaticRoleNames.Tenants.Tourist);
+            if (touristRole == null)
+            {
+                touristRole = _context.Roles.Add(new Role(_tenantId, StaticRoleNames.Tenants.Tourist, StaticRoleNames.Tenants.Tourist) { IsStatic = true, IsDefault = true }).Entity;
+                _context.SaveChanges();
+            }
+
+            // Grant permissions for tourist
+
+            var touristDefaultPermissions = new List<string>() { "Pages.Tour.View", "Pages.Booking.View", "Pages.Transaction.View", "Pages.Dispute.View", "Pages.Review.View", "Pages.Request.View" };
+
+            var grantedTouristPermissions = _context.Permissions.IgnoreQueryFilters()
+                .OfType<RolePermissionSetting>()
+                .Where(p => p.TenantId == _tenantId && p.RoleId == touristRole.Id)
+                .Select(p => p.Name)
+                .ToList();
+
+            var touristPermissions = PermissionFinder
+                .GetAllPermissions(new localtourAuthorizationProvider())
+                .Where(p => p.MultiTenancySides.HasFlag(MultiTenancySides.Tenant) && !grantedTouristPermissions.Contains(p.Name))
+                .ToList();
+
+            if (touristPermissions.Any())
+            {
+                var permissions = touristDefaultPermissions.Select(permissionName => new RolePermissionSetting
+                {
+                    TenantId = _tenantId,
+                    Name = permissionName,
+                    IsGranted = true,
+                    RoleId = touristRole.Id
+                });
+                _context.Permissions.AddRange(permissions);
+                _context.SaveChanges();
+            }
+        }
+
+        private void CreateTourGuideRoleAndUser()
+        {
+            // Tour guide role
+            var tourGuideRole = _context.Roles.IgnoreQueryFilters().FirstOrDefault(r => r.TenantId == _tenantId && r.Name == StaticRoleNames.Tenants.TourGuide);
+            if (tourGuideRole == null)
+            {
+                tourGuideRole = _context.Roles.Add(new Role(_tenantId, StaticRoleNames.Tenants.TourGuide, StaticRoleNames.Tenants.TourGuide) { IsStatic = true }).Entity;
+                _context.SaveChanges();
+            }
+
+            // Grant permissions for tourist
+
+            var tourGuideDefaultPermissions = new List<string>() { "Pages.Tour.Create", "Pages.Tour.Edit", "Pages.Tour.Delete", "Pages.Tour.View", "Pages.Tour.Approve", "Pages.Transaction.Create", "Pages.Transaction.Edit", "Pages.Transaction.Delete", "Pages.Review.Create", "Pages.Review.Edit", "Pages.Review.Delete", "Pages.Request.Create", "Pages.Request.Edit", "Pages.Request.Delete", "Pages.Dispute.Create", "Pages.Dispute.Edit", "Pages.Dispute.Delete", "Pages.Booking.Create", "Pages.Booking.Edit", "Pages.Booking.Delete", "Pages.Booking.View", "Pages.Booking.ViewAll", "Pages.Transaction.View", "Pages.Transaction.ViewAll", "Pages.Dispute.View", "Pages.Dispute.ViewAll", "Pages.Request.ViewAll", "Pages.Request.View", "Pages.Review.ViewAll", "Pages.Review.View" };
+
+            var grantedTourGuidePermissions = _context.Permissions.IgnoreQueryFilters()
+                .OfType<RolePermissionSetting>()
+                .Where(p => p.TenantId == _tenantId && p.RoleId == tourGuideRole.Id)
+                .Select(p => p.Name)
+                .ToList();
+
+            var tourGuidePermissions = PermissionFinder
+                .GetAllPermissions(new localtourAuthorizationProvider())
+                .Where(p => p.MultiTenancySides.HasFlag(MultiTenancySides.Tenant) && !grantedTourGuidePermissions.Contains(p.Name))
+                .ToList();
+
+            if (tourGuidePermissions.Any())
+            {
+                var permissions = tourGuideDefaultPermissions.Select(permissionName => new RolePermissionSetting
+                {
+                    TenantId = _tenantId,
+                    Name = permissionName,
+                    IsGranted = true,
+                    RoleId = tourGuideRole.Id
+                });
+                _context.Permissions.AddRange(permissions);
+                _context.SaveChanges();
+            }
+        }
+
+        private void CreateRandomUsers()
+        {
+            if (_context.Users.Count() == 1)
+            {
+                var users = SeedHelper.SeedData<User>("users.json");
+                Random random = new Random();
+                foreach (var user in users)
+                {
+                    user.Password = new PasswordHasher<User>(new OptionsWrapper<PasswordHasherOptions>(new PasswordHasherOptions())).HashPassword(user, "123qwe");
+                    user.IsEmailConfirmed = true;
+                    user.IsActive = true;
+                    user.NormalizedEmailAddress = user.EmailAddress.ToUpper();
+                    user.NormalizedUserName = user.UserName.ToUpper();
+                    user.Roles = new List<UserRole>();
+                }
+                _context.Users.AddRange(users);
+                _context.SaveChanges();
+                // add user role
+                foreach (var user in users)
+                {
+                    var generatedNumber = random.Next(2, 4);
+                    _context.UserRoles.Add(new UserRole(_tenantId, user.Id, generatedNumber));
+                }
+                _context.SaveChanges();
+            }
+        }
+
+        private void CreateRolesAndUsers()
+        {
+            CreateAdminRoleAndUser();
+
+            CreateTouristRoleAndUser();
+
+            CreateTourGuideRoleAndUser();
+
+            CreateRandomUsers();
         }
     }
 }
