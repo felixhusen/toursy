@@ -332,6 +332,58 @@ export class BookingServiceProxy {
     }
 
     /**
+     * @param id (optional) 
+     * @return Success
+     */
+    approveBookingCancellation(id: number | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/app/Booking/ApproveBookingCancellation?";
+        if (id === null)
+            throw new Error("The parameter 'id' cannot be null.");
+        else if (id !== undefined)
+            url_ += "id=" + encodeURIComponent("" + id) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processApproveBookingCancellation(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processApproveBookingCancellation(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processApproveBookingCancellation(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+
+    /**
      * @param query (optional) 
      * @param mode (optional) 
      * @param sorting (optional) 
@@ -4620,6 +4672,58 @@ export class TransactionServiceProxy {
      * @param id (optional) 
      * @return Success
      */
+    approveTransactionCancellation(id: number | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/app/Transaction/ApproveTransactionCancellation?";
+        if (id === null)
+            throw new Error("The parameter 'id' cannot be null.");
+        else if (id !== undefined)
+            url_ += "id=" + encodeURIComponent("" + id) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processApproveTransactionCancellation(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processApproveTransactionCancellation(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processApproveTransactionCancellation(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+
+    /**
+     * @param id (optional) 
+     * @return Success
+     */
     delete(id: number | undefined): Observable<void> {
         let url_ = this.baseUrl + "/api/services/app/Transaction/Delete?";
         if (id === null)
@@ -5459,6 +5563,7 @@ export interface IRegisterOutput {
 
 export class BookingDto implements IBookingDto {
     tourId: number | undefined;
+    tourDateId: number | undefined;
     userId: number | undefined;
     name: string | undefined;
     phoneNumber: string | undefined;
@@ -5485,6 +5590,7 @@ export class BookingDto implements IBookingDto {
     init(data?: any) {
         if (data) {
             this.tourId = data["tourId"];
+            this.tourDateId = data["tourDateId"];
             this.userId = data["userId"];
             this.name = data["name"];
             this.phoneNumber = data["phoneNumber"];
@@ -5511,6 +5617,7 @@ export class BookingDto implements IBookingDto {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["tourId"] = this.tourId;
+        data["tourDateId"] = this.tourDateId;
         data["userId"] = this.userId;
         data["name"] = this.name;
         data["phoneNumber"] = this.phoneNumber;
@@ -5537,6 +5644,7 @@ export class BookingDto implements IBookingDto {
 
 export interface IBookingDto {
     tourId: number | undefined;
+    tourDateId: number | undefined;
     userId: number | undefined;
     name: string | undefined;
     phoneNumber: string | undefined;
@@ -5558,6 +5666,8 @@ export class GetBookingForViewDto implements IGetBookingForViewDto {
     bookingCode: string | undefined;
     userFullName: string | undefined;
     stateCode: string | undefined;
+    tourStartDate: moment.Moment | undefined;
+    tourEndDate: moment.Moment | undefined;
 
     constructor(data?: IGetBookingForViewDto) {
         if (data) {
@@ -5575,6 +5685,8 @@ export class GetBookingForViewDto implements IGetBookingForViewDto {
             this.bookingCode = data["bookingCode"];
             this.userFullName = data["userFullName"];
             this.stateCode = data["stateCode"];
+            this.tourStartDate = data["tourStartDate"] ? moment(data["tourStartDate"].toString()) : <any>undefined;
+            this.tourEndDate = data["tourEndDate"] ? moment(data["tourEndDate"].toString()) : <any>undefined;
         }
     }
 
@@ -5592,6 +5704,8 @@ export class GetBookingForViewDto implements IGetBookingForViewDto {
         data["bookingCode"] = this.bookingCode;
         data["userFullName"] = this.userFullName;
         data["stateCode"] = this.stateCode;
+        data["tourStartDate"] = this.tourStartDate ? this.tourStartDate.toISOString() : <any>undefined;
+        data["tourEndDate"] = this.tourEndDate ? this.tourEndDate.toISOString() : <any>undefined;
         return data; 
     }
 
@@ -5609,6 +5723,8 @@ export interface IGetBookingForViewDto {
     bookingCode: string | undefined;
     userFullName: string | undefined;
     stateCode: string | undefined;
+    tourStartDate: moment.Moment | undefined;
+    tourEndDate: moment.Moment | undefined;
 }
 
 export class GetBookingForViewDtoPagedResultDto implements IGetBookingForViewDtoPagedResultDto {
@@ -5719,6 +5835,7 @@ export interface IFileDto {
 
 export class CreateOrEditBookingDto implements ICreateOrEditBookingDto {
     tourId: number | undefined;
+    tourDateId: number | undefined;
     userId: number | undefined;
     name: string | undefined;
     phoneNumber: string | undefined;
@@ -5745,6 +5862,7 @@ export class CreateOrEditBookingDto implements ICreateOrEditBookingDto {
     init(data?: any) {
         if (data) {
             this.tourId = data["tourId"];
+            this.tourDateId = data["tourDateId"];
             this.userId = data["userId"];
             this.name = data["name"];
             this.phoneNumber = data["phoneNumber"];
@@ -5771,6 +5889,7 @@ export class CreateOrEditBookingDto implements ICreateOrEditBookingDto {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["tourId"] = this.tourId;
+        data["tourDateId"] = this.tourDateId;
         data["userId"] = this.userId;
         data["name"] = this.name;
         data["phoneNumber"] = this.phoneNumber;
@@ -5797,6 +5916,7 @@ export class CreateOrEditBookingDto implements ICreateOrEditBookingDto {
 
 export interface ICreateOrEditBookingDto {
     tourId: number | undefined;
+    tourDateId: number | undefined;
     userId: number | undefined;
     name: string | undefined;
     phoneNumber: string | undefined;

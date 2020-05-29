@@ -9,6 +9,7 @@ import {
   GetTourForViewDto,
   CreateOrEditTransactionDto,
   TransactionServiceProxy,
+  TourDateDto,
 } from "@shared/service-proxies/service-proxies";
 import * as moment from "moment";
 import { PageEvent } from "@angular/material/paginator";
@@ -37,10 +38,9 @@ export class CreateBookingComponent extends AppComponentBase implements OnInit {
   public booking: CreateOrEditBookingDto = new CreateOrEditBookingDto();
   public transaction: CreateOrEditTransactionDto = new CreateOrEditTransactionDto();
   public tour: GetTourForViewDto;
+  public tourDates: TourDateDto[];
   public tourId: number;
   public isLinear: boolean = true;
-  // public transactionForm: FormGroup;
-  // public bookingForm: FormGroup;
 
   constructor(
     injector: Injector,
@@ -58,6 +58,7 @@ export class CreateBookingComponent extends AppComponentBase implements OnInit {
   public getTour(id: number): void {
     this._tourService.getTourForView(id).subscribe((result) => {
       this.tour = result;
+      this.tourDates = result.tourDates;
     });
   }
 

@@ -1,5 +1,6 @@
 ﻿using Abp.Domain.Entities;
 using localtour.Authorization.Users;
+using localtour.TourDates;
 using localtour.Tours;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -13,6 +14,11 @@ namespace localtour.Bookings
 
         [ForeignKey("TourId")]
         public Tour TourFk { get; set; }
+
+        public virtual int? TourDateId { get; set; }
+
+        [ForeignKey("TourDateId")]
+        public TourDate TourDateFk { get; set; }
 
         public virtual long? UserId { get; set; }
 

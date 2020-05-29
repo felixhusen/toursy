@@ -29,12 +29,14 @@ export class HomeComponent extends AppComponentBase implements OnInit {
   public sort: string = "tour.id desc";
   public defaultImageLink: string = "https://attendantdesign.com/wp-content/uploads/2017/08/tour-1-1.jpg";
   public userId: number;
+  public loading: boolean = false;
 
   constructor(injector: Injector, private _tourService: TourServiceProxy, private _appSessionService: AppSessionService) {
     super(injector);
   }
 
   public getTours(event?: any): void {
+    this.loading = true;
     this._tourService
       .getAll(
         this.nameFilter,
@@ -53,6 +55,7 @@ export class HomeComponent extends AppComponentBase implements OnInit {
         this.tours = result.items;
         this.totalCount = result.totalCount;
         this.setupCarousel();
+        this.loading = false;
       });
   }
 

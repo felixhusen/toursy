@@ -1,15 +1,23 @@
-import { Component, Injector, Optional, Inject, OnInit, ElementRef, ViewChild } from "@angular/core";
 import {
-  MatDialogRef,
-  MAT_DIALOG_DATA,
-} from "@angular/material";
+  Component,
+  Injector,
+  Optional,
+  Inject,
+  OnInit,
+  ElementRef,
+  ViewChild,
+} from "@angular/core";
+import { MatDialogRef, MAT_DIALOG_DATA } from "@angular/material";
 import { finalize } from "rxjs/operators";
 import * as _ from "lodash";
 import { AppComponentBase } from "@shared/app-component-base";
 import {
   CreateOrEditBookingDto,
   BookingServiceProxy,
-  GetBookingForEditOutput
+  GetBookingForEditOutput,
+  TourServiceProxy,
+  GetTourForViewDto,
+  TourDateDto,
 } from "@shared/service-proxies/service-proxies";
 import { AppConsts } from "@shared/AppConsts";
 import { HttpClient } from "@angular/common/http";
@@ -33,15 +41,52 @@ export class CreateOrEditBookingDialogComponent extends AppComponentBase
   public saving = false;
   public booking: GetBookingForEditOutput = new GetBookingForEditOutput();
   public title: string = "Create New Booking";
+  public tour: GetTourForViewDto;
+  public tourDates: TourDateDto[];
+  public states: { id: number; code: string }[] = [
+    {
+      id: 1,
+      code: "QLD",
+    },
+    {
+      id: 2,
+      code: "ACT",
+    },
+    {
+      id: 3,
+      code: "TAS",
+    },
+    {
+      id: 4,
+      code: "NT",
+    },
+    {
+      id: 5,
+      code: "SA",
+    },
+    {
+      id: 6,
+      code: "WA",
+    },
+    {
+      id: 7,
+      code: "VIC",
+    },
+    {
+      id: 8,
+      code: "NSW",
+    },
+  ];
 
-  @ViewChild('imageUpload', { static: false }) imageUpload: ElementRef;
+  @ViewChild("imageUpload", { static: false }) imageUpload: ElementRef;
 
   constructor(
     injector: Injector,
     private _bookingService: BookingServiceProxy,
     private _dialogRef: MatDialogRef<CreateOrEditBookingDialogComponent>,
     @Optional() @Inject(MAT_DIALOG_DATA) private _id: number,
-    private _httpClient: HttpClient
+    private _httpClient: HttpClient,
+    private _tourService: TourServiceProxy
   ) {
     super(injector);
     this.booking.booking = new CreateOrEditBookingDto();
@@ -50,6 +95,8 @@ export class CreateOrEditBookingDialogComponent extends AppComponentBase
   public getBooking(): void {
     this._bookingService.getBookingForEdit(this._id).subscribe((result) => {
       this.booking = result;
+      console.log(this.booking);
+      this.getTour(this.booking.booking.tourId);
     });
   }
 
@@ -57,12 +104,19 @@ export class CreateOrEditBookingDialogComponent extends AppComponentBase
     this._bookingService.delete(this._id).subscribe(() => {
       this.notify.info("Booking has been deleted");
       this.close(true);
-    })
+    });
   }
 
   public async approveBooking(id: number) {
     if (confirm("Are you sure to approve this booking?")) {
       await this._bookingService.approveBooking(id).toPromise();
+      this.close(true);
+    }
+  }
+
+  public async approveBookingCancellation(id: number) {
+    if (confirm("Are you sure to approve cancellation of this booking?")) {
+      await this._bookingService.approveBookingCancellation(id).toPromise();
       this.close(true);
     }
   }
@@ -74,6 +128,13 @@ export class CreateOrEditBookingDialogComponent extends AppComponentBase
     }
   }
 
+  public getTour(id: number): void {
+    this._tourService.getTourForView(id).subscribe((result) => {
+      this.tour = result;
+      this.tourDates = result.tourDates;
+    });
+  }
+
   ngOnInit(): void {
     if (this._id) {
       this.title = "Edit Booking";
@@ -83,7 +144,7 @@ export class CreateOrEditBookingDialogComponent extends AppComponentBase
 
   save(): void {
     this.saving = true;
-
+    console.log(this.booking);
     this._bookingService
       .createOrEdit(this.booking.booking)
       .pipe(
@@ -91,13 +152,10 @@ export class CreateOrEditBookingDialogComponent extends AppComponentBase
           this.saving = false;
         })
       )
-      .subscribe(result => {
-
+      .subscribe((result) => {
         this.notify.info(this.l("SavedSuccessfully"));
         this.close(true);
       });
-
-      
   }
 
   close(result: any): void {

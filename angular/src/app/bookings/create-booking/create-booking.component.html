@@ -70,6 +70,14 @@
                         <input matInput type="text" name="PromoCode" [(ngModel)]="booking.promoCode">
                     </mat-form-field>
 
+                    <mat-form-field appearance="fill">
+                        <mat-label>Select Tour Date</mat-label>
+                        <mat-select [(ngModel)]="booking.tourDateId" name="TourDate" required>
+                            <mat-option *ngFor="let tourDate of tourDates" [value]="tourDate.id">{{tourDate.startDate | date:'short'}} -
+                                {{tourDate.endDate | date:'short'}}</mat-option>
+                        </mat-select>
+                    </mat-form-field>
+
                     <div *ngIf="tour">
                         <h3 class="header-title">Tour Information</h3>
                         <img [src]="tour.tourPictures[0].link" alt="tour.tour.name" class="tour-preview-image" />

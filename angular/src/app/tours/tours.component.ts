@@ -38,6 +38,7 @@ export class ToursComponent extends AppComponentBase implements OnInit {
   public defaultImageLink: string =
     "https://attendantdesign.com/wp-content/uploads/2017/08/tour-1-1.jpg";
   public userId: number;
+  public loading: boolean = false;
 
   constructor(
     injector: Injector,
@@ -50,6 +51,7 @@ export class ToursComponent extends AppComponentBase implements OnInit {
   }
 
   public getTours(event?: any): void {
+    this.loading = true;
     if (event) {
       this.pageEvent = event;
       this.skipCount = this.pageEvent.pageIndex * this.pageEvent.pageSize;
@@ -73,6 +75,7 @@ export class ToursComponent extends AppComponentBase implements OnInit {
       .subscribe((result) => {
         this.tours = result.items;
         this.totalCount = result.totalCount;
+        this.loading = false;
       });
   }
 

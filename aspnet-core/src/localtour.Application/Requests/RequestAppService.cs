@@ -49,8 +49,6 @@ namespace localtour.Requests
                            join user in _userRepository.GetAll() on o.UserId equals user.Id
                            join booking in _bookingRepository.GetAll() on o.BookingId equals booking.Id
 
-                           where o.UserId == AbpSession.UserId
-
                            select new GetRequestForViewDto()
                            {
                                Request = new RequestDto

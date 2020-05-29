@@ -30,7 +30,7 @@
             </mat-form-field>
         </form>
     </mat-card>
-
+    <mat-progress-bar mode="indeterminate" *ngIf="loading"></mat-progress-bar>
     <p-table [value]="transactions" styleClass="ui-table-customers">
         <ng-template pTemplate="header">
             <tr>
@@ -54,8 +54,11 @@
                 <td>{{item.transaction.status}}</td>
                 <td class="text-right">{{item.transaction.amount | currency}}</td>
                 <td>
-                    <button mat-icon-button color="accent" (click)="requestCancelTransaction(item.booking.id)">
+                    <button mat-icon-button color="accent" *ngIf="item.transaction.status !== 'Success' && item.transaction.status !== 'Cancelled'" (click)="requestCancelTransaction(item.transaction.id)">
                         <mat-icon>delete</mat-icon>
+                    </button>
+                    <button mat-icon-button color="primary" *ngIf="(item.transaction.status === 'Cancellation Requested' || item.transaction.status === 'Pending') && ('Pages.Transaction.Edit' | permission)" (click)="approveTransaction(item.transaction.id, item.transaction.status)">
+                        <mat-icon>done</mat-icon>
                     </button>
                 </td>
             </tr>

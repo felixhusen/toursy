@@ -94,7 +94,7 @@ namespace localtour.Messages
             var output = new GetMessageForViewDto
             {
                 Message = ObjectMapper.Map<MessageDto>(message),
-                DisplayName = receiver.Id == AbpSession.UserId ? sender.FullName : receiver.FullName,
+                DisplayName = sender.FullName,
                 RelatedUserId = receiver.Id == AbpSession.UserId ? sender.Id : receiver.Id
             };
 
@@ -120,12 +120,12 @@ namespace localtour.Messages
                                    DateSent = o.DateSent,
                                    ReceiverId = o.ReceiverId
                                },
-                               DisplayName = receiver.Id == AbpSession.UserId ? sender.FullName : receiver.FullName,
+                               DisplayName = sender.FullName,
                                RelatedUserId = receiver.Id == AbpSession.UserId ? sender.Id : receiver.Id
                            };
 
             var pagedAndFilteredMessages = messages
-                .OrderBy("Message.DateSent desc");
+                .OrderBy("Message.DateSent asc");
 
             return await pagedAndFilteredMessages.ToListAsync();
         }

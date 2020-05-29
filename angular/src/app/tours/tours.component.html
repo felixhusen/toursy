@@ -34,6 +34,7 @@
     </mat-card>
 
     <div class="row" *ngIf="tours">
+        <mat-progress-bar mode="indeterminate" *ngIf="loading"></mat-progress-bar>
         <div class="col-xs-12 col-sm-6 col-md-4 col-lg-4 mb-3" *ngFor="let item of tours">
             <mat-card>
                 <img mat-card-image [src]="item.tourPictures.length > 0 ? item.tourPictures[0].link : defaultImageLink"

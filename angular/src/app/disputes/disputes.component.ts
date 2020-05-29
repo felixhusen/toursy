@@ -28,6 +28,7 @@ export class DisputesComponent extends AppComponentBase implements OnInit {
   public pageEvent: PageEvent;
   public title: string = "My Disputes";
   public mode: string;
+  public loading: boolean = false;
 
   constructor(
     injector: Injector,
@@ -39,6 +40,7 @@ export class DisputesComponent extends AppComponentBase implements OnInit {
   }
 
   public getDisputes(event?: any): void {
+    this.loading = true;
     if (event) {
       this.pageEvent = event;
       this.skipCount = this.pageEvent.pageIndex * this.pageEvent.pageSize;
@@ -50,6 +52,7 @@ export class DisputesComponent extends AppComponentBase implements OnInit {
       .subscribe((result) => {
         this.disputes = result.items;
         this.totalCount = result.totalCount;
+        this.loading = false;
       });
   }
 
@@ -69,6 +72,20 @@ export class DisputesComponent extends AppComponentBase implements OnInit {
     this.title = "Pending Requests";
     this.mode = "PendingRequests";
     this.getDisputes();
+  }
+
+  public async approveDispute(id: number) {
+    if (confirm("Are you sure to approve this dispute?")) {
+      await this._disputeService.approveDispute(id).toPromise();
+      this.getDisputes();
+    }
+  }
+
+  public async deleteDispute(id: number) {
+    if (confirm("Are you sure to delete this dispute?")) {
+      await this._disputeService.delete(id).toPromise();
+      this.getDisputes();
+    }
   }
 
   public exportToExcel(): void {

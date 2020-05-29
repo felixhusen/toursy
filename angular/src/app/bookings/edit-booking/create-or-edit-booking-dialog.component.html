@@ -13,49 +13,48 @@
             </mat-form-field>
             <mat-form-field appearance="fill">
               <mat-label>Email</mat-label>
-              <input matInput name="Email" type="text" placeholder="Email" [(ngModel)]="booking.booking.email" required/>
+              <input matInput name="Email" type="text" placeholder="Email" [(ngModel)]="booking.booking.email"
+                required />
             </mat-form-field>
             <mat-form-field appearance="fill">
               <mat-label>Phone Number</mat-label>
               <input matInput placeholder="Phone Number" name="PhoneNumber" [(ngModel)]="booking.booking.phoneNumber"
-                required/>
+                required />
             </mat-form-field>
             <mat-form-field appearance="fill">
               <mat-label>Address</mat-label>
-              <input matInput placeholder="Address" name="Address" [(ngModel)]="booking.booking.address"
-                required/>
+              <input matInput placeholder="Address" name="Address" [(ngModel)]="booking.booking.address" required />
             </mat-form-field>
             <mat-form-field appearance="fill">
               <mat-label>Suburb</mat-label>
-              <input matInput placeholder="Suburb" name="Suburb" [(ngModel)]="booking.booking.suburb"
-                required/>
+              <input matInput placeholder="Suburb" name="Suburb" [(ngModel)]="booking.booking.suburb" required />
             </mat-form-field>
             <mat-form-field appearance="fill">
               <mat-label>State</mat-label>
-              <mat-select [(ngModel)]="booking.stateId" name="State">
-                  <mat-option value="8">NSW</mat-option>
-                  <mat-option value="7">VIC</mat-option>
-                  <mat-option value="1">QLD</mat-option>
-                  <mat-option value="6">WA</mat-option>
-                  <mat-option value="4">NT</mat-option>
-                  <mat-option value="3">TAS</mat-option>
-                  <mat-option value="5">SA</mat-option>
-                  <mat-option value="2">ACT</mat-option>
+              <mat-select [(ngModel)]="booking.booking.stateId" name="State">
+                <mat-option *ngFor="let state of states" [value]="state.id">{{state.code}}</mat-option>
               </mat-select>
-          </mat-form-field>
+            </mat-form-field>
+            <mat-form-field appearance="fill">
+              <mat-label>Select Tour Date</mat-label>
+              <mat-select [(ngModel)]="booking.booking.tourDateId" name="TourDate">
+                <mat-option *ngFor="let tourDate of tourDates" [value]="tourDate.id">{{tourDate.startDate | date:'short'}}
+                  -
+                  {{tourDate.endDate | date:'short'}}</mat-option>
+              </mat-select>
+            </mat-form-field>
             <mat-form-field appearance="fill">
               <mat-label>Postcode</mat-label>
-              <input matInput placeholder="Post Code" name="PostCode" [(ngModel)]="booking.booking.postCode"
-                required/>
+              <input matInput placeholder="Post Code" name="PostCode" [(ngModel)]="booking.booking.postCode" required />
             </mat-form-field>
             <mat-form-field appearance="fill">
               <mat-label>Number Of People</mat-label>
-              <input matInput type="number" min="1" placeholder="Number of people" name="NumberOfPeople" [(ngModel)]="booking.booking.numberOfPeople"
-                required/>
+              <input matInput type="number" min="1" placeholder="Number of people" name="NumberOfPeople"
+                [(ngModel)]="booking.booking.numberOfPeople" required />
             </mat-form-field>
             <mat-form-field appearance="fill">
               <mat-label>Promo Code</mat-label>
-              <input matInput placeholder="Promo code" name="PromoCode" [(ngModel)]="booking.booking.promoCode"/>
+              <input matInput placeholder="Promo code" name="PromoCode" [(ngModel)]="booking.booking.promoCode" />
             </mat-form-field>
           </div>
         </div>
@@ -63,16 +62,24 @@
     </mat-tab-group>
   </mat-dialog-content>
   <div mat-dialog-actions align="end">
-    <button mat-flat-button type="button" flex="15" color="primary" (click)="approveBooking(booking.booking.id)" *ngIf="booking.booking.status === 'Pending' && ('Pages.Booking.Edit' | permission)">
+    <button mat-flat-button type="button" flex="15" color="primary" (click)="approveBooking(booking.booking.id)"
+      *ngIf="booking.booking.status === 'Pending' && ('Pages.Booking.Edit' | permission)">
       Approve
+    </button>
+    <button mat-flat-button type="button" flex="15" color="primary"
+      (click)="approveBookingCancellation(booking.booking.id)"
+      *ngIf="booking.booking.status === 'Cancellation Requested' && ('Pages.Booking.Edit' | permission)">
+      Approve Cancellation
     </button>
     <button mat-button type="button" [disabled]="saving" (click)="close(false)">
       {{ "Cancel" | localize }}
     </button>
-    <button mat-flat-button type="button" flex="15" color="accent" (click)="requestCancelBooking(booking.booking.id)" *ngIf="_id">
+    <button mat-flat-button type="button" flex="15" color="accent" (click)="requestCancelBooking(booking.booking.id)"
+      *ngIf="_id">
       Cancel Booking
     </button>
-    <button mat-flat-button type="submit" flex="15" color="primary" [disabled]="!createBookingModal.form.valid || saving">
+    <button mat-flat-button type="submit" flex="15" color="primary"
+      [disabled]="!createBookingModal.form.valid || saving">
       {{ "Save" | localize }}
     </button>
   </div>

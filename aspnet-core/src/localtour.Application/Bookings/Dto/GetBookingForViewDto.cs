@@ -15,5 +15,9 @@ namespace localtour.Bookings.Dto
         public string UserFullName { get; set; }
 
         public string StateCode { get; set; }
+
+        public DateTime? TourStartDate { get; set; }
+
+        public DateTime? TourEndDate { get; set; }
     }
 }
