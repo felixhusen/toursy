@@ -39,6 +39,7 @@ export class CreateOrEditTourDialogComponent extends AppComponentBase
   public endDate: moment.Moment;
   public endTime: string;
   public title: string = "Create New Tour";
+  private dateCount: number = 0;
 
   @ViewChild('imageUpload', { static: false }) imageUpload: ElementRef;
 
@@ -67,6 +68,7 @@ export class CreateOrEditTourDialogComponent extends AppComponentBase
     newDate.startDate = moment(this.startDate).set({minutes: startTime.minutes, hours: startTime.hours});
     let endTime = new Time(this.endTime);
     newDate.endDate = moment(this.endDate).set({minutes: endTime.minutes, hours: endTime.hours});
+    newDate.id = this.dateCount++;
     if (this._id) newDate.tourId = this._id;
     this.tourDates.push(newDate);
   }

@@ -42,4 +42,19 @@
             </ng-template>
         </p-table>
     </mat-card>
+    <mat-card class="mb-3">
+        <form autcomplete="off" (ngSubmit)="saveReview()">
+            <h2 mat-dialog-title>Write a review on {{tour.tour.name}}</h2>
+            <mat-label>Rating</mat-label>
+            <mat-icon class="ratestar clickable" (click)="setRating(1)">star_border</mat-icon>
+            <mat-icon class="ratestar clickable" (click)="setRating(2)">star_border</mat-icon>
+            <mat-icon class="ratestar clickable" (click)="setRating(3)">star_border</mat-icon>
+            <mat-icon class="ratestar clickable" (click)="setRating(4)">star_border</mat-icon>
+            <mat-icon class="ratestar clickable" (click)="setRating(5)">star_border</mat-icon>
+            <mat-form-field appearance="fill">
+                <textarea matInput name="reviewText" placeholder="Review text" [(ngModel)]="reviewText" required></textarea>
+            </mat-form-field>
+            <button mat-flat-button type="submit" color="primary" [disabled]="!reviewText || !rating">Submit Review</button>
+        </form>
+    </mat-card>
 </div>
