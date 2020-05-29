@@ -71,7 +71,8 @@ export class CreateOrEditTourDialogComponent extends AppComponentBase
     this.tourDates.push(newDate);
   }
 
-  public deleteDate(dateNumber: number): void {
+  public async deleteDate(dateNumber: number) {
+    if (dateNumber) await this._tourService.deleteTourDate(dateNumber).toPromise();
     this.tourDates = this.tourDates.filter(date => date.id != dateNumber);
   }
 
