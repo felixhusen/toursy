@@ -35,7 +35,9 @@ export class CreateOrEditTourDialogComponent extends AppComponentBase
   public tour: GetTourForEditOutput = new GetTourForEditOutput();
   public tourDates: TourDateDto[] = [];
   public startDate: moment.Moment;
+  public startTime: string;
   public endDate: moment.Moment;
+  public endTime: string;
   public title: string = "Create New Tour";
 
   @ViewChild('imageUpload', { static: false }) imageUpload: ElementRef;
@@ -61,10 +63,16 @@ export class CreateOrEditTourDialogComponent extends AppComponentBase
 
   public addDate(): void {
     const newDate = new TourDateDto();
-    newDate.startDate = this.startDate;
-    newDate.endDate = this.endDate;
+    let startTime = new Time(this.startTime);  // this.startTime is the value gathered by the form field
+    newDate.startDate = moment(this.startDate).set({minutes: startTime.minutes, hours: startTime.hours});
+    let endTime = new Time(this.endTime);
+    newDate.endDate = moment(this.endDate).set({minutes: endTime.minutes, hours: endTime.hours});
     if (this._id) newDate.tourId = this._id;
     this.tourDates.push(newDate);
+  }
+
+  public deleteDate(dateNumber: number): void {
+    this.tourDates = this.tourDates.filter(date => date.id != dateNumber);
   }
 
   public uploadTourPicture(event: any): void {
@@ -137,7 +145,12 @@ export class CreateOrEditTourDialogComponent extends AppComponentBase
 
         for (let tourDate of this.tourDates) {
           if (!tourDate.tourId) tourDate.tourId = result.id;
-          console.log(tourDate)
+          var timezoneOffset = moment(tourDate.startDate).utcOffset();
+          if (timezoneOffset != 0) {
+            console.log("Modifying date time according to timezone offset of " + (timezoneOffset / 60) + " hours");
+            tourDate.startDate = moment(tourDate.startDate).set({"minutes": moment(tourDate.startDate).get("minutes") + timezoneOffset});
+            tourDate.endDate = moment(tourDate.endDate).set({"minutes": moment(tourDate.endDate).get("minutes") + timezoneOffset});
+          }
           this._tourService.createOrEditTourDate(tourDate).subscribe(() => {})
         }
 
@@ -145,10 +158,20 @@ export class CreateOrEditTourDialogComponent extends AppComponentBase
         this.close(true);
       });
 
-      
+
   }
 
   close(result: any): void {
     this._dialogRef.close(result);
+  }
+}
+
+
+class Time {
+  public minutes: number;
+  public hours: number;
+  constructor(timeString: string) {
+    this.minutes = Number(timeString.slice(3));
+    this.hours = Number(timeString.slice(0, 2));
   }
 }
