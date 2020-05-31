@@ -56,7 +56,7 @@
               <mat-icon mat-list-icon>calendar_today</mat-icon>
               <div mat-line>Start Date: {{date.startDate | date:'short'}}</div>
               <div mat-line>End Date: {{date.endDate | date:'short'}}</div>
-              <div><mat-icon mat-list-icon (click)="deleteDate(date.id);" ngClass="clickable">highlight_off</mat-icon></div>
+              <div><mat-icon mat-list-icon (click)="deleteDate(date.id);" ngClass="clickable delete-icon">highlight_off</mat-icon></div>
             </mat-list-item>
           </mat-list>
         </div>

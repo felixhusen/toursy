@@ -6,7 +6,9 @@ import {
   GetTourForViewDto,
   CreateOrEditReviewDto,
   ReviewServiceProxy,
-  GetReviewForEditOutput
+  GetReviewForViewDto,
+  GetReviewForEditOutput,
+  ReviewDto
 } from "@shared/service-proxies/service-proxies";
 import * as moment from "moment";
 import { ActivatedRoute, Router } from "@angular/router";
@@ -24,6 +26,12 @@ export class TourDetailsComponent extends AppComponentBase implements OnInit {
   public id: number;
   public rating: number = 0;
   public reviewText: string;
+  public testReviews: GetReviewForViewDto[] = [];
+  public reviews: GetReviewForViewDto[];
+  public maxResultCount: number = 25;
+  public skipCount: number = 0;
+  public sort: string;
+
   public review: GetReviewForEditOutput = new GetReviewForEditOutput();
 
   constructor(
@@ -60,7 +68,7 @@ export class TourDetailsComponent extends AppComponentBase implements OnInit {
       .createOrEdit(this.review.review)
       .subscribe(result => {
         let submitReview = new CreateOrEditReviewDto();
-        submitReview.userId = this._appSessionService.user.id;
+        submitReview.userId = this._appSessionService.userId;
         submitReview.tourId = this.tour.tour.id;
         submitReview.rating = this.rating;
         submitReview.description = this.reviewText;
@@ -70,8 +78,29 @@ export class TourDetailsComponent extends AppComponentBase implements OnInit {
       });
   }
 
+  // does not return any results at the moment
+  public getReviewsForTour(): void {
+    this._reviewService
+      .getAll(undefined, undefined, undefined, undefined)
+      .subscribe((result) => {
+        console.log(result);
+        this.reviews = result.items;
+        this.reviews = this.reviews.filter(item => item.review.tourId === this.tour.tour.id);
+      });
+  }
+
+  public deleteReview(reviewId: number): void {
+    this.reviews.filter(rev => rev.review.id != reviewId);
+    // delete from backend too (?)
+  }
+
+  private openReviewDialog(): void {
+    document.querySelector("#reviewCard").scrollIntoView({behavior: "smooth"});
+  }
+
   ngOnInit(): void {
     this.id = Number(this._activatedRoute.snapshot.paramMap.get("id"));
     this.getTour(this.id);  // changed from _id to id
+    this.getReviewsForTour();
   }
 }
