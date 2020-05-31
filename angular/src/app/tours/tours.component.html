@@ -105,7 +105,7 @@
         <!-- empty string should be a falsy value; in advanced search, if any of latitude, longitude
              and radius are selected but not all, it is invalid -->
         <button mat-flat-button color="primary" (click)="getTours()" [disabled]="(latitudeFilter && (!longitudeFilter || !radiusFilter))
-        || (radiusFilter && (!latitudeFilter || !longitudeFilter))">Advanced Search</button>
+        || (longitudeFilter && (!latitudeFilter || !radiusFilter)) || (radiusFilter && (!latitudeFilter || !longitudeFilter))">Advanced Search</button>
     </mat-card>
 
     <div class="row" *ngIf="tours">
