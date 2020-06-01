@@ -1,6 +1,6 @@
 <div [@routerTransition]>
 
-    <h3 class="page-title mb-3">{{sender.fullName}}</h3>
+    <h3 class="page-title mb-3" *ngIf="sender">{{sender.fullName}}</h3>
 
     <mat-card>
         <mat-list class="chat-list">

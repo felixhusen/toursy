@@ -9,6 +9,7 @@ using localtour.Reviews.Dto;
 using localtour.Tours;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Dynamic.Core;
 using System.Threading.Tasks;
@@ -70,6 +71,35 @@ namespace localtour.Reviews
             );
         }
 
+        public async Task<List<GetReviewForViewDto>> GetReviewsForTour(int TourId)
+        {
+            var filteredReviews = _reviewRepository.GetAll().Where(review => review.TourId == TourId);
+
+            var reviews = from o in filteredReviews
+
+                          join o1 in _tourRepository.GetAll() on o.TourId equals o1.Id
+                          join o2 in _userRepository.GetAll() on o.UserId equals o2.Id
+
+                          orderby o.DatePosted descending
+
+                          select new GetReviewForViewDto()
+                          {
+                              Review = new ReviewDto
+                              {
+                                  Id = o.Id,
+                                  DatePosted = o.DatePosted,
+                                  Description = o.Description,
+                                  Rating = o.Rating,
+                                  TourId = o.TourId,
+                                  UserId = o.UserId
+                              },
+                              TourName = o1.Name,
+                              UserFullName = o2.FullName
+                          };
+
+            return await reviews.ToListAsync();
+        }
+
         public async Task<GetReviewForViewDto> GetReviewForView(int id)
         {
             var review = await _reviewRepository.GetAsync(id);
@@ -101,7 +131,7 @@ namespace localtour.Reviews
             }
         }
 
-        [AbpAuthorize(PermissionNames.Pages_Review_Create)]
+        //[AbpAuthorize(PermissionNames.Pages_Review_Create)]
         protected virtual async Task Create(CreateOrEditReviewDto input)
         {
             var review = ObjectMapper.Map<Review>(input);
@@ -116,7 +146,7 @@ namespace localtour.Reviews
             await _reviewRepository.InsertAsync(review);
         }
 
-        [AbpAuthorize(PermissionNames.Pages_Review_Edit)]
+        //[AbpAuthorize(PermissionNames.Pages_Review_Edit)]
         protected virtual async Task Update(CreateOrEditReviewDto input)
         {
             var review = await _reviewRepository.FirstOrDefaultAsync((int)input.Id);

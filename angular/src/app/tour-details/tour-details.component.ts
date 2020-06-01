@@ -8,12 +8,11 @@ import {
   ReviewServiceProxy,
   GetReviewForViewDto,
   GetReviewForEditOutput,
-  ReviewDto
+  ReviewDto,
 } from "@shared/service-proxies/service-proxies";
 import * as moment from "moment";
 import { ActivatedRoute, Router } from "@angular/router";
 import { AppSessionService } from "@shared/session/app-session.service";
-
 
 @Component({
   templateUrl: "./tour-details.component.html",
@@ -32,7 +31,7 @@ export class TourDetailsComponent extends AppComponentBase implements OnInit {
   public skipCount: number = 0;
   public sort: string;
 
-  public review: GetReviewForEditOutput = new GetReviewForEditOutput();
+  public review: CreateOrEditReviewDto = new CreateOrEditReviewDto();
 
   constructor(
     injector: Injector,
@@ -52,7 +51,9 @@ export class TourDetailsComponent extends AppComponentBase implements OnInit {
   }
 
   public bookTour(id: number): void {
-    this._router.navigateByUrl('/app/bookings/create-booking', { queryParams: { tourId: id }});
+    this._router.navigateByUrl("/app/bookings/create-booking", {
+      queryParams: { tourId: id },
+    });
   }
 
   public setRating(to: number): void {
@@ -64,43 +65,40 @@ export class TourDetailsComponent extends AppComponentBase implements OnInit {
   }
 
   public saveReview(): void {
-    this._reviewService
-      .createOrEdit(this.review.review)
-      .subscribe(result => {
-        let submitReview = new CreateOrEditReviewDto();
-        submitReview.userId = this._appSessionService.userId;
-        submitReview.tourId = this.tour.tour.id;
-        submitReview.rating = this.rating;
-        submitReview.description = this.reviewText;
-        submitReview.datePosted = moment();
-
-        this._reviewService.createOrEdit(submitReview).subscribe();
-      });
+    this.review.userId = this._appSessionService.userId;
+    this.review.tourId = this.tour.tour.id;
+    this.review.rating = this.rating;
+    this.review.description = this.reviewText;
+    this.review.datePosted = moment();
+    console.log(this.review);
+    this._reviewService.createOrEdit(this.review).subscribe((result) => {
+      this.notify.info("Review has been posted");
+    });
   }
 
   // does not return any results at the moment
   public getReviewsForTour(): void {
     this._reviewService
-      .getAll(undefined, undefined, undefined, undefined)
+      .getReviewsForTour(this.id)
       .subscribe((result) => {
-        console.log(result);
-        this.reviews = result.items;
-        this.reviews = this.reviews.filter(item => item.review.tourId === this.tour.tour.id);
+        this.reviews = result;
       });
   }
 
   public deleteReview(reviewId: number): void {
-    this.reviews.filter(rev => rev.review.id != reviewId);
+    this.reviews.filter((rev) => rev.review.id != reviewId);
     // delete from backend too (?)
   }
 
   private openReviewDialog(): void {
-    document.querySelector("#reviewCard").scrollIntoView({behavior: "smooth"});
+    document
+      .querySelector("#reviewCard")
+      .scrollIntoView({ behavior: "smooth" });
   }
 
   ngOnInit(): void {
     this.id = Number(this._activatedRoute.snapshot.paramMap.get("id"));
-    this.getTour(this.id);  // changed from _id to id
+    this.getTour(this.id); // changed from _id to id
     this.getReviewsForTour();
   }
 }
