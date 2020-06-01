@@ -9,7 +9,9 @@ namespace localtour.Tours.Dto
     {
         public string Name { get; set; }
 
-        public decimal Price { get; set; }
+        public decimal? MinPrice { get; set; }
+
+        public decimal? MaxPrice { get; set; }
 
         public string Description { get; set; }
 
@@ -17,9 +19,7 @@ namespace localtour.Tours.Dto
 
         public DateTime EndDate { get; set; }
 
-        public string Longitude { get; set; }
-
-        public string Latitude { get; set; }
+        public string LocationName { get; set; }
 
         public long? UserId { get; set; }
     }

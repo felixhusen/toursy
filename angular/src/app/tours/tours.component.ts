@@ -25,11 +25,7 @@ export class ToursComponent extends AppComponentBase implements OnInit {
   public descriptionFilter: string;
   public startDateFilter: moment.Moment;
   public endDateFilter: moment.Moment;
-  public longitudeFilter: string;
-  public latitudeFilter: string;
-  public radiusFilter: number;
-  public accommodationFilter: number;
-  public styleFilter: string;
+  public locationNameFilter: string;
   public userIdFilter: number;
   public tours: GetTourForViewDto[];
   public totalCount: number;
@@ -42,7 +38,6 @@ export class ToursComponent extends AppComponentBase implements OnInit {
   public defaultImageLink: string =
     "https://attendantdesign.com/wp-content/uploads/2017/08/tour-1-1.jpg";
   public userId: number;
-  private tourStyles: string[] = ["Style 1", "Style 2", "Style 3", "Style 4", "Style 5"];
   private showingAdvanced: boolean = false;
   public loading: boolean = false;
 
@@ -93,11 +88,7 @@ export class ToursComponent extends AppComponentBase implements OnInit {
         this.descriptionFilter,
         this.startDateFilter,
         this.endDateFilter,
-        this.longitudeFilter,
-        this.latitudeFilter,
-        this.radiusFilter,
-        this.accommodationFilter,
-        this.styleFilter,
+        this.locationNameFilter,
         this.userIdFilter,
         this.sort,
         this.skipCount,
@@ -120,11 +111,7 @@ export class ToursComponent extends AppComponentBase implements OnInit {
         this.descriptionFilter,
         this.startDateFilter,
         this.endDateFilter,
-        this.longitudeFilter,
-        this.latitudeFilter,
-        this.radiusFilter,
-        this.accommodationFilter,
-        this.styleFilter,
+        this.locationNameFilter,
         this.userIdFilter,
         this.sort,
         this.skipCount,

@@ -15,12 +15,12 @@ import { AppSessionService } from "@shared/session/app-session.service";
 export class HomeComponent extends AppComponentBase implements OnInit {
   public slides: any = [];
   public nameFilter: string;
-  public priceFilter: number;
+  public minPriceFilter: number;
+  public maxPriceFilter: number;
   public descriptionFilter: string;
   public startDateFilter: moment.Moment;
   public endDateFilter: moment.Moment;
-  public longitudeFilter: string;
-  public latitudeFilter: string;
+  public locationNameFilter: string;
   public userIdFilter: number;
   public tours: GetTourForViewDto[];
   public totalCount: number;
@@ -40,12 +40,12 @@ export class HomeComponent extends AppComponentBase implements OnInit {
     this._tourService
       .getAll(
         this.nameFilter,
-        this.priceFilter,
+        this.minPriceFilter,
+        this.maxPriceFilter,
         this.descriptionFilter,
         this.startDateFilter,
         this.endDateFilter,
-        this.longitudeFilter,
-        this.latitudeFilter,
+        this.locationNameFilter,
         this.userIdFilter,
         this.sort,
         this.skipCount,
