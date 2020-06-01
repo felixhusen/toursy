@@ -19,8 +19,9 @@ namespace localtour.Helpers
         {
             return existingQuery.WhereIf(!string.IsNullOrWhiteSpace(input.Name), tour => tour.Name.Contains(input.Name))
                                 .WhereIf(!string.IsNullOrWhiteSpace(input.Description), tour => tour.Name.Contains(input.Description))
-                                .WhereIf(!string.IsNullOrWhiteSpace(input.Longitude), tour => tour.Longitude == input.Longitude)
-                                .WhereIf(!string.IsNullOrWhiteSpace(input.Latitude), tour => tour.Latitude == input.Latitude)
+                                .WhereIf(!string.IsNullOrWhiteSpace(input.LocationName), tour => tour.LocationName.Contains(input.LocationName))
+                                .WhereIf(input.MinPrice != null, tour => tour.Price >= input.MinPrice)
+                                .WhereIf(input.MaxPrice != null, tour => tour.Price <= input.MaxPrice)
                                 .WhereIf(input.UserId != null, tour => tour.UserId == input.UserId);
         }
 

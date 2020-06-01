@@ -20,12 +20,12 @@ import { FileDownloadService } from "@shared/utils/file-download.service";
 })
 export class ToursComponent extends AppComponentBase implements OnInit {
   public nameFilter: string;
-  public priceFilter: number;
+  public minPriceFilter: number;
+  public maxPriceFilter: number;
   public descriptionFilter: string;
   public startDateFilter: moment.Moment;
   public endDateFilter: moment.Moment;
-  public longitudeFilter: string;
-  public latitudeFilter: string;
+  public locationNameFilter: string;
   public userIdFilter: number;
   public tours: GetTourForViewDto[];
   public totalCount: number;
@@ -38,6 +38,7 @@ export class ToursComponent extends AppComponentBase implements OnInit {
   public defaultImageLink: string =
     "https://attendantdesign.com/wp-content/uploads/2017/08/tour-1-1.jpg";
   public userId: number;
+  private showingAdvanced: boolean = false;
   public loading: boolean = false;
 
   constructor(
@@ -58,15 +59,36 @@ export class ToursComponent extends AppComponentBase implements OnInit {
       this.maxResultCount = this.pageEvent.pageSize;
     }
 
+
+    /* The specification for TourServiceProxy.getAll
+      /**
+       * @param name (optional)
+       * @param minPrice (optional)
+       * @param maxPrice (optional)
+       * @param description (optional)
+       * @param startDate (optional)
+       * @param endDate (optional)
+       * @param longitude (optional)
+       * @param latitude (optional)
+       * @param radius (optional)
+       * @param accommodation (optional)
+       * @param style (optional)
+       * @param userId (optional)
+       * @param sorting (optional)
+       * @param skipCount (optional)
+       * @param maxResultCount (optional)
+       * @return Success
+       */
+
     this._tourService
       .getAll(
         this.nameFilter,
-        this.priceFilter,
+        this.minPriceFilter,
+        this.maxPriceFilter,
         this.descriptionFilter,
         this.startDateFilter,
         this.endDateFilter,
-        this.longitudeFilter,
-        this.latitudeFilter,
+        this.locationNameFilter,
         this.userIdFilter,
         this.sort,
         this.skipCount,
@@ -84,16 +106,16 @@ export class ToursComponent extends AppComponentBase implements OnInit {
     this._tourService
       .getToursToExcel(
         this.nameFilter,
-        this.priceFilter,
+        this.minPriceFilter,
+        this.maxPriceFilter,
         this.descriptionFilter,
         this.startDateFilter,
         this.endDateFilter,
-        this.longitudeFilter,
-        this.latitudeFilter,
+        this.locationNameFilter,
         this.userIdFilter,
-        undefined,
-        undefined,
-        undefined
+        this.sort,
+        this.skipCount,
+        this.maxResultCount
       )
       .subscribe((result) => {
         this._fileDownloadService.downloadTempFile(result);

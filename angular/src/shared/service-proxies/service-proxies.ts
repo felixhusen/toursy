@@ -2230,6 +2230,66 @@ export class ReviewServiceProxy {
     }
 
     /**
+     * @param tourId (optional) 
+     * @return Success
+     */
+    getReviewsForTour(tourId: number | undefined): Observable<GetReviewForViewDto[]> {
+        let url_ = this.baseUrl + "/api/services/app/Review/GetReviewsForTour?";
+        if (tourId === null)
+            throw new Error("The parameter 'tourId' cannot be null.");
+        else if (tourId !== undefined)
+            url_ += "TourId=" + encodeURIComponent("" + tourId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "text/plain"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetReviewsForTour(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetReviewsForTour(<any>response_);
+                } catch (e) {
+                    return <Observable<GetReviewForViewDto[]>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<GetReviewForViewDto[]>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetReviewsForTour(response: HttpResponseBase): Observable<GetReviewForViewDto[]> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (Array.isArray(resultData200)) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200.push(GetReviewForViewDto.fromJS(item));
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<GetReviewForViewDto[]>(<any>null);
+    }
+
+    /**
      * @param id (optional) 
      * @return Success
      */
@@ -3465,28 +3525,32 @@ export class TourServiceProxy {
 
     /**
      * @param name (optional) 
-     * @param price (optional) 
+     * @param minPrice (optional) 
+     * @param maxPrice (optional) 
      * @param description (optional) 
      * @param startDate (optional) 
      * @param endDate (optional) 
-     * @param longitude (optional) 
-     * @param latitude (optional) 
+     * @param locationName (optional) 
      * @param userId (optional) 
      * @param sorting (optional) 
      * @param skipCount (optional) 
      * @param maxResultCount (optional) 
      * @return Success
      */
-    getAll(name: string | undefined, price: number | undefined, description: string | undefined, startDate: moment.Moment | undefined, endDate: moment.Moment | undefined, longitude: string | undefined, latitude: string | undefined, userId: number | undefined, sorting: string | undefined, skipCount: number | undefined, maxResultCount: number | undefined): Observable<GetTourForViewDtoPagedResultDto> {
+    getAll(name: string | undefined, minPrice: number | undefined, maxPrice: number | undefined, description: string | undefined, startDate: moment.Moment | undefined, endDate: moment.Moment | undefined, locationName: string | undefined, userId: number | undefined, sorting: string | undefined, skipCount: number | undefined, maxResultCount: number | undefined): Observable<GetTourForViewDtoPagedResultDto> {
         let url_ = this.baseUrl + "/api/services/app/Tour/GetAll?";
         if (name === null)
             throw new Error("The parameter 'name' cannot be null.");
         else if (name !== undefined)
             url_ += "Name=" + encodeURIComponent("" + name) + "&"; 
-        if (price === null)
-            throw new Error("The parameter 'price' cannot be null.");
-        else if (price !== undefined)
-            url_ += "Price=" + encodeURIComponent("" + price) + "&"; 
+        if (minPrice === null)
+            throw new Error("The parameter 'minPrice' cannot be null.");
+        else if (minPrice !== undefined)
+            url_ += "MinPrice=" + encodeURIComponent("" + minPrice) + "&"; 
+        if (maxPrice === null)
+            throw new Error("The parameter 'maxPrice' cannot be null.");
+        else if (maxPrice !== undefined)
+            url_ += "MaxPrice=" + encodeURIComponent("" + maxPrice) + "&"; 
         if (description === null)
             throw new Error("The parameter 'description' cannot be null.");
         else if (description !== undefined)
@@ -3499,14 +3563,10 @@ export class TourServiceProxy {
             throw new Error("The parameter 'endDate' cannot be null.");
         else if (endDate !== undefined)
             url_ += "EndDate=" + encodeURIComponent(endDate ? "" + endDate.toJSON() : "") + "&"; 
-        if (longitude === null)
-            throw new Error("The parameter 'longitude' cannot be null.");
-        else if (longitude !== undefined)
-            url_ += "Longitude=" + encodeURIComponent("" + longitude) + "&"; 
-        if (latitude === null)
-            throw new Error("The parameter 'latitude' cannot be null.");
-        else if (latitude !== undefined)
-            url_ += "Latitude=" + encodeURIComponent("" + latitude) + "&"; 
+        if (locationName === null)
+            throw new Error("The parameter 'locationName' cannot be null.");
+        else if (locationName !== undefined)
+            url_ += "LocationName=" + encodeURIComponent("" + locationName) + "&"; 
         if (userId === null)
             throw new Error("The parameter 'userId' cannot be null.");
         else if (userId !== undefined)
@@ -3571,28 +3631,32 @@ export class TourServiceProxy {
 
     /**
      * @param name (optional) 
-     * @param price (optional) 
+     * @param minPrice (optional) 
+     * @param maxPrice (optional) 
      * @param description (optional) 
      * @param startDate (optional) 
      * @param endDate (optional) 
-     * @param longitude (optional) 
-     * @param latitude (optional) 
+     * @param locationName (optional) 
      * @param userId (optional) 
      * @param sorting (optional) 
      * @param skipCount (optional) 
      * @param maxResultCount (optional) 
      * @return Success
      */
-    getToursToExcel(name: string | undefined, price: number | undefined, description: string | undefined, startDate: moment.Moment | undefined, endDate: moment.Moment | undefined, longitude: string | undefined, latitude: string | undefined, userId: number | undefined, sorting: string | undefined, skipCount: number | undefined, maxResultCount: number | undefined): Observable<FileDto> {
+    getToursToExcel(name: string | undefined, minPrice: number | undefined, maxPrice: number | undefined, description: string | undefined, startDate: moment.Moment | undefined, endDate: moment.Moment | undefined, locationName: string | undefined, userId: number | undefined, sorting: string | undefined, skipCount: number | undefined, maxResultCount: number | undefined): Observable<FileDto> {
         let url_ = this.baseUrl + "/api/services/app/Tour/GetToursToExcel?";
         if (name === null)
             throw new Error("The parameter 'name' cannot be null.");
         else if (name !== undefined)
             url_ += "Name=" + encodeURIComponent("" + name) + "&"; 
-        if (price === null)
-            throw new Error("The parameter 'price' cannot be null.");
-        else if (price !== undefined)
-            url_ += "Price=" + encodeURIComponent("" + price) + "&"; 
+        if (minPrice === null)
+            throw new Error("The parameter 'minPrice' cannot be null.");
+        else if (minPrice !== undefined)
+            url_ += "MinPrice=" + encodeURIComponent("" + minPrice) + "&"; 
+        if (maxPrice === null)
+            throw new Error("The parameter 'maxPrice' cannot be null.");
+        else if (maxPrice !== undefined)
+            url_ += "MaxPrice=" + encodeURIComponent("" + maxPrice) + "&"; 
         if (description === null)
             throw new Error("The parameter 'description' cannot be null.");
         else if (description !== undefined)
@@ -3605,14 +3669,10 @@ export class TourServiceProxy {
             throw new Error("The parameter 'endDate' cannot be null.");
         else if (endDate !== undefined)
             url_ += "EndDate=" + encodeURIComponent(endDate ? "" + endDate.toJSON() : "") + "&"; 
-        if (longitude === null)
-            throw new Error("The parameter 'longitude' cannot be null.");
-        else if (longitude !== undefined)
-            url_ += "Longitude=" + encodeURIComponent("" + longitude) + "&"; 
-        if (latitude === null)
-            throw new Error("The parameter 'latitude' cannot be null.");
-        else if (latitude !== undefined)
-            url_ += "Latitude=" + encodeURIComponent("" + latitude) + "&"; 
+        if (locationName === null)
+            throw new Error("The parameter 'locationName' cannot be null.");
+        else if (locationName !== undefined)
+            url_ += "LocationName=" + encodeURIComponent("" + locationName) + "&"; 
         if (userId === null)
             throw new Error("The parameter 'userId' cannot be null.");
         else if (userId !== undefined)
