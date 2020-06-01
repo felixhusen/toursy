@@ -41,6 +41,7 @@ export class ReviewsComponent extends AppComponentBase implements OnInit {
     this._reviewService
       .getAll(this.searchQuery, this.sort, this.skipCount, this.maxResultCount)
       .subscribe((result) => {
+        console.log(result);
         this.reviews = result.items;
         this.totalCount = result.totalCount;
       });

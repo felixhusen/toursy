@@ -7,6 +7,7 @@ import {
 } from "@shared/service-proxies/service-proxies";
 import * as moment from "moment";
 import { PageEvent } from "@angular/material/paginator";
+import { AppSessionService } from "@shared/session/app-session.service";
 
 @Component({
   templateUrl: "./user-details.component.html",
@@ -38,5 +39,6 @@ export class UserDetailsComponent extends AppComponentBase implements OnInit {
 
   ngOnInit(): void {
     this.getUser();
+
   }
 }
