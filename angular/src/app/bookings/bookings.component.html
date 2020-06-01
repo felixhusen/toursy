@@ -30,7 +30,7 @@
             </mat-form-field>
         </form>
     </mat-card>
-
+    <mat-progress-bar mode="indeterminate" *ngIf="loading"></mat-progress-bar>
     <p-table [value]="bookings" styleClass="ui-table-customers">
         <ng-template pTemplate="header">
             <tr>
@@ -56,7 +56,7 @@
                 <td>{{item.booking.status}}</td>
                 <td class="text-right">{{item.booking.totalPrice | currency}}</td>
                 <td>
-                    <button mat-icon-button color="primary" (click)="showCreateOrEditBookingDialog(item.booking.id)">
+                    <button mat-icon-button color="primary" *ngIf="'Pages.Booking.Edit' | permission" (click)="showCreateOrEditBookingDialog(item.booking.id)">
                         <mat-icon>edit</mat-icon>
                     </button>
                     <button mat-icon-button color="accent" (click)="requestCancelBooking(item.booking.id)">

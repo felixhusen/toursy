@@ -12,6 +12,7 @@
     </div>
 
     <mat-card>
+        <mat-progress-bar mode="indeterminate" *ngIf="loading"></mat-progress-bar>
         <mat-list>
             <mat-list-item *ngFor="let item of messages" [routerLink]="['/app/messages/' + item.relatedUserId]"
                 routerLinkActive="active">

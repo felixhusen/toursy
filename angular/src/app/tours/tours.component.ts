@@ -44,6 +44,7 @@ export class ToursComponent extends AppComponentBase implements OnInit {
   public userId: number;
   private tourStyles: string[] = ["Style 1", "Style 2", "Style 3", "Style 4", "Style 5"];
   private showingAdvanced: boolean = false;
+  public loading: boolean = false;
 
   constructor(
     injector: Injector,
@@ -56,6 +57,7 @@ export class ToursComponent extends AppComponentBase implements OnInit {
   }
 
   public getTours(event?: any): void {
+    this.loading = true;
     if (event) {
       this.pageEvent = event;
       this.skipCount = this.pageEvent.pageIndex * this.pageEvent.pageSize;
@@ -104,6 +106,7 @@ export class ToursComponent extends AppComponentBase implements OnInit {
       .subscribe((result) => {
         this.tours = result.items;
         this.totalCount = result.totalCount;
+        this.loading = false;
       });
   }
 

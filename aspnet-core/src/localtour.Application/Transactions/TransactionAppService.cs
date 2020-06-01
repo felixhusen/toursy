@@ -156,6 +156,14 @@ namespace localtour.Transactions
             await _transactionRepository.UpdateAsync(transaction);
         }
 
+        [AbpAuthorize(PermissionNames.Pages_Transaction_Edit)]
+        public async Task ApproveTransactionCancellation(int id)
+        {
+            var transaction = await _transactionRepository.GetAsync(id);
+            transaction.Status = "Cancelled";
+            await _transactionRepository.UpdateAsync(transaction);
+        }
+
         protected virtual async Task Create(CreateOrEditTransactionDto input)
         {
             var transaction = ObjectMapper.Map<Transaction>(input);

@@ -5,7 +5,7 @@
     <mat-card>
         <mat-list class="chat-list">
             <mat-list-item *ngFor="let item of messages">
-                <div mat-line>{{item.senderName}}: {{item.message.content}}</div>
+                <div mat-line>{{item.displayName}}: {{item.message.content}}</div>
                 <div mat-line>{{item.message.dateSent | date}}</div>
                 <mat-divider></mat-divider>
             </mat-list-item>

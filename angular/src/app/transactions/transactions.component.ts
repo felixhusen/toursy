@@ -29,12 +29,14 @@ export class TransactionsComponent extends AppComponentBase implements OnInit {
   public pageEvent: PageEvent;
   public title: string = "My Transactions";
   public mode: string;
+  public loading: boolean = false;
 
   constructor(injector: Injector, private _transactionService: TransactionServiceProxy, private _fileDownloadService: FileDownloadService) {
     super(injector);
   }
 
   public getTransactions(event?: any): void {
+    this.loading = true;
     if (event) {
         this.pageEvent = event;
         this.skipCount = this.pageEvent.pageIndex * this.pageEvent.pageSize;
@@ -46,8 +48,7 @@ export class TransactionsComponent extends AppComponentBase implements OnInit {
       .subscribe((result) => {
         this.transactions = result.items;
         this.totalCount = result.totalCount;
-        console.log("Result")
-        console.log(this.transactions)
+        this.loading = false;
       });
   }
 
@@ -79,6 +80,20 @@ export class TransactionsComponent extends AppComponentBase implements OnInit {
     if (confirm("Are you sure to cancel this transaction?")) {
       await this._transactionService.cancelTransaction(id).toPromise();
       this.getTransactions();
+    }
+  }
+
+  public async approveTransaction(id: number, status: string) {
+    if (status === "Cancellation Requested") {
+      if (confirm("Are you sure to approve the cancellation of this transaction?")) {
+        await this._transactionService.approveTransactionCancellation(id).toPromise();
+        this.getTransactions();
+      }
+    } else {
+      if (confirm("Are you sure to approve the this transaction?")) {
+        await this._transactionService.approveTransaction(id).toPromise();
+        this.getTransactions();
+      }
     }
   }
 

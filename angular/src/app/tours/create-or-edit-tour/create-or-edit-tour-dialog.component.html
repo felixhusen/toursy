@@ -12,6 +12,11 @@
                 maxlength="32" />
             </mat-form-field>
             <mat-form-field appearance="fill">
+              <mat-label>Location Name</mat-label>
+              <input matInput name="LocationName" placeholder="Location" [(ngModel)]="tour.tour.locationName" required minlength="2"
+                maxlength="32" />
+            </mat-form-field>
+            <mat-form-field appearance="fill">
               <mat-label>Price</mat-label>
               <input matInput name="Price" type="number" placeholder="Price" [(ngModel)]="tour.tour.price" required
                 maxlength="32" />

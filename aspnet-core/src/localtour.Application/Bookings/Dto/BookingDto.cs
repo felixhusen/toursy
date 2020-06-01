@@ -9,6 +9,8 @@ namespace localtour.Bookings.Dto
     {
         public int? TourId { get; set; }
 
+        public int? TourDateId { get; set; }
+
         public long? UserId { get; set; }
 
         public string Name { get; set; }

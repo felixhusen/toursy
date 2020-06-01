@@ -28,6 +28,7 @@ export class BookingsComponent extends AppComponentBase implements OnInit {
   public pageEvent: PageEvent;
   public title: string = "My Bookings";
   public mode: string;
+  public loading: boolean = false;
 
   constructor(
     injector: Injector,
@@ -39,6 +40,7 @@ export class BookingsComponent extends AppComponentBase implements OnInit {
   }
 
   public getBookings(event?: any): void {
+    this.loading = true;
     if (event) {
       this.pageEvent = event;
       this.skipCount = this.pageEvent.pageIndex * this.pageEvent.pageSize;
@@ -58,6 +60,7 @@ export class BookingsComponent extends AppComponentBase implements OnInit {
         this.totalCount = result.totalCount;
         console.log("Result");
         console.log(this.bookings);
+        this.loading = false;
       });
   }
 

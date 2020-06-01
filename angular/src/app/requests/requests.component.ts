@@ -28,6 +28,7 @@ export class RequestsComponent extends AppComponentBase implements OnInit {
   public pageEvent: PageEvent;
   public title: string = "My Requests";
   public mode: string;
+  public loading: boolean = false;
 
   constructor(
     injector: Injector,
@@ -89,6 +90,7 @@ export class RequestsComponent extends AppComponentBase implements OnInit {
   }
 
   public getRequests(event?: any): void {
+    this.loading = true;
     if (event) {
       this.pageEvent = event;
       this.skipCount = this.pageEvent.pageIndex * this.pageEvent.pageSize;
@@ -100,9 +102,22 @@ export class RequestsComponent extends AppComponentBase implements OnInit {
       .subscribe((result) => {
         this.requests = result.items;
         this.totalCount = result.totalCount;
-        console.log("Result")
-        console.log(this.requests)
+        this.loading = false;
       });
+  }
+
+  public async approveRequest(id: number) {
+    if (confirm("Are you sure to approve this request?")) {
+      await this._requestService.approveRequest(id).toPromise();
+      this.getRequests();
+    }
+  }
+
+  public async deleteRequest(id: number) {
+    if (confirm("Are you sure to delete this request?")) {
+      await this._requestService.delete(id).toPromise();
+      this.getRequests();
+    }
   }
 
   ngOnInit(): void {
