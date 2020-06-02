@@ -36,7 +36,7 @@ import { MessageDetailsComponent } from "./message-details/message-details.compo
           {
             path: "user-details",
             component: UserDetailsComponent,
-
+            canActivate: [AppRouteGuard],
           },
           {
             path: "tours",

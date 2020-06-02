@@ -2,14 +2,9 @@ import { Component, Injector, OnInit, ViewEncapsulation } from "@angular/core";
 import { AppComponentBase } from "@shared/app-component-base";
 import { appModuleAnimation } from "@shared/animations/routerTransition";
 import {
-  RequestServiceProxy,
-  GetRequestForViewDto,
   GetBookingForViewDto,
   BookingServiceProxy,
 } from "@shared/service-proxies/service-proxies";
-import * as moment from "moment";
-import { PageEvent } from "@angular/material/paginator";
-import { AppSessionService } from "@shared/session/app-session.service";
 
 @Component({
   templateUrl: "./user-details.component.html",
