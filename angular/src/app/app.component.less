@@ -90,6 +90,10 @@
     }
 }
 
+.routeLink {
+    cursor: pointer;
+}
+
 :host ::ng-deep .ui-table-customers {
     box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.2), 0 1px 1px 0 rgba(0, 0, 0, 0.14), 0 2px 1px -1px rgba(0, 0, 0, 0.12);
     table-layout: auto;
@@ -101,38 +105,38 @@
         font-weight: 700;
         font-size: 12px;
         letter-spacing: .3px;
-    
+
         &.status-qualified {
             background-color: #C8E6C9;
             color: #256029;
         }
-    
+
         &.status-unqualified {
             background-color: #FFCDD2;
             color: #C63737;
         }
-    
+
         &.status-negotiation {
             background-color: #FEEDAF;
             color: #8A5340;
         }
-    
+
         &.status-new {
             background-color: #B3E5FC;
             color: #23547B;
         }
-    
+
         &.status-renewal {
             background-color: #ECCFFF;
             color: #694382;
         }
-    
+
         &.status-proposal {
             background-color: #FFD8B2;
             color: #805B36;
         }
     }
-    
+
     .flag {
         vertical-align: middle;
         width: 30px;
@@ -150,7 +154,7 @@
 
         span {
             margin-top: .125em;
-            vertical-align: middle; 
+            vertical-align: middle;
             margin-left: .5em
         }
     }
@@ -159,7 +163,7 @@
         .ui-dropdown {
             float: left;
         }
-    
+
         .ui-paginator-current {
             float: right;
         }
@@ -168,7 +172,7 @@
     .ui-progressbar {
         height: 8px;
         background-color: #D8DADC;
-    
+
         .ui-progressbar-value {
             background-color: #00ACAD;
         }
@@ -176,7 +180,7 @@
 
     .ui-column-filter {
         display: block;
-    
+
         input {
             width: 100%;
         }
@@ -184,7 +188,7 @@
 
     .ui-table-globalfilter-container {
         float: right;
-    
+
         input {
             width: 200px;
         }
@@ -192,7 +196,7 @@
 
     .ui-datepicker {
         min-width: 25em;
-    
+
         td {
             font-weight: 400;
         }
