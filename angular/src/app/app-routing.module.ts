@@ -34,6 +34,11 @@ import { MessageDetailsComponent } from "./message-details/message-details.compo
             canActivate: [AppRouteGuard],
           },
           {
+            path: "user-details",
+            component: UserDetailsComponent,
+            canActivate: [AppRouteGuard],
+          },
+          {
             path: "tours",
             component: ToursComponent,
             canActivate: [AppRouteGuard],
@@ -95,7 +100,8 @@ import { MessageDetailsComponent } from "./message-details/message-details.compo
             canActivate: [AppRouteGuard],
           },
           {
-            path: "users/:id",
+            //path: "users/:id"
+            path: "user-details",
             component: UserDetailsComponent,
             data: { permission: "Pages.Users" },
             canActivate: [AppRouteGuard],
