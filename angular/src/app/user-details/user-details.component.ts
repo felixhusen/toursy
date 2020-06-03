@@ -4,6 +4,10 @@ import { appModuleAnimation } from "@shared/animations/routerTransition";
 import {
   GetBookingForViewDto,
   BookingServiceProxy,
+  UserServiceProxy,
+  UserDto,
+  RoleServiceProxy,
+  RoleDto,
 } from "@shared/service-proxies/service-proxies";
 
 @Component({
@@ -14,25 +18,35 @@ import {
 })
 
 export class UserDetailsComponent extends AppComponentBase implements OnInit {
-  public user: any;
-  private username: string = this.appSession.getShownLoginName();
-  private email: string = this.appSession.user.emailAddress;
-  private firstName: string = this.appSession.user.name;
-  private lastName: string = this.appSession.user.surname;
+  public user: UserDto;
   private editing: boolean = false;
   public bookings: GetBookingForViewDto[];
-
+  private roleName: string;
 
   constructor(
     injector: Injector,
     private _bookingService: BookingServiceProxy,
+    private _userService: UserServiceProxy,
+    private _roleService: RoleServiceProxy
   ) {
     super(injector);
   }
 
   public save(): void {
     this.editing = false;
-    // update backend components
+    this._userService.update(this.user).subscribe(() => {
+      this.notify.info("Changes saved");
+      location.reload();
+    })
+  }
+
+  public cancel(): void {
+    this.editing = false;
+  }
+
+  public async getUser() {
+    this.user = await this._userService.get(this.appSession.userId).toPromise();
+    this.roleName = this.user.roleNames[0].toUpperCase().charAt(0) + this.user.roleNames[0].toLowerCase().slice(1);
   }
 
   public getBookings(): void {
@@ -53,5 +67,6 @@ export class UserDetailsComponent extends AppComponentBase implements OnInit {
 
   ngOnInit(): void {
     this.getBookings();
+    this.getUser();
   }
 }
