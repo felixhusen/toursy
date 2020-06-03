@@ -1,17 +1,87 @@
 <div [@routerTransition]>
+    <mat-card class="mb-3" *ngIf="user">
+        <div class="row">
+            <div class="col-xs-12 col-sm-2">
+                <img src="../../assets/images/default_avatar.jpg" alt="Profile Picture" class="img-thumbnail">
+            </div>
+            <div class="col-xs-12 col-sm-10">
+                <div class="row" *ngIf="editing">
+                    <div class="col-xs-12">
+                        <mat-form-field appearance="fill">
+                            <mat-label>Your first name</mat-label>
+                            <input matInput name="FirstName" [(ngModel)]="user.name">
+                        </mat-form-field>
+                    </div>
+                </div>
+                <div class="row" *ngIf="editing">
+                    <div class="col-xs-12">
+                        <mat-form-field appearance="fill">
+                            <mat-label>Your surname</mat-label>
+                            <input matInput name="Surname" [(ngModel)]="user.surname">
+                        </mat-form-field>
+                    </div>
+                </div>
+                <h3 class="heading-title mt-1" *ngIf="!editing">{{user.fullName}}</h3>
 
-    <mat-card>
-        <h2>Your details</h2>
-        <ng-container>
-            <h3>{{user.name}}</h3>
-            <h5>{{user.role}}</h5>
-            <h5><mat-icon>email</mat-icon>&nbsp;{{user.email}}</h5>
-            <button mat-raised-button color="primary">Edit</button>
-        </ng-container>
+                <div class="row">
+                    <div class="col-xs-12" *ngIf="editing">
+                        <mat-form-field appearance="fill">
+                            <mat-label>Your username</mat-label>
+                            <input matInput [(ngModel)]="user.userName" name="Username">
+                        </mat-form-field>
+                    </div>
+                </div>
+                <h4 class="heading-title" *ngIf="!editing">{{roleName}}</h4>
+                <div class="row" *ngIf="editing">
+                    <div class="col-xs-12">
+                        <mat-form-field appearance="fill">
+                            <mat-label>Your email address</mat-label>
+                            <input matInput [(ngModel)]="user.emailAddress" name="EmailAddress" type="email">
+                        </mat-form-field>
+                    </div>
+                </div>
+                <h5 class="heading-title" *ngIf="!editing">{{user.emailAddress}}</h5>
+
+                <button mat-flat-button color="primary" *ngIf="editing"
+                    [disabled]="!user.userName || !user.name || !user.surname || !user.emailAddress"
+                    (click)="save()">Save Changes</button>
+                <button mat-flat-button color="accent" *ngIf="editing"
+                    [disabled]="!user.userName || !user.name || !user.surname || !user.emailAddress" (click)="cancel()"
+                    class="ml-1">Cancel</button>
+                <button mat-flat-button color="primary" *ngIf="!editing" class="mt-1 mb-1"
+                    (click)="editing = true;">Edit Account</button>
+            </div>
+        </div>
     </mat-card>
 
-    <mat-card>
-        <h3>My Bookings</h3>
+    <mat-card class="mb-3">
+        <h3 class="heading-title mt-1 mb-3">My Bookings</h3>
 
+        <p-table [value]="bookings" styleClass="ui-table-customers">
+            <ng-template pTemplate="header">
+                <tr>
+                    <th>Booking Number</th>
+                    <th>Tour</th>
+                    <th>Name</th>
+                    <th>Phone Number</th>
+                    <th>Number of People</th>
+                    <th>Status</th>
+                    <th class="text-right">Total Price</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-item>
+                <tr>
+                    <td>
+                        <button mat-flat-button color="primary">{{item.booking.id}}</button>
+                    </td>
+                    <td>{{item.tourName}}</td>
+                    <td>{{item.booking.name}}</td>
+                    <td>{{item.booking.phoneNumber}}</td>
+                    <td>{{item.booking.numberOfPeople}} person(s)</td>
+                    <td>{{item.booking.status}}</td>
+                    <td class="text-right">{{item.booking.totalPrice | currency}}</td>
+                </tr>
+            </ng-template>
+        </p-table>
     </mat-card>
 </div>

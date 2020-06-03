@@ -2,12 +2,13 @@ import { Component, Injector, OnInit, ViewEncapsulation } from "@angular/core";
 import { AppComponentBase } from "@shared/app-component-base";
 import { appModuleAnimation } from "@shared/animations/routerTransition";
 import {
-  RequestServiceProxy,
-  GetRequestForViewDto,
+  GetBookingForViewDto,
+  BookingServiceProxy,
+  UserServiceProxy,
+  UserDto,
+  RoleServiceProxy,
+  RoleDto,
 } from "@shared/service-proxies/service-proxies";
-import * as moment from "moment";
-import { PageEvent } from "@angular/material/paginator";
-import { AppSessionService } from "@shared/session/app-session.service";
 
 @Component({
   templateUrl: "./user-details.component.html",
@@ -17,28 +18,55 @@ import { AppSessionService } from "@shared/session/app-session.service";
 })
 
 export class UserDetailsComponent extends AppComponentBase implements OnInit {
-  public user: any;
+  public user: UserDto;
+  private editing: boolean = false;
+  public bookings: GetBookingForViewDto[];
+  private roleName: string;
 
   constructor(
     injector: Injector,
+    private _bookingService: BookingServiceProxy,
+    private _userService: UserServiceProxy,
+    private _roleService: RoleServiceProxy
   ) {
     super(injector);
   }
 
-  public getUser(event?: any): void {
+  public save(): void {
+    this.editing = false;
+    this._userService.update(this.user).subscribe(() => {
+      this.notify.info("Changes saved");
+      location.reload();
+    })
+  }
 
-    // this._requestService
-    //   .getAll(this.searchQuery, this.sort, this.skipCount, this.maxResultCount)
-    //   .subscribe((result) => {
-    //     this.requests = result.items;
-    //     this.totalCount = result.totalCount;
-    //     console.log("Result")
-    //     console.log(this.requests)
-    //   });
+  public cancel(): void {
+    this.editing = false;
+  }
+
+  public async getUser() {
+    this.user = await this._userService.get(this.appSession.userId).toPromise();
+    this.roleName = this.user.roleNames[0].toUpperCase().charAt(0) + this.user.roleNames[0].toLowerCase().slice(1);
+  }
+
+  public getBookings(): void {
+      this._bookingService
+          .getAll(
+            undefined,
+            undefined,
+            undefined,
+            undefined,
+            undefined
+          )
+          .subscribe((result) => {
+            this.bookings = result.items;
+            console.log("Result");
+            console.log(this.bookings);
+          });
   }
 
   ngOnInit(): void {
+    this.getBookings();
     this.getUser();
-
   }
 }
