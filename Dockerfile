@@ -2,8 +2,8 @@
 
 FROM mcr.microsoft.com/dotnet/core/aspnet:3.1-buster-slim AS base
 WORKDIR /app
-EXPOSE 80
-EXPOSE 443
+# EXPOSE 80
+# EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/core/sdk:3.1-buster AS build
 WORKDIR /src
@@ -31,4 +31,5 @@ COPY --from=publish /app/publish .
 RUN apt-get update -yq \
     && apt-get install -yq libc6-dev \
     && apt-get install -yq libgdiplus
-ENTRYPOINT ["dotnet", "localtour.Web.Host.dll"]
+CMD ASPNETCORE_URLS=http://*:$PORT dotnet localtour.Web.Host.dll
+# ENTRYPOINT ["dotnet", "localtour.Web.Host.dll"]
